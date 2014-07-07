@@ -1,0 +1,70 @@
+
+
+.editor {
+    
+}
+
+.compile-button {
+    margin: 1em 1em 0 0;
+    outline: none;
+}
+
+.txt {
+    display: block;
+    border: 1px solid #666;
+    width: 100%;
+    padding: .5em;
+    font-size: 1.2em;
+    font-family: consolas, courier;
+    color: #444;
+    min-height: 200px;
+}
+
+.nick {
+    color: #fff;
+}
+
+.preview {
+    padding: 1em;
+    background-color: #000;
+    margin: 0 0 1em 0;
+    letter-spacing: 1px;
+    
+    p {
+        margin: 0;
+    }
+}
+
+.error {
+    color: hotpink;
+}
+
+.preview-message {
+    margin: 0 auto;
+    color: #CAB8B8;
+    font-size: 1.2em;
+    font-family: consolas, courier;
+}
+
+#message {
+    
+}
+
+/**
+ * IRC formatting
+ *
+ */
+.irc-bold {
+    font-weight: bold;
+    color: #fff;
+} 
+
+.lbl {
+    margin-bottom: 0;
+}
+
+.hint {
+    margin-top: 0;
+}
+
+ 
