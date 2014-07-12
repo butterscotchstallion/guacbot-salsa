@@ -10,7 +10,7 @@ define('pluginMessages', function (require) {
     };
     
     pm.bindEventHandlers = function () {
-        $('.message-link').on('click', function (e) {
+        $('body').on('click', '.message-link', function (e) {
             e.preventDefault();
             
             $('#message-name').val($(this).data('message-name'));

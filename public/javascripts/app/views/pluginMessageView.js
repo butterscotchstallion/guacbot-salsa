@@ -20,11 +20,7 @@ define('pluginMessageView', function (require) {
         render    : function() {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(modelJSON);
-            
-            //console.log(this.model);
-            //console.log(modelJSON);
-            //console.log(tpl);
-            
+
             $(this.el).html(tpl);
 
             return this;

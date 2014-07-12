@@ -38,9 +38,13 @@ var bookshelf = require('bookshelf')(knex);
 
 app.set('bookshelf', bookshelf);
 
-var routes = require('./routes/index');
+app.use('/',                require('./routes/index'));
+app.use('/api/v1',          require('./routes/api'));
+app.use('/plugin-messages', require('./routes/plugin-messages'));
 
-app.use('/', routes);
+process.on('error', function (e) {
+    console.log(e.stack);
+});
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
@@ -49,7 +53,7 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-/// error handlers
+// error handlers
 
 // development error handler
 // will print stacktrace
@@ -75,6 +79,5 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
 
 module.exports = app;

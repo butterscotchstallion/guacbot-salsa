@@ -8,8 +8,9 @@ var bookshelf     = app.get('bookshelf');
 var plugin        = require('../models/plugin'); 
 var Plugin        = new plugin();
 var PluginMessage = bookshelf.Model.extend({
-    tableName : "plugin_messages",
-    plugin    : function () {
+    idAttribute: 'id',
+    tableName  : "plugin_messages",
+    plugin     : function () {
         return this.belongsTo(plugin, 'plugin_id');
     }
 });

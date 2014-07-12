@@ -7,9 +7,13 @@ define('pluginMessageCollection', function (require) {
     var pluginMessageModel      = require('pluginMessageModel');
     
     var pluginMessageCollection = Backbone.Collection.extend({
-        url       : '/api/v1/plugin-messages/list',
+        url       : '/api/v1/plugin-messages',
 
-        model     : pluginMessageModel
+        model     : pluginMessageModel,
+        
+        comparator: function (a, b) {
+            return a.filename > b.filename;
+        }
     });
 
     return pluginMessageCollection;

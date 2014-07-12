@@ -13,8 +13,6 @@ require.config({
         Backbone      : "lib/backbone.min",
         text          : "lib/text",
         underscore    : "lib/underscore.min",
-        spin          : "lib/spin.min",
-        jquerySpin    : "lib/jquery.spin",
         
         // models
         pluginMessageModel: "app/models/pluginMessageModel",
@@ -26,12 +24,9 @@ require.config({
         appView          : "app/views/appView", 
         pluginMessageView: "app/views/pluginMessageView", 
         
-        // templates
-        //pluginMessageTemplateFile: "text!app/templates/pluginMessage.html",
-        
-        app           : "app/app",
-        editor        : "app/modules/editor",
-        pluginMessages: "app/modules/plugin-messages/plugin-messages"
+        app              : "app/app",
+        editor           : "app/modules/editor",
+        pluginMessages   : "app/modules/plugin-messages/plugin-messages"
     },
     shim: {
         bootstrap: {
@@ -48,10 +43,7 @@ require.config({
             exports: '_'
         },
         appView: {
-            deps: ['Backbone']
-        },
-        jquerySpin: {
-            deps: ['jquery', 'spin']
+            deps: ['Backbone', 'bootstrap']
         }
     }
 });
