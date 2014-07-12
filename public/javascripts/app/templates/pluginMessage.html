@@ -1,0 +1,27 @@
+
+<!-- a single row in the plugin message table -->
+
+<td class="col-select">
+    <input type="checkbox"
+           name="messages[]"
+           value="{{id}}">
+</td>
+
+<td class="col-plugin-name">
+    <a href="?plugin={{filename}}">{{plugin.filename}}</a>
+</td>
+
+<td class="col-message-name">
+    <a href="?name={{name}}"><code>{{name}}</code></a>
+</td>
+
+<td class="col-message">
+    <a href="#"
+       data-toggle="modal"
+       data-target="#message-modal"
+       data-message="{{message}}"
+       data-message-id="{{id}}"
+       data-message-name="{{name}}"
+       data-plugin-name="{{pluginName}}"
+       class="btn btn-default message-link"><span class="glyphicon glyphicon-envelope"></span> View Message</a>
+</td>

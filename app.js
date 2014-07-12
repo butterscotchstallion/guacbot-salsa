@@ -5,10 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressHbs = require('express3-handlebars');
-var routes = require('./routes/index');
-var pmRoutes = require('./routes/plugin-messages');
+var fs            = require('fs');
+var config     = JSON.parse(fs.readFileSync("./config/db.json", 'utf8'));
 
-var app = express();
+// intentional global variable
+app = express();
 
 app.engine('.html', expressHbs({
     extname      : '.html',
@@ -28,6 +29,17 @@ app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+var knex = require('knex')({
+    client    : 'mysql',
+    connection: config
+});
+
+var bookshelf = require('bookshelf')(knex);
+
+app.set('bookshelf', bookshelf);
+
+var routes = require('./routes/index');
+
 app.use('/', routes);
 
 /// catch 404 and forwarding to error handler
@@ -44,6 +56,9 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
+        
+        console.log(err);
+        
         res.render('error', {
             message: err.message,
             error: err

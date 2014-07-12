@@ -1,9 +1,10 @@
 
 
 define('pluginMessages', function (require) {
-    var $  = require('jquery');
-    var pm = {};
-
+    var $       = require('jquery');
+    var pm      = {};
+    var appView = require('appView');
+    
     pm.init = function () {
         pm.bindEventHandlers();
     };

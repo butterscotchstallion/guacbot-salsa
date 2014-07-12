@@ -4,7 +4,18 @@
  */
 "use strict";
 
-var pm = {};
+var bookshelf     = app.get('bookshelf');
+var plugin        = require('../models/plugin'); 
+var Plugin        = new plugin();
+var PluginMessage = bookshelf.Model.extend({
+    tableName : "plugin_messages",
+    plugin    : function () {
+        return this.belongsTo(plugin, 'plugin_id');
+    }
+});
+
+/*
+var pm   = {};
 
 pm.getMessages = function (options) {
     var pluginFilter = '';
@@ -21,7 +32,12 @@ pm.getMessages = function (options) {
         params.push(options.query.name);
     }
     
-    var cols  = ['pm.id', 'pm.name', 'pm.message', 'p.name AS pluginName', 'p.filename'];
+    var cols  = ['pm.id', 
+                 'pm.name', 
+                 'pm.message', 
+                 'p.name AS pluginName', 
+                 'p.filename'];
+                 
     var query = [
         "SELECT " + cols.join(', '),
         "FROM plugin_messages pm",
@@ -39,6 +55,7 @@ pm.getMessages = function (options) {
         });
     });
 };
+*/
 
-module.exports = pm;
+module.exports = PluginMessage;
 
