@@ -15,18 +15,10 @@ require.config({
         underscore    : "lib/underscore.min",
         
         // models
-        pluginMessageModel: "app/models/pluginMessageModel",
-        
-        // collections
-        pluginMessageCollection: "app/collections/pluginMessageCollection",
+        pluginMessageModel     : "app/modules/plugin-messages/models/pluginMessageModel",
         
         // views
-        appView          : "app/views/appView", 
-        pluginMessageView: "app/views/pluginMessageView", 
-        
-        app              : "app/app",
-        editor           : "app/modules/editor",
-        pluginMessages   : "app/modules/plugin-messages/plugin-messages"
+        editView               : "app/modules/plugin-messages/views/edit"
     },
     shim: {
         bootstrap: {
@@ -42,13 +34,17 @@ require.config({
         underscore: {
             exports: '_'
         },
-        appView: {
+        editView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["appView"]);
+require(["jquery", "editView"], function ($, editView) {
+    $(function () {
+        new editView();
+    });
+});
 
 
 

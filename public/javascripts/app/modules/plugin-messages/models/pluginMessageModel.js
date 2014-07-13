@@ -9,10 +9,7 @@ define('pluginMessageModel', function (require) {
 
     var pluginMessage = Backbone.Model.extend({
         idAttribute: 'id',
-        
-        defaults: {
-           //name: "lol"
-        }        
+        url: "/api/v1/plugin-messages/" + window.app.pluginMessageID
     });
     
     return pluginMessage;

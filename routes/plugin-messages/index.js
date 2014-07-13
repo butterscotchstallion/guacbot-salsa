@@ -12,4 +12,12 @@ router.get('/', function(req, res) {
     });
 });
 
+router.get('/:pluginMessageID', function(req, res) {
+    res.render('plugin-messages/message', { 
+        title               : 'Plugin Message - Edit',
+        isPluginMessagesPage: true,
+        pluginMessageID     : req.params.pluginMessageID
+    });
+});
+
 module.exports = router;

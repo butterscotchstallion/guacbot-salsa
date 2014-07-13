@@ -11,8 +11,8 @@ define('pluginMessageCollection', function (require) {
 
         model     : pluginMessageModel,
         
-        comparator: function (a, b) {
-            return a.filename > b.filename;
+        comparator: function (model) {
+            return model.get('filename');
         }
     });
 

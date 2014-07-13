@@ -2,7 +2,7 @@
  * main view
  *
  */
-define('appView', function (require) {
+define('listView', function (require) {
     "use strict";
     
     var Handlebars                = require('Handlebars');
@@ -22,12 +22,11 @@ define('appView', function (require) {
     
     var pluginMessageModel        = require('pluginMessageModel');
     var pluginMessageCollection   = require('pluginMessageCollection');
-    var pluginMessageView         = require('pluginMessageView');
+    var pluginMessageItemView     = require('pluginMessageItemView');
     
-    var MessageModel              = new pluginMessageModel();
     var MessageCollection         = new pluginMessageCollection();
     
-    var appView                   = Backbone.View.extend({
+    var listView                  = Backbone.View.extend({
         el: $('body'),
         
         initialize: function () {
@@ -63,7 +62,7 @@ define('appView', function (require) {
         },
         
         addOne: function (message) {
-            var view = new pluginMessageView({
+            var view = new pluginMessageItemView({
                 model: message
             });
             
@@ -77,10 +76,7 @@ define('appView', function (require) {
         }
     });
     
-    $(function () {        
-        new appView(); 
-    });   
-    
+    return listView;
 });
 
 

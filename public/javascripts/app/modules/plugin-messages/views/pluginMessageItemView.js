@@ -1,10 +1,10 @@
 
 
-define('pluginMessageView', function (require) {
+define('pluginMessageItemView', function (require) {
     var Backbone                  = require('Backbone');
     var $                         = require('jquery');
     var Handlebars                = require('Handlebars');
-    var pluginMessageTemplateFile = require('text!/javascripts/app/templates/pluginMessage.html');
+    var pluginMessageTemplateFile = require('text!/javascripts/app/modules/plugin-messages/templates/pluginMessageRow.html');
     var pluginMessageTemplate     = Handlebars.compile(pluginMessageTemplateFile);
     
     // A single plugin message
