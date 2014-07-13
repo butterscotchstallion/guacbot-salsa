@@ -1,4 +1,46 @@
-<h1>{{plugin.name}} :: {{name}}</h1>
+<h1>{{plugin.name}} <small>{{name}}</small></h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="subheader">Preview</h2>
+            
+        <div class="message-preview">
+            {{{compiledMessage}}}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="subheader">Message</h2>
+        <p class="help-block">The raw, unparsed contents of the message. This message is compiled by Handlebars.</p>
+        
+        <form method="post" action="">            
+            <textarea class="form-control message" 
+                      rows="5">{{message}}</textarea>
+            <p class="help-block">Some words are surrounded by strings like <code>\u0002</code>. This is the formatting code for bold and colors in the IRC protocol.</p>
+        </form>
+    </div>
+    
+    <div class="col-md-6">
+        <h2 class="subheader">Template Variables</h2>
+        <p class="help-block">The properties of this object are available in the template.</p>
+        
+        <div class="form-group">
+            <textarea class="form-control template-object" 
+                      rows="5">{{templateObject}}</textarea>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 compile-area">
+        <button type="button" 
+                class="btn btn-default btn-block recompile-button"><span class="glyphicon glyphicon-cog"></span> Compile</button>
+    </div>
+</div>
 
 
-hello world.
+
+
+    
