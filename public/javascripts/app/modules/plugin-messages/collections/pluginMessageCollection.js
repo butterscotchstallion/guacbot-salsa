@@ -12,7 +12,7 @@ define('pluginMessageCollection', function (require) {
         model     : pluginMessageModel,
         
         comparator: function (model) {
-            return model.get('filename');
+            return model.get('plugin').name;
         }
     });
 

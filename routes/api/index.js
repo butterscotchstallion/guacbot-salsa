@@ -75,7 +75,6 @@ router.get('/plugin-messages', function(req, res) {
                     var messagesJSON = messages.toJSON();
                     
                     res.json(messages);
-                    //res.send(JSON.stringify(messages, null, 4));
                 });
 });
 

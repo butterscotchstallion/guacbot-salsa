@@ -32,13 +32,13 @@ define('listView', function (require) {
         initialize: function () {
             this.collection = MessageCollection;
             
-            this.listenTo(this.collection, 'reset add change remove', this.render, this);
-            this.listenTo(this.collection, 'change',                  this.addAll, this);
-            this.listenTo(this.collection, 'add',                     this.addOne, this);
-            
+            //this.listenTo(this.collection, 'reset add change remove', this.render, this);
+            this.listenTo(this.collection, 'reset',                   this.addAll, this);
+
             var self = this;
             
             this.collection.fetch({
+                reset: true,
                 success: function (data, options) {
                     $(".loading-row").hide();
                     $('.message-count-msg').removeClass('hidden');
@@ -70,8 +70,10 @@ define('listView', function (require) {
         },
         
         addAll: function () {
+            var self = this;
+            
             MessageCollection.each(function (message) {
-                this.addOne(message);
+                self.addOne(message);
             });
         }
     });

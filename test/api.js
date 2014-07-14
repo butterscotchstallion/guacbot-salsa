@@ -52,7 +52,7 @@ describe('api', function() {
                       expect(body).to.be.an('array');
                       
                       for (var j = 0; j < body.length; j++) {
-                          expect(body[j].plugin.id).to.eql(8);
+                        expect(body[j].plugin.id).to.eql(8);
                       }
                       
                       done();

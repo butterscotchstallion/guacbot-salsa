@@ -8,26 +8,40 @@ define('relatedMessageItemView', function (require) {
     var relatedMessageTemplate     = Handlebars.compile(relatedMessageTemplateFile);
     
     var relatedMessageItemView = Backbone.View.extend({
-        tagName   : 'a',
+        tagName   : 'option',
         
-        className : "list-group-item",
+        className : function (el) {
+            var currentItem = window.app.pluginMessageID;
+            var classes     = ["list-group-item"];
+            
+            if (this.model.get('id') == currentItem) {
+                classes.push('active');
+            }
+            
+            return classes.join(' ');
+        },
         
         attributes: function () {
             var self = this;
-            
-            return {
-                href: function () {
-                    return '/plugin-messages/' + self.model.get('id');
+            var id   = self.model.get('id');
+            var attrs = {
+                value: function () {
+                    //return '/plugin-messages/' + self.model.get('id');
+                    return id;
                 }
+            };
+            
+            if (id == window.app.pluginMessageID) {
+                attrs['selected'] = "selected";
             }
+            
+            return attrs;
         },
         
         template  : relatedMessageTemplate,
         
         initialize: function() {
-            console.log('relatedMessageItemView initialized');
-            
-            //debugger;
+        
         },
         
         render    : function() {

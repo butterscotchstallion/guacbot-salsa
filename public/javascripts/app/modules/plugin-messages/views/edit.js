@@ -24,7 +24,16 @@ define('editView', function (require) {
         
         events        : {
             'click .recompile-button': 'onRecompileClicked',
-            'focus .parse-me'        : 'onFocusParseMeField'
+            'input .parse-me'        : 'onRecompileClicked',
+            'focus .parse-me'        : 'onFocusParseMeField',
+            'input .related-messages': 'onRelatedMessageSelected'
+        },
+        
+        onRelatedMessageSelected: function (e) {
+            var self      = $(e.target);
+            var messageID = self.val();
+            
+            window.location = "/plugin-messages/" + messageID;
         },
         
         onFocusParseMeField: function () {
@@ -106,6 +115,8 @@ define('editView', function (require) {
                     data   : data
                 });
                 
+                this.resetErrorState();
+                
             } catch (e) {
                 console.log('errrorrrrr: ' + e);
                 
@@ -186,15 +197,11 @@ define('editView', function (require) {
                 success: function (data, options) {
                     $(".loading").hide();
                 }
-            }).then(function () {            
+            }).then(function () {        
                 self.collection.fetch({
                     reset  : true,
                     
                     success: function (data, options) {
-                        console.log('collection fetched');
-                        
-                        debugger;
-                        
                         $('.related-message-count').text(data.length);
                     }
                 });
