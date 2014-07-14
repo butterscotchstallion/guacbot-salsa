@@ -175,19 +175,25 @@ define('editView', function (require) {
             this.collection = new relatedMessageCollection();
             
             this.listenTo(this.model,      'reset add change remove', this.render, this);
-            this.listenTo(this.collection, 'reset add change remove', this.renderRelatedMessages, this);
             this.listenTo(this.collection, 'change',                  this.addAll, this);
             this.listenTo(this.collection, 'add',                     this.addOne, this);
             
             var self = this;
             
+            // Need the template to load in order to access elements present there
             this.model.fetch({
                 success: function (data, options) {
                     $(".loading").hide();
                 }
+            }).then(function () {            
+                self.collection.fetch({
+                    success: function (data, options) {
+                        console.log('collection fetched');
+                        
+                        $('.related-message-count').text(data.length);
+                    }
+                });
             });
-            
-            this.collection.fetch();
         },
         
         addOne: function (message) {

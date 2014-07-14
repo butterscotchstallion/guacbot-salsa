@@ -12,7 +12,7 @@ define('relatedMessageCollection', function (require) {
         model     : relatedMessagesModel,
         
         comparator: function (model) {
-            return model.get('id');
+            return model.get('name');
         }
     });
 

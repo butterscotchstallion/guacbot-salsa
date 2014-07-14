@@ -13,13 +13,19 @@ define('relatedMessageItemView', function (require) {
         className : "list-group-item",
         
         attributes: {
-            //href: '/plugin-messages/' + this.model.get('id')
+            /*
+            href: function () {
+                console.log('this model: ' + this.model);
+                
+                return '/plugin-messages/' + this.model.get('id');
+            }
+            */
         },
         
         template  : relatedMessageTemplate,
         
         initialize: function() {
-        
+            console.log('relatedMessageItemView initialized');
         },
         
         render    : function() {
