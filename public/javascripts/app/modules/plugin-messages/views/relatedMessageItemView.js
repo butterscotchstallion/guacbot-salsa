@@ -12,26 +12,28 @@ define('relatedMessageItemView', function (require) {
         
         className : "list-group-item",
         
-        attributes: {
-            /*
-            href: function () {
-                console.log('this model: ' + this.model);
-                
-                return '/plugin-messages/' + this.model.get('id');
+        attributes: function () {
+            var self = this;
+            
+            return {
+                href: function () {
+                    return '/plugin-messages/' + self.model.get('id');
+                }
             }
-            */
         },
         
         template  : relatedMessageTemplate,
         
         initialize: function() {
             console.log('relatedMessageItemView initialized');
+            
+            //debugger;
         },
         
         render    : function() {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(modelJSON);
-            
+
             $(this.el).html(tpl);
 
             return this;
