@@ -15,10 +15,16 @@ require.config({
         underscore    : "lib/underscore.min",
         
         // models
-        pluginMessageModel     : "app/modules/plugin-messages/models/pluginMessageModel",
+        pluginMessageModel     : "app/modules/plugin-messages/models/pluginMessageModel",        
+        relatedMessagesModel   : "app/modules/plugin-messages/models/relatedMessagesModel",
+        
+        // collections
+        relatedMessageCollection: "app/modules/plugin-messages/collections/relatedMessageCollection",
+        pluginMessageCollection: "app/modules/plugin-messages/collections/pluginMessageCollection",
         
         // views
-        editView               : "app/modules/plugin-messages/views/edit"
+        editView               : "app/modules/plugin-messages/views/edit",
+        relatedMessageItemView : "app/modules/plugin-messages/views/relatedMessageItemView"
     },
     shim: {
         bootstrap: {

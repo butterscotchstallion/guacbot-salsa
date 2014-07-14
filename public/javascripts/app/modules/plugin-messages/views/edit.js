@@ -5,19 +5,43 @@
 define('editView', function (require) {
     "use strict";
     
-    var Handlebars            = require('Handlebars');
-    var Backbone              = require('Backbone');
-    var $                     = require('jquery');
-    var _                     = require('underscore');
-    var templateFile          = require('text!/javascripts/app/modules/plugin-messages/templates/edit.html');
-    var template              = Handlebars.compile(templateFile);
-    var pluginMessageModel    = require('pluginMessageModel');
-
+    var Handlebars               = require('Handlebars');
+    var Backbone                 =  require('Backbone');
+    var $                        = require('jquery');
+    var _                        = require('underscore');
+    var templateFile             = require('text!/javascripts/app/modules/plugin-messages/templates/edit.html');
+    var template                 = Handlebars.compile(templateFile);
+    var pluginMessageModel       = require('pluginMessageModel');
+    var pluginMessageCollection  = require('pluginMessageCollection');
+    var relatedMessageCollection = require('relatedMessageCollection');
+    var relatedMessageItemView   = require('relatedMessageItemView');
+    var relatedMessagesModel     = require('relatedMessagesModel');
+    
+    var MessageCollection       = new pluginMessageCollection();
+    
     var pluginMessageEditView = Backbone.View.extend({
         template      : template,
         
         events        : {
-            'click .recompile-button': 'onRecompileClicked'
+            'click .recompile-button': 'onRecompileClicked',
+            'focus .parse-me'        : 'onFocusParseMeField'
+        },
+        
+        onFocusParseMeField: function () {
+            this.resetErrorState();
+        },
+        
+        resetErrorState: function () {
+            var parseMe = $('.parse-me');
+            var container;
+            
+            $.each(parseMe, function () {
+                container = $(this).data('container');
+                
+                $(container).removeClass('has-error');
+            });
+            
+            $('.parse-error-container').addClass('hidden');
         },
         
         onRecompileClicked: function () {
@@ -37,7 +61,11 @@ define('editView', function (require) {
             // Render main template
             var modelJSON        = this.model.toJSON();
             var templateObject   = {
-                recipient: "PrgmrBill"
+                recipient: "PrgmrBill",
+                nick: "Cayenne",
+                message: "All's well that ends well",
+                originNick: "Bruce Lee",
+                timeAgo: "2 days ago"
             };
             var stringified      = JSON.stringify(templateObject, null, 4);
             var processedMessage = this.processMessage({
@@ -80,6 +108,10 @@ define('editView', function (require) {
                 
             } catch (e) {
                 console.log('errrorrrrr: ' + e);
+                
+                $('.parse-error-container').removeClass('hidden');
+                $('.template-object-container').addClass('has-error');
+                $('.message-container').addClass('has-error');
             }
 
             return message;            
@@ -139,9 +171,13 @@ define('editView', function (require) {
         el: $('body'),
         
         initialize: function () {
-            this.model = new pluginMessageModel();
+            this.model      = new pluginMessageModel();
+            this.collection = new relatedMessageCollection();
             
-            this.listenTo(this.model, 'reset add change remove', this.render, this);
+            this.listenTo(this.model,      'reset add change remove', this.render, this);
+            this.listenTo(this.collection, 'reset add change remove', this.renderRelatedMessages, this);
+            this.listenTo(this.collection, 'change',                  this.addAll, this);
+            this.listenTo(this.collection, 'add',                     this.addOne, this);
             
             var self = this;
             
@@ -149,6 +185,22 @@ define('editView', function (require) {
                 success: function (data, options) {
                     $(".loading").hide();
                 }
+            });
+            
+            this.collection.fetch();
+        },
+        
+        addOne: function (message) {
+            var view = new relatedMessageItemView({
+                model: message
+            });
+            
+            $(".related-messages").append(view.render().el);
+        },
+        
+        addAll: function () {
+            this.collection.each(function (message) {
+                this.addOne(message);
             });
         },
         

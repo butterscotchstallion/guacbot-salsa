@@ -41,4 +41,31 @@ describe('api', function() {
                       done();
                   });
     });
+    
+    it('gets related messages', function (done) {
+        superagent.get(BASE_URL + 'plugin-messages/6/related')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('array');
+                      
+                      for (var j = 0; j < body.length; j++) {
+                          expect(body[j].plugin.id).to.eql(8);
+                      }
+                      
+                      done();
+                  });
+    });
 });
+
+
+
+
+
+
+
+
+
+
