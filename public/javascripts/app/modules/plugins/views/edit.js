@@ -9,15 +9,14 @@ define('editView', function (require) {
     var Backbone                 =  require('Backbone');
     var $                        = require('jquery');
     var _                        = require('underscore');
-    var templateFile             = require('text!/javascripts/app/modules/plugin-messages/templates/edit.html');
+    var IRCColorParser           = require('IRCColorParser');
+    var templateFile             = require('text!/javascripts/app/modules/plugins/templates/messages/index.html');
     var template                 = Handlebars.compile(templateFile);
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
     var relatedMessageCollection = require('relatedMessageCollection');
     var relatedMessageItemView   = require('relatedMessageItemView');
     var relatedMessagesModel     = require('relatedMessagesModel');
-    
-    var MessageCollection       = new pluginMessageCollection();
     
     var pluginMessageEditView = Backbone.View.extend({
         template      : template,
@@ -32,8 +31,9 @@ define('editView', function (require) {
         onRelatedMessageSelected: function (e) {
             var self      = $(e.target);
             var messageID = self.val();
+            var pluginID  = window.app.pluginID;
             
-            window.location = "/plugin-messages/" + messageID;
+            window.location = "/plugins/" + pluginID + "/messages/" + messageID;
         },
         
         onFocusParseMeField: function () {
@@ -72,9 +72,10 @@ define('editView', function (require) {
             var templateObject   = {
                 recipient: "PrgmrBill",
                 nick: "Cayenne",
-                message: "All's well that ends well",
+                message: "Biggie Smalls is da illest",
                 originNick: "Bruce Lee",
-                timeAgo: "2 days ago"
+                timeAgo: "2 days ago",
+                line : 1                
             };
             var stringified      = JSON.stringify(templateObject, null, 4);
             var processedMessage = this.processMessage({
@@ -139,9 +140,16 @@ define('editView', function (require) {
             var o = m;
         
             o = this.fixUnicode(o);
-            o = this.replaceUnicodeBoldWithHTMLBold(o);
+            //o = this.replaceUnicodeBoldWithHTMLBold(o);
+            o = this.parseIRCControlCodes(o);
             
             return o;
+        },
+        
+        parseIRCControlCodes: function (input) {
+            return IRCColorParser.parse({
+                input: input
+            });
         },
         
         fixUnicode:  function (input) {
@@ -159,7 +167,7 @@ define('editView', function (require) {
         
         replaceUnicodeColorWithHTMLColors: function (input) {
             return input.replace(/\u0002(.*?)\u0002/g, "<span class=\"color-$1\">$1</span>");
-        },    
+        },
         
         tidyPayload: function (p) {
             var o = p;

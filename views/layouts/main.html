@@ -9,7 +9,8 @@
     <link href='//fonts.googleapis.com/css?family=Permanent+Marker|Trocchi|Fjalla+One' rel='stylesheet' type='text/css'>
     <script>
         window.app = {
-            pluginMessageID: "{{pluginMessageID}}"
+            pluginMessageID: "{{pluginMessageID}}",
+            pluginID       : "{{pluginID}}"
         };
     </script>
 </head>
@@ -28,8 +29,10 @@
             <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li {{#if isHomepage}}class="active"{{/if}}><a href="/">Home</a></li>
-            <li {{#if isPluginMessagesPage}}class="active"{{/if}}><a href="/plugin-messages">Plugin Messages</a></li>
-            <li><a href="#contact">Contact</a></li>
+            
+            <li {{#if isPluginsPage}}class="active"{{/if}}><a href="/plugins">Plugins</a></li>
+            
+            <!--
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -42,6 +45,7 @@
                 <li><a href="#">One more separated link</a></li>
               </ul>
             </li>
+            -->
           </ul>
         </div><!--/.nav-collapse -->
         </div>

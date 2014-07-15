@@ -15,16 +15,14 @@ require.config({
         underscore    : "lib/underscore.min",
         
         // models
-        pluginMessageModel     : "app/modules/plugin-messages/models/pluginMessageModel",        
-        relatedMessagesModel   : "app/modules/plugin-messages/models/relatedMessagesModel",
+        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
         
         // collections
-        relatedMessageCollection: "app/modules/plugin-messages/collections/relatedMessageCollection",
-        pluginMessageCollection: "app/modules/plugin-messages/collections/pluginMessageCollection",
+        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
-        editView               : "app/modules/plugin-messages/views/edit",
-        relatedMessageItemView : "app/modules/plugin-messages/views/relatedMessageItemView"
+        listView               : "app/modules/plugins/views/list",
+        pluginMessageItemView  : "app/modules/plugins/views/pluginMessageItemView"
     },
     shim: {
         bootstrap: {
@@ -40,15 +38,15 @@ require.config({
         underscore: {
             exports: '_'
         },
-        editView: {
+        listView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["jquery", "editView"], function ($, editView) {
+require(["jquery", "listView"], function ($, listView) {
     $(function () {
-        new editView();
+        new listView();
     });
 });
 

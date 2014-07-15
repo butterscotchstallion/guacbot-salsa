@@ -4,7 +4,7 @@ define('relatedMessageItemView', function (require) {
     var Backbone                   = require('Backbone');
     var $                          = require('jquery');
     var Handlebars                 = require('Handlebars');
-    var relatedMessageTemplateFile = require('text!/javascripts/app/modules/plugin-messages/templates/relatedMessageItem.html');
+    var relatedMessageTemplateFile = require('text!/javascripts/app/modules/plugins/templates/messages/relatedMessageItem.html');
     var relatedMessageTemplate     = Handlebars.compile(relatedMessageTemplateFile);
     
     var relatedMessageItemView = Backbone.View.extend({

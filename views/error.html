@@ -2,8 +2,10 @@
 <h1>{{message}}</h1>
 <h2>{{error}}</h2>
 
-<pre>
-    {{#each error.stack}}
-        {{this}}
-    {{/each}}
-</pre>
+{{#if error.stack}}
+    <pre>
+        {{#each error.stack}}
+            {{this}}
+        {{/each}}
+    </pre>
+{{/if}}

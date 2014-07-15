@@ -7,6 +7,53 @@ var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 //var plugin      = require('../models/plugin');
 
+// All messages for this plugin
+router.get('/plugins/:pluginID/messages', function (req, res, next) {
+    var PluginMessage = new pluginMessage();
+    
+    PluginMessage.query({
+                    where: {
+                        plugin_id: req.params.pluginID
+                     }
+                 })
+                 .fetchAll({
+                    withRelated: ['plugin']
+                 })
+                 .then(function (message) {
+                    if (!message) {
+                        next('No such plugin');
+                    }
+                    
+                    var message = message.toJSON();
+                    
+                    res.json(message);
+                });
+});
+
+// Message by ID
+router.get('/plugins/:pluginID/messages/:pluginMessageID', function (req, res, next) {
+    var PluginMessage = new pluginMessage();
+    
+    PluginMessage.query({
+                    where: {
+                        id       : req.params.pluginMessageID,
+                        plugin_id: req.params.pluginID
+                     }
+                 })
+                 .fetch({
+                    withRelated: ['plugin']
+                 })
+                 .then(function (message) {
+                    if (!message) {
+                        next('No such plugin');
+                    }
+                    
+                    var message = message.toJSON();
+                    
+                    res.json(message);
+                });
+});
+
 // A single message
 router.get('/plugin-messages/:pluginMessageID', function (req, res, next) {
     var PluginMessage = new pluginMessage();
@@ -30,6 +77,27 @@ router.get('/plugin-messages/:pluginMessageID', function (req, res, next) {
                 });
 });
 
+// Update message
+router.post('/plugin-messages/:pluginMessageID', function (req, res, next) {
+    var PluginMessage = new pluginMessage();
+    
+    PluginMessage.set({
+        "message": req.params.message
+    });
+    
+    PluginMessage.save({
+        success: function (result) {
+            console.log('success: ', result);
+        },
+        fail: function (err) {
+            console.log('error: ', err);
+        }
+    });
+    
+    res.end();
+});
+
+// Get related messages (from same plugin)
 router.get('/plugin-messages/:pluginMessageID/related', function (req, res, next) {
     var PluginMessage = new pluginMessage();
     

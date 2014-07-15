@@ -3,7 +3,11 @@
     margin: 1em 0 1em 0;
     background-color: #000;
     padding: 1em;
-    color: #fff;
+    color: #C0C0C0;
+    
+    strong {
+        color: #fff;
+    }
 }
 
 .subheader {
@@ -28,3 +32,20 @@ textarea.monospace {
 .related-message-count-container {
     padding: .5em 0 0 1.5em;
 }
+
+.plugin-header {
+    margin-top: 0;
+    margin-bottom: .5em;
+    line-height: 1.7;
+    border-bottom: 1px dotted #666;
+}
+
+
+
+
+
+
+
+
+
+

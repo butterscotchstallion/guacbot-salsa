@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressHbs = require('express3-handlebars');
 var fs            = require('fs');
-var config     = JSON.parse(fs.readFileSync("./config/db.json", 'utf8'));
+var config     = JSON.parse(fs.readFileSync("./config/db-dev.json", 'utf8'));
 
 // intentional global variable
 app = express();
@@ -38,9 +38,9 @@ var bookshelf = require('bookshelf')(knex);
 
 app.set('bookshelf', bookshelf);
 
-app.use('/',                require('./routes/index'));
-app.use('/api/v1',          require('./routes/api'));
-app.use('/plugin-messages', require('./routes/plugin-messages'));
+app.use('/',        require('./routes/index'));
+app.use('/api/v1',  require('./routes/api'));
+app.use('/plugins', require('./routes/plugins'));
 
 process.on('error', function (e) {
     console.log(e.stack);
