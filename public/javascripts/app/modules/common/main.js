@@ -13,21 +13,16 @@ require.config({
         Backbone      : "lib/backbone.min",
         text          : "lib/text",
         underscore    : "lib/underscore.min",
-        IRCColorParser: "lib/IRCColorParser",
-        
-        common        : "app/modules/common/main",
         
         // models
-        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",        
-        relatedMessagesModel   : "app/modules/plugins/models/relatedMessagesModel",
+        pluginsModel     : "app/modules/plugins/models/pluginsModel",
         
         // collections
-        relatedMessageCollection: "app/modules/plugins/collections/relatedMessageCollection",
-        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
+        pluginsCollection: "app/modules/plugins/collections/pluginsCollection",
         
         // views
-        editView               : "app/modules/plugins/views/edit",
-        relatedMessageItemView : "app/modules/plugins/views/relatedMessageItemView"
+        pluginsMenuView    : "app/modules/common/views/pluginsMenu",
+        pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem"
     },
     shim: {
         bootstrap: {
@@ -43,15 +38,17 @@ require.config({
         underscore: {
             exports: '_'
         },
-        editView: {
+        pluginsMenuView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["jquery", "editView"], function ($, editView) {
+require(["jquery", "pluginsMenuView"], function ($, pluginsMenuView) {
     $(function () {
-        new editView();
+        console.log('common');
+        
+        new pluginsMenuView();
     });
 });
 

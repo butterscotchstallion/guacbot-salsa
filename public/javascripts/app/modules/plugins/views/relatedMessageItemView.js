@@ -28,6 +28,9 @@ define('relatedMessageItemView', function (require) {
                 value: function () {
                     //return '/plugin-messages/' + self.model.get('id');
                     return id;
+                },
+                title: function () {
+                    return self.model.get('message');
                 }
             };
             
