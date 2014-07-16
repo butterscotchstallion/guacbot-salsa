@@ -49,8 +49,10 @@ require.config({
     }
 });
 
-require(["jquery", "editView"], function ($, editView) {
+require(["editView", "common"], function (editView, common) {
     $(function () {
+        console.log(common);
+        
         new editView();
     });
 });

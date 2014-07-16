@@ -1,30 +1,55 @@
 
 
 define('pluginsMenuView', function (require) {
-    var Backbone   = require('Backbone');
-    var $          = require('jquery');
-    var Handlebars = require('Handlebars');
-    var tplFile    = require('text!/javascripts/app/modules/plugins/templates/messages/relatedMessageItem.html');
-    var tpl        = Handlebars.compile(relatedMessageTemplateFile);
+    var Backbone            = require('Backbone');
+    var $                   = require('jquery');
+    var Handlebars          = require('Handlebars');
+    var tplFile             = require('text!/javascripts/app/modules/common/templates/pluginsMenuItem.html');
+    var tpl                 = Handlebars.compile(tplFile);
+    var pluginsCollection   = require('pluginsCollection');
+    var pluginsModel        = require('pluginsModel');
+    var pluginsMenuItemView = require('pluginsMenuItemView');
     
     var pluginsMenuView = Backbone.View.extend({
-        tagName   : 'li',
-        
-        className : function (el) {
+        initialize: function() {
+            var self        = this;            
+            this.model      = new pluginsModel();
+            this.collection = new pluginsCollection({
+                model: pluginsModel
+            });
             
+            this.listenTo(this.collection, 'reset', this.addPlugins, this);
+            
+            this.collection.fetch({
+                reset: true,
+                
+                success: function () {
+                    $('.plugin-count').text(self.collection.length);
+                }
+            });
         },
         
-        template  : tpl,
+        addPlugin: function (plugin) {
+            var view = new pluginsMenuItemView({
+                model: plugin
+            });
+            
+            $(".plugins-menu").append(view.render().el);
+        },
         
-        initialize: function() {
-        
+        addPlugins: function () {
+            var self = this;
+            
+            this.collection.each(function (message) {
+                self.addPlugin(message);
+            });
         },
         
         render    : function() {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(modelJSON);
-
-            $(this.el).html(tpl);
+        
+            //$('.plugins-menu').a(tpl);
 
             return this;
         }
