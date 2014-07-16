@@ -5,6 +5,15 @@
 var express = require('express');
 var router = express.Router();
 
+router.get('/:pluginID', function(req, res) {
+    res.render('plugins/index', { 
+        title               : 'Plugin',
+        isPluginsPage       : true,
+        isPluginMessagesPage: true,
+        pluginID            : req.params.pluginID
+    });
+});
+
 router.get('/:pluginID/messages', function(req, res) {
     res.render('plugins/messages/list', { 
         title               : 'Plugin Messages - List',
