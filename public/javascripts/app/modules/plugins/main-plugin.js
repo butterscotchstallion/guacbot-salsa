@@ -17,14 +17,10 @@ require.config({
         common                 : "app/modules/common/main",
         
         // models
-        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
-        
-        // collections
-        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
+        pluginModel     : "app/modules/plugins/models/pluginModel",
         
         // views
-        listView               : "app/modules/plugins/views/list",
-        pluginMessageItemView  : "app/modules/plugins/views/pluginMessageItemView"
+        pluginView            : "app/modules/plugins/views/plugin"
     },
     shim: {
         bootstrap: {
@@ -40,15 +36,15 @@ require.config({
         underscore: {
             exports: '_'
         },
-        listView: {
+        pluginView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["common", "jquery"], function (common, $) {
+require(["common", "jquery", "pluginView"], function (common, $, pluginView) {
     $(function () {
-        
+        new pluginView();
     });
 });
 

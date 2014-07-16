@@ -23,6 +23,25 @@ router.get('/plugins', function (req, res, next) {
           });
 });
 
+// A specific plugin
+router.get('/plugins/:pluginID', function (req, res, next) {
+    var Plugin = new plugin();
+    
+    Plugin.query({
+            where: {
+                id: req.params.pluginID
+            }
+          })
+          .fetch()
+          .then(function (plugin) {
+                if (!plugin) {
+                    next('No such plugin');
+                }
+                
+                res.json(plugin);
+          });
+});
+
 // All messages for this plugin
 router.get('/plugins/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
