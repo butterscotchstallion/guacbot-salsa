@@ -14,6 +14,8 @@ require.config({
         text          : "lib/text",
         underscore    : "lib/underscore.min",
         
+        common                 : "app/modules/common/main",
+        
         // models
         pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
         
@@ -44,7 +46,7 @@ require.config({
     }
 });
 
-require(["jquery", "listView"], function ($, listView) {
+require(["listView", "common"], function (listView) {
     $(function () {
         new listView();
     });

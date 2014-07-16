@@ -46,8 +46,6 @@ require.config({
 
 require(["jquery", "pluginsMenuView"], function ($, pluginsMenuView) {
     $(function () {
-        console.log('common');
-        
         new pluginsMenuView();
     });
 });
