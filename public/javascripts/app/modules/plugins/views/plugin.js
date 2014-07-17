@@ -28,8 +28,7 @@ define('pluginView', function (require) {
                 reset: true,
                 success: function (data, options) {
                     // hide loading message
-                    console.log('success');
-    
+     
                 },
                 error: function (e) {
                     console.log(e);
@@ -40,11 +39,7 @@ define('pluginView', function (require) {
         render: function (model) {
             var modelJSON = model.toJSON();
             var tpl       = this.template(modelJSON);
-            
-            //console.log(model);
-            //console.log(modelJSON);
-           // debugger;
-            
+
             this.$el.html(tpl);
 
             return this;

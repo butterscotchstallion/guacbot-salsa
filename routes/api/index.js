@@ -7,6 +7,37 @@ var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
 
+// Save plugin message
+router.put('/plugins/:pluginID/messages/:messageID', function (req, res, next) {
+    var message   = req.param('message');
+    var messageID = req.param('messageID');
+    var pluginID  = req.param('pluginID');
+    
+    if (message.trim().length === 0) {
+        res.send(200, { status: "ERROR", message: "Message cannot be blank" });
+    } else {
+        var model     = new pluginMessage({ 
+            id: messageID
+        });
+        
+        var options = { patch: true };
+        
+        model.save({
+                message  : message,
+                id       : messageID,
+                plugin_id: pluginID
+              }, options)
+              .then(function (model) {
+                res.location(['/plugins', 
+                              req.params.pluginID,
+                              'messages',
+                              req.params.messageID].join('/'));
+                
+                res.send(201, null);
+              });
+    }
+});
+
 // All plugins
 router.get('/plugins', function (req, res, next) {
     var Plugin = new plugin();

@@ -1,8 +1,29 @@
 
+<div class="row clearfix">
+    <div class="col-md-12">
+        <h1 class="plugin-header">{{name}}</h1>        
+    </div>
+</div>
 
-<h1 class="pluginHeader">{{name}}</h1>
-
-<span class="label {{#if enabled}}label-success{{else}}label-danger{{/if}}">
-    {{#if enabled}}Enabled{{else}}Disabled{{/if}}
-</span>
-
+<div class="row clearfix info-container">
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Information</div>
+            
+            <div class="panel-body">
+                This plugin is currently 
+                <span class="label {{#if enabled}}label-success{{else}}label-danger{{/if}}">
+                    {{#if enabled}}Enabled{{else}}Disabled{{/if}}
+                </span>
+                
+                {{#if enabled}}
+                    <button type="button" 
+                            class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Disable</button>
+                {{else}}
+                    <button type="button" 
+                            class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Enable</button>    
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
