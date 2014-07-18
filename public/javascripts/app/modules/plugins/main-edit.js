@@ -51,7 +51,11 @@ require.config({
 
 require(["editView", "common"], function (editView, common) {
     $(function () {
-        new editView();
+        var views = editView;
+        
+        new views.editView();
+        new views.sidebarView();
+        new views.pluginMessageHeaderView();
     });
 });
 

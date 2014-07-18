@@ -10,22 +10,86 @@ define('editView', function (require) {
     var $                        = require('jquery');
     var _                        = require('underscore');
     var IRCColorParser           = require('IRCColorParser');
-    var templateFile             = require('text!/javascripts/app/modules/plugins/templates/messages/index.html');
-    var template                 = Handlebars.compile(templateFile);
+    var editTemplate             = require('text!/javascripts/app/modules/plugins/templates/messages/edit.html');
+    var editTemplateCompiled     = Handlebars.compile(editTemplate);
+    
+    var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/edit-sidebar.html');
+    var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
+    
+    var pluginMessageHeaderTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/plugin-message-header.html');
+    var pluginMessageHeaderTemplateCompiled  = Handlebars.compile(pluginMessageHeaderTemplate);
+    
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
     var relatedMessageCollection = require('relatedMessageCollection');
     var relatedMessageItemView   = require('relatedMessageItemView');
     var relatedMessagesModel     = require('relatedMessagesModel');
     
-    var pluginMessageEditView = Backbone.View.extend({
-        template      : template,
+    function setMessageErrorState (message) {
+        $('.parse-error-container').removeClass('hidden');
+        $('.template-object-container').addClass('has-error');
+        $('.message-container').addClass('has-error');
+    };
+    
+    var PluginMessageModel      = new pluginMessageModel();
+    var PluginMessageCollection = new relatedMessageCollection();
+    
+    // Need the template to load in order to access elements present there
+    PluginMessageModel.fetch({
+        //reset  : true,
+        success: function (data, options) {
+            $(".loading").hide();
+        }
+    }).then(function () {
+        PluginMessageCollection.fetch({
+            success: function (data, options) {
+                $('.related-message-count').text(data.length);
+            }
+        });
+    });
+    
+    // Container view for the whole page
+    var editView = Backbone.View.extend({
+        el            : $('.edit-area'),
+        
+        template      : editTemplateCompiled,
         
         events        : {
             'click .recompile-button': 'onRecompileClicked',
             'input .parse-me'        : 'onRecompileClicked',
             'focus .parse-me'        : 'onFocusParseMeField',
-            'input .related-messages': 'onRelatedMessageSelected'
+            'input .related-messages': 'onRelatedMessageSelected',
+            'click .save-message'    : 'onSaveMessageButtonClicked'
+        },
+        
+        initialize: function () {
+            var self        = this;
+            self.model      = PluginMessageModel;
+            
+            self.listenTo(self.model,      'change remove', self.render, self);
+            self.listenTo(self.model,      'invalid',       self.setMessageErrorState, self);
+        },
+        
+        onSaveMessageButtonClicked: function (e) {
+            var self = this;
+            
+            self.model.set({
+                message  : $('.message').val().trim(),
+                plugin_id: window.app.pluginID,
+                id       : window.app.pluginMessageID
+            })
+            .save({
+                success: self.onMessageSavedSuccessfully,
+                fail   : self.onMessageSavedFailure
+            });
+        },
+        
+        onMessageSavedSuccessfully: function () {
+            $('.save-successful-msg').removeClass('hidden');
+        },
+        
+        onMessageSavedFailure: function (e) {
+            $('.save-failure-msg').removeClass('hidden');
         },
         
         onRelatedMessageSelected: function (e) {
@@ -88,7 +152,7 @@ define('editView', function (require) {
                 compiledMessage: processedMessage
             }, modelJSON));
             
-            $(this.el).html(tpl);
+            this.$el.html(tpl);
             
             // Render preview
             this.renderPreview({
@@ -100,40 +164,41 @@ define('editView', function (require) {
         },
         
         processMessage: function (options) {
-            var message = options.message;
+            var message = options.message;            
+            var payload = this.tidyPayload(options.message);
+            var rawData = $.trim(options.templateObject);
+            var data;
             
-            try {
-                var payload = this.tidyPayload(options.message);
-                var rawData = $.trim(options.templateObject);
-                var data;
-                
-                if (rawData.length > 0) {
-                    data = JSON && JSON.parse(rawData) || $.parseJSON(rawData);
-                }
-                
-                var message = this.compile({
-                    message: payload,
-                    data   : data
-                });
-                
-                this.resetErrorState();
-                
-            } catch (e) {
-                console.log('errrorrrrr: ' + e);
-                
-                $('.parse-error-container').removeClass('hidden');
-                $('.template-object-container').addClass('has-error');
-                $('.message-container').addClass('has-error');
+            if (rawData.length > 0) {
+                data = JSON && JSON.parse(rawData) || $.parseJSON(rawData);
             }
-
+            
+            var message = this.compile({
+                message: payload,
+                data   : data
+            });
+            
+            this.resetErrorState();
+            
             return message;            
         },
         
         compile: function (options) {
-            var fmt = this.formatMessage(options.message);
-            var t   = Handlebars.compile(fmt);
+            var output = options.message;
             
-            return t(options.data);
+            try {
+                var fmt = this.formatMessage(options.message);
+                var t   = Handlebars.compile(fmt);
+                
+                output = t(options.data);
+                
+            } catch (e) {
+                //output = e.message;
+                //output = false;
+                setMessageErrorState(e.message);
+            }
+            
+            return output;
         },
         
         formatMessage: function (m) {
@@ -183,40 +248,24 @@ define('editView', function (require) {
             var template = this.compile(options);
             
             $('.message-preview').html(template);
+        },
+        
+        setMessageErrorState: function (model, error) {
+            setMessageErrorState(error);
         }
     });
     
-    var editView = Backbone.View.extend({
-        el: $('body'),
-        
+    var relatedMessageView = Backbone.View.extend({
         initialize: function () {
-            this.model      = new pluginMessageModel();
-            this.collection = new relatedMessageCollection();
-            
-            this.listenTo(this.model,      'reset add change remove', this.render, this);
-            this.listenTo(this.collection, 'reset',                   this.addAll, this);
-            this.listenTo(this.collection, 'add',                     this.addOne, this);
-            
             var self = this;
             
-            // Need the template to load in order to access elements present there
-            this.model.fetch({
-                reset  : true,
-                success: function (data, options) {
-                    $(".loading").hide();
-                }
-            }).then(function () {        
-                self.collection.fetch({
-                    reset  : true,
-                    
-                    success: function (data, options) {
-                        $('.related-message-count').text(data.length);
-                    }
-                });
-            });
+            self.collection = PluginMessageCollection;
+            
+            self.listenTo(self.collection, 'reset', self.addMessages, self);
+            self.listenTo(self.collection, 'add',   self.addMessage, self);            
         },
         
-        addOne: function (message) {
+        addMessage: function (message) {
             var view = new relatedMessageItemView({
                 model: message
             });
@@ -224,24 +273,66 @@ define('editView', function (require) {
             $(".related-messages").append(view.render().el);
         },
         
-        addAll: function () {
+        addMessages: function () {
             var self = this;
+            
+            console.log('collection: ', this.collection);
             
             this.collection.each(function (message) {
                 self.addOne(message);
             });
-        },
-        
-        render: function (model) {
-            var view = new pluginMessageEditView({
-                model: model
-            });
-            
-            console.log('rendering');
-            
-            $(".message-container").html(view.render().el);
         }
     });
     
-    return editView;
+    var sidebarView = Backbone.View.extend({
+        template: sidebarTemplateCompiled,
+        
+        initialize: function () {
+            var self        = this;
+            
+            self.model = PluginMessageModel;
+            
+            self.listenTo(self.model, 'change add', self.render, self);
+        },
+        
+        render: function () {
+            /*
+            var view = new relatedMessageView({
+                model: this.model
+            });
+            
+            console.log('rendering sidebar');
+            
+            $(".sidebar").html(view.render().el);
+            */
+            $('.sidebar').html(this.template(this.model));
+            
+            new relatedMessageView();
+        }
+    });
+    
+    var pluginMessageHeaderView = Backbone.View.extend({
+        template: pluginMessageHeaderTemplateCompiled,
+        
+        initialize: function () {
+            var self        = this;
+            
+            self.model = PluginMessageModel;
+            
+            self.listenTo(self.model, 'change add', self.render, self);
+        },
+        
+        render: function () {
+            var modelJSON = this.model.toJSON();
+            var tpl = this.template(modelJSON);
+            
+            $('.plugin-message-header').html(tpl);
+        }
+    });    
+    
+    return {
+        editView               : editView,
+        sidebarView            : sidebarView,
+        pluginMessageHeaderView: pluginMessageHeaderView
+    };
 });
