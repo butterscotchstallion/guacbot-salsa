@@ -81,14 +81,20 @@ define('editView', function (require) {
             .save({
                 success: self.onMessageSavedSuccessfully,
                 fail   : self.onMessageSavedFailure
+            }).then(function () {
+                
             });
         },
         
         onMessageSavedSuccessfully: function () {
+            console.log('save success');
+            
             $('.save-successful-msg').removeClass('hidden');
         },
         
         onMessageSavedFailure: function (e) {
+            console.log('onMessageSavedFailure');
+            
             $('.save-failure-msg').removeClass('hidden');
         },
         
@@ -285,6 +291,8 @@ define('editView', function (require) {
     });
     
     var sidebarView = Backbone.View.extend({
+        el: $('.sidebar'),
+        
         template: sidebarTemplateCompiled,
         
         initialize: function () {
@@ -295,17 +303,8 @@ define('editView', function (require) {
             self.listenTo(self.model, 'change add', self.render, self);
         },
         
-        render: function () {
-            /*
-            var view = new relatedMessageView({
-                model: this.model
-            });
-            
-            console.log('rendering sidebar');
-            
-            $(".sidebar").html(view.render().el);
-            */
-            $('.sidebar').html(this.template(this.model));
+        render: function (model) {
+            this.$el.html(this.template(model));
             
             new relatedMessageView();
         }

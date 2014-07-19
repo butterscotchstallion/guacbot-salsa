@@ -7,6 +7,36 @@ var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
 
+// Create plugin message
+router.post('/plugins/:pluginID/messages', function (req, res, next) {
+    var pluginID  = req.param('pluginID');
+    var message   = req.param('message');
+    var name      = req.param('name');
+    
+    var model   = new pluginMessage();        
+    var options = {};
+    
+    model.save({
+            message  : message,
+            name     : name,
+            plugin_id: pluginID
+          }, options)
+          .then(function (model) {
+            res.location(['/plugins', 
+                          req.params.pluginID,
+                          'messages',
+                          model.id].join('/'));
+            
+            res.send(201, null);
+          })
+            .catch(function (error) {
+                res.send(200, {
+                    status: "ERROR",
+                    message: error
+                });
+            });
+});
+
 // Save plugin message
 router.put('/plugins/:pluginID/messages/:messageID', function (req, res, next) {
     var message   = req.param('message');

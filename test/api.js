@@ -12,6 +12,38 @@ var BASE_URL   = config.baseURL;
 
 // HEY \u0002{{{nick}}}\u0002, {{{message}}} (\u0002{{{originNick}}}\u0002 {{timeAgo}})
 describe('plugins api', function() {
+    it('doesnt allow invalid plugin messages', function (done) {
+        superagent.post(BASE_URL + 'plugins/8/messages')
+                  .set('Content-Type', 'application/json')
+                  .send({
+                    invalid: "input"
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+    
+    it('creates a plugin message', function (done) {
+        superagent.post(BASE_URL + 'plugins/8/messages')
+                  .set('Content-Type', 'application/json')
+                  .send({
+                    message: "Hello world!",
+                    name: "saved"
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(201);
+                      
+                      done();
+                  });
+    });
+    
     it('fails if you try to save a blank a plugin message', function (done) {
         superagent.put(BASE_URL + 'plugins/8/messages/14')
                   .set('Content-Type', 'application/json')
