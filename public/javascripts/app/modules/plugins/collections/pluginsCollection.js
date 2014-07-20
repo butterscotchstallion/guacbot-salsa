@@ -9,8 +9,6 @@ define('pluginsCollection', function (require) {
     var pluginsCollection = Backbone.Collection.extend({
         url       : '/api/v1/plugins',
 
-        model     : pluginsModel,
-        
         comparator: function (model) {
             return model.get('filename')
         }

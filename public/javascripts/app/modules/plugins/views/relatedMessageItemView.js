@@ -12,7 +12,7 @@ define('relatedMessageItemView', function (require) {
         
         className : function (el) {
             var currentItem = window.app.pluginMessageID;
-            var classes     = ["list-group-item"];
+            var classes     = [];
             
             if (this.model.get('id') == currentItem) {
                 classes.push('active');
@@ -23,10 +23,10 @@ define('relatedMessageItemView', function (require) {
         
         attributes: function () {
             var self  = this;
+            
             var id    = self.model.get('id');
             var attrs = {
                 value: function () {
-                    //return '/plugin-messages/' + self.model.get('id');
                     return id;
                 },
                 title: function () {
@@ -51,7 +51,7 @@ define('relatedMessageItemView', function (require) {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(modelJSON);
 
-            $(this.el).html(tpl);
+            this.$el.html(tpl);
 
             return this;
         }

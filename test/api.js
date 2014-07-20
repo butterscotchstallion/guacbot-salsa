@@ -45,6 +45,7 @@ describe('plugins api', function() {
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
+                      expect(body.id).to.be.ok();
                       
                       done();
                   });
@@ -89,9 +90,12 @@ describe('plugin messages api', function() {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
                       
-                      var body = res.body;                    
-                      expect(body).to.be.an('array');
-                      expect(body).to.not.be.empty();
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.messages).to.be.an('array');
+                      expect(body.messages).to.not.be.empty();
                       
                       done();
                   });
@@ -107,10 +111,14 @@ describe('plugin messages api', function() {
 
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
-                      expect(body.name).to.be.a('string');
-                      expect(body.message).to.be.a('string');
-                      expect(body.created_at).to.be.a('string');
-                      expect(body.plugin).to.be.an('object');
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.pluginMessage.name).to.be.ok();
+                      expect(body.pluginMessage.message).to.be.ok();
+                      expect(body.pluginMessage.created_at).to.be.ok();
+                      expect(body.pluginMessage.plugin).to.be.an('object');
+                      expect(body.pluginMessage.plugin.id).to.be.ok();
+                      expect(body.pluginMessage.id).to.be.ok();
                       
                       done();
                   });
@@ -144,6 +152,7 @@ describe('plugin messages api', function() {
                       
                       expect(res.status).to.eql(201);
                       expect(res.header.location).to.not.be.empty();
+                      expect(res.body.id).to.be.ok();
                       
                       done();
                   });

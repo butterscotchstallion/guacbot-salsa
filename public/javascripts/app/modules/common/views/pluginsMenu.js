@@ -12,8 +12,7 @@ define('pluginsMenuView', function (require) {
     
     var pluginsMenuView = Backbone.View.extend({
         initialize: function() {
-            var self        = this;            
-            this.model      = new pluginsModel();
+            var self        = this;
             this.collection = new pluginsCollection({
                 model: pluginsModel
             });
@@ -41,18 +40,14 @@ define('pluginsMenuView', function (require) {
         addPlugins: function () {
             var self = this;
             
-            this.collection.each(function (message) {
+            self.collection.each(function (message) {
                 self.addPlugin(message);
             });
         },
         
         render    : function() {
-            var modelJSON = this.model.toJSON();
-            var tpl       = this.template(modelJSON);
-        
-            //$('.plugins-menu').a(tpl);
 
-            return this;
+        
         }
     });
     

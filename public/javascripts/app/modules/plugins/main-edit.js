@@ -19,10 +19,8 @@ require.config({
         
         // models
         pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",        
-        relatedMessagesModel   : "app/modules/plugins/models/relatedMessagesModel",
-        
+
         // collections
-        relatedMessageCollection: "app/modules/plugins/collections/relatedMessageCollection",
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views

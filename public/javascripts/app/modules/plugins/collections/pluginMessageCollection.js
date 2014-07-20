@@ -9,11 +9,11 @@ define('pluginMessageCollection', function (require) {
     
     var pluginMessageCollection = Backbone.Collection.extend({
         url       : '/api/v1/plugins/' + pluginID + '/messages',
-
-        model     : pluginMessageModel,
         
-        comparator: function (model) {
-            return model.get('plugin').name;
+        comparator: "name",
+        
+        parse     : function (response, options) {
+            return response.messages;
         }
     });
 

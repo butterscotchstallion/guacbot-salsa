@@ -6,7 +6,7 @@ define('editView', function (require) {
     "use strict";
     
     var Handlebars               = require('Handlebars');
-    var Backbone                 =  require('Backbone');
+    var Backbone                 = require('Backbone');
     var $                        = require('jquery');
     var _                        = require('underscore');
     var IRCColorParser           = require('IRCColorParser');
@@ -21,10 +21,8 @@ define('editView', function (require) {
     
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
-    var relatedMessageCollection = require('relatedMessageCollection');
     var relatedMessageItemView   = require('relatedMessageItemView');
-    var relatedMessagesModel     = require('relatedMessagesModel');
-    
+
     function setMessageErrorState (message) {
         $('.parse-error-container').removeClass('hidden');
         $('.template-object-container').addClass('has-error');
@@ -32,20 +30,14 @@ define('editView', function (require) {
     };
     
     var PluginMessageModel      = new pluginMessageModel();
-    var PluginMessageCollection = new relatedMessageCollection();
+    var PluginMessageCollection = new pluginMessageCollection();
     
     // Need the template to load in order to access elements present there
     PluginMessageModel.fetch({
-        //reset  : true,
+        reset  : true,
         success: function (data, options) {
             $(".loading").hide();
         }
-    }).then(function () {
-        PluginMessageCollection.fetch({
-            success: function (data, options) {
-                $('.related-message-count').text(data.length);
-            }
-        });
     });
     
     // Container view for the whole page
@@ -263,12 +255,20 @@ define('editView', function (require) {
     
     var relatedMessageView = Backbone.View.extend({
         initialize: function () {
-            var self = this;
+            var self        = this;
             
-            self.collection = PluginMessageCollection;
+            self.collection = new pluginMessageCollection({
+                model: pluginMessageModel
+            });
             
             self.listenTo(self.collection, 'reset', self.addMessages, self);
-            self.listenTo(self.collection, 'add',   self.addMessage, self);            
+            
+            self.collection.fetch({
+                reset: true,
+                success: function (data, options) {
+                    $('.related-message-count').text(data.length);
+                }
+            });
         },
         
         addMessage: function (message) {
@@ -279,13 +279,11 @@ define('editView', function (require) {
             $(".related-messages").append(view.render().el);
         },
         
-        addMessages: function () {
+        addMessages: function (messages) {
             var self = this;
             
-            console.log('collection: ', this.collection);
-            
-            this.collection.each(function (message) {
-                self.addOne(message);
+            self.collection.each(function (message) {
+                self.addMessage(message);
             });
         }
     });
@@ -296,15 +294,13 @@ define('editView', function (require) {
         template: sidebarTemplateCompiled,
         
         initialize: function () {
-            var self        = this;
+            var self = this;
             
-            self.model = PluginMessageModel;
-            
-            self.listenTo(self.model, 'change add', self.render, self);
+            self.render();
         },
         
-        render: function (model) {
-            this.$el.html(this.template(model));
+        render: function (collection) {
+            this.$el.html(this.template());
             
             new relatedMessageView();
         }
@@ -321,9 +317,8 @@ define('editView', function (require) {
             self.listenTo(self.model, 'change add', self.render, self);
         },
         
-        render: function () {
-            var modelJSON = this.model.toJSON();
-            var tpl = this.template(modelJSON);
+        render: function (model) {
+            var tpl       = this.template(model.toJSON());
             
             $('.plugin-message-header').html(tpl);
         }

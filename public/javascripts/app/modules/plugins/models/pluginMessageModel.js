@@ -16,8 +16,6 @@ define('pluginMessageModel', function (require) {
         url        : "/api/v1/plugins/" + pluginID + "/messages/" + pluginMessageID,
         
         validate   : function (attrs, options) {
-            console.log(attrs);
-            
             try {
                 var t   = Handlebars.compile(attrs.message);   
                 var tpl = t();
@@ -25,6 +23,10 @@ define('pluginMessageModel', function (require) {
             } catch (e) {
                 return e.message;
             }
+        },
+        
+        parse: function (response, options) {
+            return response.pluginMessage;
         }
     });
     

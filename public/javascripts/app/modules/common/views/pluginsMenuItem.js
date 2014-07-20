@@ -28,7 +28,7 @@ define('pluginsMenuItemView', function (require) {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(modelJSON);
             
-            $(this.el).html(tpl);
+            this.$el.html(tpl);
 
             return this;
         }

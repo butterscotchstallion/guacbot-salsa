@@ -61,12 +61,11 @@ router.post('/', function (req, res, next) {
             
             res.send(201, {
                 status : "OK",
-                message: "Plugin created successfully"
+                message: "Plugin created successfully",
+                id     : parseInt(model.get('id'), 10)
             });
           })
             .catch(function (error) {
-                console.log(error);
-                
                 res.send(200, {
                     status: "ERROR",
                     message: error
@@ -94,12 +93,18 @@ router.post('/:pluginID/messages', function (req, res, next) {
             plugin_id: pluginID
           }, options)
           .then(function (model) {
+            var id = model.get('id');
+            
             res.location(['/plugins', 
                           req.params.pluginID,
                           'messages',
-                          model.id].join('/'));
+                          id].join('/'));
             
-            res.send(201, null);
+            res.send(201, {
+                status: "OK",
+                message: "Plugin message created successfully",
+                id     : id
+            });
           })
             .catch(function (error) {
                 res.send(200, {
@@ -139,9 +144,7 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
                 message: "Plugin message updated"
             });
           })
-          .catch(function (err) {
-            var error = err.toJSON();
-
+          .catch(function (error) {
             res.send(200, {
                 status: "ERROR",
                 message: error
@@ -162,7 +165,11 @@ router.get('/:pluginID/messages', function (req, res, next) {
                     withRelated: ['plugin']
                  })
                  .then(function (messages) {
-                    res.json(200, messages);
+                    res.json(200, {
+                        status: "OK",
+                        message: null,
+                        messages: messages
+                    });
                 });
 });
 
@@ -180,7 +187,11 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                     withRelated: ['plugin']
                  })
                  .then(function (message) {
-                    res.json(200, message);
+                    res.json(200, {
+                        status       : "OK",
+                        message      : null,
+                        pluginMessage: message
+                    });
                 });
 });
 
