@@ -50,7 +50,8 @@ define('editView', function (require) {
             'click .recompile-button': 'onRecompileClicked',
             'input .parse-me'        : 'onRecompileClicked',
             'focus .parse-me'        : 'onFocusParseMeField',
-            'click .save-message'    : 'onSaveMessageButtonClicked'
+            'click .save-message'    : 'onSaveMessageButtonClicked',
+            'click .delete-button'   : 'onDeletePluginMessageButtonClicked',
         },
         
         initialize: function () {
@@ -59,6 +60,18 @@ define('editView', function (require) {
             
             self.listenTo(self.model,      'change remove', self.render, self);
             self.listenTo(self.model,      'invalid',       self.setMessageErrorState, self);
+        },
+        
+        onDeletePluginMessageButtonClicked: function (e) {
+            var btn = $(e.target);
+            
+            btn.button('loading');
+            
+            PluginMessageModel.destroy()
+                      .then(function () {
+                        console.log('baleeeeted');
+                        btn.button('reset');
+                      });
         },
         
         onSaveMessageButtonClicked: function (e) {

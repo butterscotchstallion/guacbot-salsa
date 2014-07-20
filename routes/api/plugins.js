@@ -230,11 +230,18 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                     withRelated: ['plugin']
                  })
                  .then(function (message) {
-                    res.json(200, {
-                        status       : "OK",
-                        message      : null,
-                        pluginMessage: message
-                    });
+                    if (message) {
+                        res.json(200, {
+                            status       : "OK",
+                            message      : null,
+                            pluginMessage: message
+                        });
+                    } else {
+                        res.json(404, {
+                            status       : "ERROR",
+                            message      : "Plugin message not found"
+                        });
+                    }
                 });
 });
 

@@ -10,8 +10,6 @@ var fs         = require('fs');
 var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
-var pluginMessageID;
-
 describe('plugins api', function() {
     var pluginID;
     
@@ -101,7 +99,13 @@ describe('plugins api', function() {
     });
 });
 
+/**
+ * Plugin messages
+ *
+ */
 describe('plugin messages api', function() {
+    var pluginMessageID;
+    
     it('gets all messages for a plugin', function (done) {
         superagent.get(BASE_URL + 'plugins/8/messages')
                   .end(function(e, res) {
@@ -137,6 +141,22 @@ describe('plugin messages api', function() {
                       expect(body.pluginMessage.plugin).to.be.an('object');
                       expect(body.pluginMessage.plugin.id).to.be.ok();
                       expect(body.pluginMessage.id).to.be.ok();
+                      
+                      done();
+                  });
+    });
+
+    it('fails to get a non-existent plugin message', function (done) {
+        superagent.get(BASE_URL + 'plugins/8/messages/lol')
+                  .end(function(e, res) {
+                      expect(res.status).to.eql(404);
+                      expect(e).to.eql(null);
+                      
+                      var body = res.body;
+
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
                       
                       done();
                   });
