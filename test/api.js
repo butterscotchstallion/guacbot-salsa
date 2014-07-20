@@ -192,6 +192,30 @@ describe('plugin messages api', function() {
                       done();
                   });
     });
+    
+    it('deletes a plugin message', function (done) {
+        superagent.del(BASE_URL + 'plugins/8/messages/168')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('fails to delete a non-existent plugin message', function (done) {
+        superagent.del(BASE_URL + 'plugins/8/messages/lol')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
 });
 
 

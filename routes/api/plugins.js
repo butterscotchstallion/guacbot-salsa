@@ -184,6 +184,7 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                      }
                  })
                  .fetch({
+                    required: true,
                     withRelated: ['plugin']
                  })
                  .then(function (message) {
@@ -192,6 +193,38 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                         message      : null,
                         pluginMessage: message
                     });
+                });
+});
+
+// Delete Message by ID
+router.delete('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
+    var PluginMessage = new pluginMessage({
+        id       : req.params.pluginMessageID,
+        plugin_id: req.params.pluginID
+    });
+    
+    PluginMessage.fetch()
+                 .then(function (model) {                    
+                    if (model) {                    
+                        PluginMessage.destroy()
+                                     .then(function (message) {
+                                        res.json(200, {
+                                            status       : "OK",
+                                            message      : "Plugin message deleted successfully."
+                                        });
+                                    })
+                                    .catch(function (error) {
+                                        res.send(200, {
+                                            status: "ERROR",
+                                            message: error
+                                        });
+                                    });
+                    } else {
+                        res.send(200, {
+                            status: "ERROR",
+                            message: "Message not found"
+                        });
+                    }
                 });
 });
 
