@@ -13,14 +13,12 @@ router.get('/', function (req, res, next) {
     var Plugin = new plugin();
     
     Plugin.fetchAll()
-          .then(function (plugin) {
-                if (!plugin) {
-                    next('No such plugin');
-                }
-                    
-                var plugin = plugin.toJSON();
-                
-                res.json(plugin);
+          .then(function (plugins) {
+                res.json(200, {
+                    status  : "OK",
+                    message : null,
+                    plugins : plugins || []
+                });
           });
 });
 
@@ -35,11 +33,18 @@ router.get('/:pluginID', function (req, res, next) {
           })
           .fetch()
           .then(function (plugin) {
-                if (!plugin) {
-                    next('No such plugin');
-                }
-                
-                res.json(plugin);
+            if (plugin) {
+                res.json(200, {
+                    status : "OK",
+                    message: null,
+                    plugin : plugin
+                });
+            } else {
+                res.json(404, {
+                    status: "ERROR",
+                    message: "Plugin not found"
+                });
+            }
           });
 });
 

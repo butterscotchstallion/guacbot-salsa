@@ -7,10 +7,14 @@ define('pluginsCollection', function (require) {
     var pluginsModel = require('pluginsModel');
 
     var pluginsCollection = Backbone.Collection.extend({
-        url       : '/api/v1/plugins',
+        url        : '/api/v1/plugins',
 
-        comparator: function (model) {
+        comparator : function (model) {
             return model.get('filename')
+        },
+        
+        parse      : function (response, options) {
+            return response.plugins;
         }
     });
 

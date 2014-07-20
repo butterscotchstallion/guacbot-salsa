@@ -63,9 +63,26 @@ describe('plugins api', function() {
                       
                       var body = res.body;
 
+                      expect(body.status).to.eql("OK");
+                      expect(body.plugin).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.plugin.id).to.eql(8);
+                      
+                      done();
+                  });
+    });
+    
+    it('fails to get a non-existent plugin', function (done) {
+        superagent.get(BASE_URL + 'plugins/lol')
+                  .end(function(e, res) {
+                      expect(res.status).to.eql(404);
+                      expect(e).to.eql(null);
+                      
+                      var body = res.body;
+
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
-                      expect(body.id).to.eql(8);
+                      expect(body.status).to.eql("ERROR");
                       
                       done();
                   });
@@ -79,8 +96,8 @@ describe('plugins api', function() {
                       
                       var body = res.body;
 
-                      expect(body).to.be.an('array');
-                      expect(body).to.not.be.empty();
+                      expect(body.status).to.be.eql("OK");
+                      expect(body.plugins).to.be.an('array');
                       
                       done();
                   });
@@ -210,7 +227,7 @@ describe('plugin messages api', function() {
                       expect(e).to.eql(null);
                       
                       expect(res.status).to.eql(200);
-                      //expect(res.header.location).to.not.be.empty();
+                      expect(res.header.location).to.not.be.empty();
                       expect(res.body.status).to.eql("OK");
                       
                       done();

@@ -67,10 +67,13 @@ define('editView', function (require) {
             
             btn.button('loading');
             
+            var pluginID = window.app.pluginID;
+            
             PluginMessageModel.destroy()
                       .then(function () {
-                        console.log('baleeeeted');
                         btn.button('reset');
+                        
+                        window.location = "/plugins/" + pluginID;
                       });
         },
         
