@@ -10,7 +10,11 @@ var fs         = require('fs');
 var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
+var pluginMessageID;
+
 describe('plugins api', function() {
+    var pluginID;
+    
     it('fails to create an invalid plugin', function (done) {
         superagent.post(BASE_URL + 'plugins')                  
                   .send({
@@ -47,6 +51,8 @@ describe('plugins api', function() {
                       expect(body.status).to.eql("OK");
                       expect(body.id).to.be.ok();
                       
+                      pluginID = body.id;
+                      
                       done();
                   });
     });
@@ -77,6 +83,18 @@ describe('plugins api', function() {
 
                       expect(body).to.be.an('array');
                       expect(body).to.not.be.empty();
+                      
+                      done();
+                  });
+    });
+    
+    it('deletes a plugin', function (done) {
+        superagent.del(BASE_URL + 'plugins/' + pluginID)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.body.status).to.eql("OK");
                       
                       done();
                   });
@@ -144,15 +162,36 @@ describe('plugin messages api', function() {
         superagent.post(BASE_URL + 'plugins/8/messages')
                   .set('Content-Type', 'application/json')
                   .send({
-                    message: "Hello world!",
+                    message: "Hello, world!",
                     name   : "saved"
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);
                       
+                      expect(res.body.status).to.eql("OK");
                       expect(res.status).to.eql(201);
                       expect(res.header.location).to.not.be.empty();
                       expect(res.body.id).to.be.ok();
+                      
+                      pluginMessageID = res.body.id;
+                      
+                      done();
+                  });
+    });
+    
+    it('updates a plugin message', function (done) {
+        superagent.put(BASE_URL + 'plugins/8/messages/' + pluginMessageID)
+                  .set('Content-Type', 'application/json')
+                  .send({
+                    message  : "sup",
+                    name     : "delivered"
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      //expect(res.header.location).to.not.be.empty();
+                      expect(res.body.status).to.eql("OK");
                       
                       done();
                   });
@@ -175,8 +214,20 @@ describe('plugin messages api', function() {
                   });
     });
     
-    it('updates a plugin message', function (done) {
-        superagent.put(BASE_URL + 'plugins/8/messages/14')
+    it('deletes a plugin message', function (done) {
+        superagent.del(BASE_URL + 'plugins/8/messages/' + pluginMessageID)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('fails to update a non-existent plugin message', function (done) {
+        superagent.put(BASE_URL + 'plugins/8/messages/lol')
                   .set('Content-Type', 'application/json')
                   .send({
                     message  : "sup",
@@ -184,22 +235,9 @@ describe('plugin messages api', function() {
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);
-                      
-                      expect(res.status).to.eql(200);
-                      expect(res.header.location).to.not.be.empty();
-                      expect(res.body.status).to.eql("OK");
-                      
-                      done();
-                  });
-    });
-    
-    it('deletes a plugin message', function (done) {
-        superagent.del(BASE_URL + 'plugins/8/messages/168')
-                  .end(function(e, res) {
-                      expect(e).to.eql(null);
-                      
-                      expect(res.status).to.eql(200);
-                      expect(res.body.status).to.eql("OK");
+   
+                      expect(res.status).to.eql(404);
+                      expect(res.body.status).to.eql("ERROR");
                       
                       done();
                   });
@@ -210,7 +248,7 @@ describe('plugin messages api', function() {
                   .end(function(e, res) {
                       expect(e).to.eql(null);
                       
-                      expect(res.status).to.eql(200);
+                      expect(res.status).to.eql(404);
                       expect(res.body.status).to.eql("ERROR");
                       
                       done();

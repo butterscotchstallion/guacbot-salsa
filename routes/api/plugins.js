@@ -59,17 +59,48 @@ router.post('/', function (req, res, next) {
             res.location(['/plugins', 
                           model.get('id')].join('/'));
             
-            res.send(201, {
+            res.json(201, {
                 status : "OK",
                 message: "Plugin created successfully",
                 id     : parseInt(model.get('id'), 10)
             });
           })
             .catch(function (error) {
-                res.send(200, {
+                res.json(200, {
                     status: "ERROR",
                     message: error
                 });
+            });
+});
+
+// Delete Plugin by ID
+router.delete('/:pluginID', function (req, res, next) {
+    var Plugin = new plugin({
+        id: req.params.pluginID
+    });
+    
+    Plugin.fetch()
+          .then(function (model) {                    
+                if (model) {                    
+                    Plugin.destroy()
+                         .then(function (message) {
+                            res.json(200, {
+                                status       : "OK",
+                                message      : "Plugin deleted successfully."
+                            });
+                        })
+                        .catch(function (error) {
+                            res.json(200, {
+                                status: "ERROR",
+                                message: error
+                            });
+                        });
+                } else {
+                    res.json(404, {
+                        status: "ERROR",
+                        message: "Plugin not found"
+                    });
+                }
             });
 });
 
@@ -80,7 +111,7 @@ router.post('/', function (req, res, next) {
 
 // Create plugin message
 router.post('/:pluginID/messages', function (req, res, next) {
-    var pluginID  = req.param('pluginID');
+    var pluginID  = req.params.pluginID;
     var message   = req.param('message');
     var name      = req.param('name');
     
@@ -100,14 +131,14 @@ router.post('/:pluginID/messages', function (req, res, next) {
                           'messages',
                           id].join('/'));
             
-            res.send(201, {
+            res.json(201, {
                 status: "OK",
                 message: "Plugin message created successfully",
                 id     : id
             });
           })
             .catch(function (error) {
-                res.send(200, {
+                res.json(200, {
                     status: "ERROR",
                     message: error
                 });
@@ -121,34 +152,45 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
     var messageID = req.params.messageID;
     var pluginID  = req.params.pluginID;
     
-    var model     = new pluginMessage({ 
-        id: messageID
+    var PluginMessage  = new pluginMessage({ 
+        id       : messageID,
+        plugin_id: pluginID
     });
     
     var options = { patch: true };
     
-    model.save({
-            message  : message,
-            id       : messageID,
-            plugin_id: pluginID,
-            name     : name
-          }, options)
-          .then(function (model) {
-            res.location(['/plugins', 
-                          pluginID,
-                          'messages',
-                          messageID].join('/'));
-            
-            res.send(200, {
-                status : "OK",
-                message: "Plugin message updated"
-            });
-          })
-          .catch(function (error) {
-            res.send(200, {
-                status: "ERROR",
-                message: error
-            });
+    PluginMessage.fetch()
+         .then(function (model) {
+            if (model) {
+                PluginMessage.save({
+                            message  : message,
+                            id       : messageID,
+                            plugin_id: pluginID,
+                            name     : name
+                        }, options)
+                        .then(function (model) {                        
+                            res.location(['/plugins', 
+                                      pluginID,
+                                      'messages',
+                                      messageID].join('/'));
+                            
+                            res.json(200, {
+                                status : "OK",
+                                message: "Plugin message updated"
+                            });
+                        })
+                        .catch(function (error) {
+                            res.json(200, {
+                                status: "ERROR",
+                                message: error
+                            });
+                        });
+            } else {
+                res.json(404, {
+                    status: "ERROR",
+                    message: "Message not found"
+                });
+            }
         });
 });
 
@@ -214,13 +256,13 @@ router.delete('/:pluginID/messages/:pluginMessageID', function (req, res, next) 
                                         });
                                     })
                                     .catch(function (error) {
-                                        res.send(200, {
+                                        res.json(200, {
                                             status: "ERROR",
                                             message: error
                                         });
                                     });
                     } else {
-                        res.send(200, {
+                        res.json(404, {
                             status: "ERROR",
                             message: "Message not found"
                         });
