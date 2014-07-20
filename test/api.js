@@ -33,12 +33,16 @@ describe('plugins api', function() {
                   .set('Content-Type', 'application/json')
                   .send({
                     message: "Hello world!",
-                    name: "saved"
+                    name   : "saved"
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);
                       
+                      console.log(res.header);
+                      
                       expect(res.status).to.eql(201);
+                      
+                      //expect(res.body.id).to.be.a(Number);
                       
                       done();
                   });
@@ -48,14 +52,14 @@ describe('plugins api', function() {
         superagent.put(BASE_URL + 'plugins/8/messages/14')
                   .set('Content-Type', 'application/json')
                   .send({
-                    message: ""
+                    message: "",
+                    name   : "delivered"                 
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);
                       
                       expect(res.status).to.eql(200);
                       expect(res.body.status).to.eql("ERROR");
-                      expect(res.body.message).to.eql("Message cannot be blank");
                       
                       done();
                   });
@@ -65,7 +69,8 @@ describe('plugins api', function() {
         superagent.put(BASE_URL + 'plugins/8/messages/14')
                   .set('Content-Type', 'application/json')
                   .send({
-                    message: "sup"
+                    message  : "sup",
+                    name     : "delivered"
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);

@@ -25,7 +25,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+//app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -38,15 +38,17 @@ var bookshelf = require('bookshelf')(knex);
 
 app.set('bookshelf', bookshelf);
 
-app.use('/',        require('./routes/index'));
-app.use('/api/v1',  require('./routes/api'));
-app.use('/plugins', require('./routes/plugins'));
+app.use('/', require('./routes/index'));
+
+// API
+app.use('/api/v1/plugins', require('./routes/api/plugins'));
+app.use('/plugins',        require('./routes/plugins'));
 
 process.on('error', function (e) {
     console.log(e.stack);
 });
 
-/// catch 404 and forwarding to error handler
+// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;

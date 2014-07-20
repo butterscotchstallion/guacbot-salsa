@@ -10,21 +10,21 @@ var plugin        = require('../models/plugin');
 
 var Plugin        = new plugin();
 
-var checkit       = new Checkit({
-    message: ["required", "alphaNumeric"],
-    name   : ["required", "alphaNumeric"]
-});
-
 var PluginMessage = bookshelf.Model.extend({
     initialize : function () {
         this.on('saving', this.validateSave);
     },
     
     validateSave: function () {
-        return checkit.run(this.attributes)
-                      .catch(Checkit.Error, function (err) {
-                        console.log(err.toJSON());
-                      });
+        var rules   = {
+            message  : ["required"],
+            name     : ["required"],
+            plugin_id: ["integer"]
+        };
+        
+        var checkit = new Checkit(rules);
+        
+        return checkit.run(this.attributes);
     },
     
     idAttribute: 'id',
