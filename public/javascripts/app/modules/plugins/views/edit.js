@@ -50,7 +50,6 @@ define('editView', function (require) {
             'click .recompile-button': 'onRecompileClicked',
             'input .parse-me'        : 'onRecompileClicked',
             'focus .parse-me'        : 'onFocusParseMeField',
-            'input .related-messages': 'onRelatedMessageSelected',
             'click .save-message'    : 'onSaveMessageButtonClicked'
         },
         
@@ -88,14 +87,6 @@ define('editView', function (require) {
             console.log('onMessageSavedFailure');
             
             $('.save-failure-msg').removeClass('hidden');
-        },
-        
-        onRelatedMessageSelected: function (e) {
-            var self      = $(e.target);
-            var messageID = self.val();
-            var pluginID  = window.app.pluginID;
-            
-            window.location = "/plugins/" + pluginID + "/messages/" + messageID;
         },
         
         onFocusParseMeField: function () {
@@ -290,6 +281,20 @@ define('editView', function (require) {
     
     var sidebarView = Backbone.View.extend({
         el: $('.sidebar'),
+        
+        events    : {            
+            'input .related-messages': 'onRelatedMessageSelected'
+        },
+        
+        onRelatedMessageSelected: function (e) {
+            var self      = $(e.target);
+            var messageID = self.val();
+            var pluginID  = window.app.pluginID;
+            
+            console.log('selected');
+            
+            window.location = "/plugins/" + pluginID + "/messages/" + messageID;
+        },
         
         template: sidebarTemplateCompiled,
         
