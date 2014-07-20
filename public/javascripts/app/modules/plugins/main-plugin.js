@@ -18,6 +18,11 @@ require.config({
         
         // models
         pluginModel     : "app/modules/plugins/models/pluginModel",
+        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
+        pluginMessageInfoModel     : "app/modules/plugins/models/pluginMessageInfoModel",
+        
+        // collections
+        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
         pluginView            : "app/modules/plugins/views/plugin"

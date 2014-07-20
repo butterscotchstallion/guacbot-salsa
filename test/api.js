@@ -163,6 +163,23 @@ describe('plugin messages api', function() {
                   });
     });
 
+    it('gets info about plugin messages', function (done) {
+        superagent.get(BASE_URL + 'plugins/8/messages/info')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.info).to.be.an('object');
+                      expect(body.info.messageCount).to.be.a('number');
+                      
+                      done();
+                  });
+    });
+    
     it('fails to get a non-existent plugin message', function (done) {
         superagent.get(BASE_URL + 'plugins/8/messages/lol')
                   .end(function(e, res) {

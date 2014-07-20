@@ -7,6 +7,7 @@ var moment        = require('moment');
 var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
+var Bookshelf     = app.get('bookshelf');
 
 // All plugins
 router.get('/', function (req, res, next) {
@@ -217,6 +218,31 @@ router.get('/:pluginID/messages', function (req, res, next) {
                         message: null,
                         messages: messages
                     });
+                });
+});
+
+// Plugin message info
+router.get('/:pluginID/messages/info', function (req, res, next) {
+    Bookshelf.knex('plugin_messages')   
+             .where({
+                    plugin_id: req.params.pluginID                    
+                 })
+                 .count('* AS messageCount')
+                 .then(function (result) {
+                    var info = result[0];
+                    
+                    if (info) {
+                        res.json(200, {
+                            status : "OK",
+                            message: null,
+                            info   : info
+                        });
+                    } else {
+                        res.json(500, {
+                            status       : "ERROR",
+                            message      : "Error retrieving message info"
+                        });
+                    }
                 });
 });
 

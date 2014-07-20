@@ -5,23 +5,45 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-md-12">
+        {{#if enabled}}
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <span class="glyphicon glyphicon-ok"></span> <strong>Huzzah!</strong> This plugin is enabled.
+            </div>
+        {{else}}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <span class="glyphicon glyphicon-remove"></span> <strong>Aw shucks!</strong> This plugin is disabled.
+            </div>
+        {{/if}}
+    </div>
+</div>
+
 <div class="row clearfix info-container">
+    <div class="col-md-3">
+        <div class="list-group">
+          <a href="#" class="list-group-item active"><span class="glyphicon glyphicon-home"></span> Dashboard</a>
+          <a href="/plugins/{{id}}/messages" 
+             class="list-group-item message-count-link"><span class="glyphicon glyphicon-envelope"></span> Messages <span class="badge message-count"></span></a>
+          <a href="#" class="list-group-item">Morbi leo risus</a>
+          <a href="#" class="list-group-item">Porta ac consectetur ac</a>
+          <a href="#" class="list-group-item">Vestibulum at eros</a>
+        </div>
+    </div>
+    
     <div class="col-md-4">
         <div class="panel panel-default">
-            <div class="panel-heading">Information</div>
+            <div class="panel-heading">Control Panel</div>
             
             <div class="panel-body">
-                This plugin is currently 
-                <span class="label {{#if enabled}}label-success{{else}}label-danger{{/if}}">
-                    {{#if enabled}}Enabled{{else}}Disabled{{/if}}
-                </span>
-                
                 {{#if enabled}}
                     <button type="button" 
-                            class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Disable</button>
+                            class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Disable Plugin</button>
                 {{else}}
                     <button type="button" 
-                            class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Enable</button>    
+                            class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> Enable Plugin</button>    
                 {{/if}}
             </div>
         </div>
