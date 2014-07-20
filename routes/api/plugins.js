@@ -3,40 +3,10 @@
  *
  */
 var express       = require('express');
+var moment        = require('moment');
 var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
-
-// Create plugin message
-router.post('/:pluginID/messages', function (req, res, next) {
-    var pluginID  = req.param('pluginID');
-    var message   = req.param('message');
-    var name      = req.param('name');
-    
-    var model   = new pluginMessage();        
-    var options = {};
-    
-    model.save({
-            message  : message,
-            name     : name,
-            plugin_id: pluginID
-          }, options)
-          .then(function (model) {
-            res.location(['/plugins', 
-                          req.params.pluginID,
-                          'messages',
-                          model.id].join('/'));
-            
-            res.send(201, null);
-          })
-            .catch(function (error) {
-                res.send(200, {
-                    status: "ERROR",
-                    message: error
-                });
-            });
-});
-
 
 // All plugins
 router.get('/', function (req, res, next) {
@@ -73,6 +43,37 @@ router.get('/:pluginID', function (req, res, next) {
           });
 });
 
+// Create plugin
+router.post('/', function (req, res, next) {
+    var pluginID = req.param('pluginID');
+    var filename = req.param('filename');
+    var name     = req.param('name');
+    
+    var model    = new plugin();        
+
+    model.save({
+            filename: filename,
+            name    : name
+          })
+          .then(function (model) {
+            res.location(['/plugins', 
+                          model.get('id')].join('/'));
+            
+            res.send(201, {
+                status : "OK",
+                message: "Plugin created successfully"
+            });
+          })
+            .catch(function (error) {
+                console.log(error);
+                
+                res.send(200, {
+                    status: "ERROR",
+                    message: error
+                });
+            });
+});
+
 /**
  * Plugin Messages
  *
@@ -80,35 +81,28 @@ router.get('/:pluginID', function (req, res, next) {
 
 // Create plugin message
 router.post('/:pluginID/messages', function (req, res, next) {
-    var pluginID  = req.params.pluginID;
+    var pluginID  = req.param('pluginID');
     var message   = req.param('message');
     var name      = req.param('name');
     
-    var model     = new pluginMessage();        
-
+    var model   = new pluginMessage();        
+    var options = {};
+    
     model.save({
             message  : message,
             name     : name,
             plugin_id: pluginID
-          })
+          }, options)
           .then(function (model) {
-            var id = model.get('id');
-            
-            /*
             res.location(['/plugins', 
                           req.params.pluginID,
                           'messages',
-                          id].join('/'));
-            */
+                          model.id].join('/'));
             
-            res.json(201, {
-                status : "OK",
-                message: "Plugin message created successfully",
-                id     : id
-            });
+            res.send(201, null);
           })
             .catch(function (error) {
-                res.json(200, {
+                res.send(200, {
                     status: "ERROR",
                     message: error
                 });
@@ -136,17 +130,18 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
           }, options)
           .then(function (model) {
             res.location(['/plugins', 
-                          req.params.pluginID,
+                          pluginID,
                           'messages',
-                          req.params.messageID].join('/'));
+                          messageID].join('/'));
             
-            res.send(201, null);
+            res.send(200, {
+                status : "OK",
+                message: "Plugin message updated"
+            });
           })
           .catch(function (err) {
             var error = err.toJSON();
-            
-            console.log(error);
-            
+
             res.send(200, {
                 status: "ERROR",
                 message: error
@@ -161,19 +156,13 @@ router.get('/:pluginID/messages', function (req, res, next) {
     PluginMessage.query({
                     where: {
                         plugin_id: req.params.pluginID
-                     }
+                    }
                  })
                  .fetchAll({
                     withRelated: ['plugin']
                  })
-                 .then(function (message) {
-                    if (!message) {
-                        next('No such plugin');
-                    }
-                    
-                    var message = message.toJSON();
-                    
-                    res.json(message);
+                 .then(function (messages) {
+                    res.json(200, messages);
                 });
 });
 
@@ -190,10 +179,8 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                  .fetch({
                     withRelated: ['plugin']
                  })
-                 .then(function (message) {                    
-                    var message = message.toJSON();
-                    
-                    res.json(message);
+                 .then(function (message) {
+                    res.json(200, message);
                 });
 });
 
