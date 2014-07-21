@@ -55,6 +55,24 @@ describe('plugins api', function() {
                   });
     });
     
+    it('updates a plugin', function (done) {
+        superagent.put(BASE_URL + 'plugins/' + pluginID)                  
+                  .send({
+                    name    : "test plugin!",
+                    filename: "test-plugin",
+                    enabled : 0
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);       
+                      
+                      expect(res.status).to.eql(200);
+                      expect(res.header.location).to.not.be.empty();
+                      expect(res.body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
     it('gets a specific plugin', function (done) {
         superagent.get(BASE_URL + 'plugins/8')
                   .end(function(e, res) {

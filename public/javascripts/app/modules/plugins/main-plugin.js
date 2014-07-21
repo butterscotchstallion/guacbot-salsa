@@ -47,8 +47,20 @@ require.config({
     }
 });
 
-require(["common", "jquery", "pluginView"], function (common, $, pluginView) {
+require(["common", "jquery", "pluginView", "Handlebars"], function (common, $, pluginView, Handlebars) {
     $(function () {
+        Handlebars.registerHelper("debug", function(optionalValue) {
+            console.log("\nCurrent Context");
+            console.log("====================");
+            console.log(this);
+            
+            if (arguments.length > 1) {
+                console.log("Value");
+                console.log("====================");
+                console.log(optionalValue);
+            }
+        });
+
         new pluginView();
     });
 });

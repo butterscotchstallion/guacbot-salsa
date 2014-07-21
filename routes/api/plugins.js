@@ -79,6 +79,50 @@ router.post('/', function (req, res, next) {
             });
 });
 
+// Update plugin 
+router.put('/:pluginID', function (req, res, next) {
+    var message   = req.param('message');
+    var name      = req.param('name');
+    var enabled   = req.param('enabled');
+    var pluginID  = req.params.pluginID;
+    
+    var Plugin  = new plugin({ 
+        id: pluginID
+    });
+    
+    var options = { patch: true };
+
+    Plugin.fetch()
+         .then(function (model) {
+            if (model) {
+                Plugin.save({
+                            id     : pluginID,
+                            name   : name,
+                            enabled: enabled
+                        }, options)
+                        .then(function (model) {                        
+                            res.location(['/plugins', pluginID].join('/'));
+                            
+                            res.json(200, {
+                                status : "OK",
+                                message: "Plugin updated"
+                            });
+                        })
+                        .catch(function (error) {
+                            res.json(200, {
+                                status: "ERROR",
+                                message: error
+                            });
+                        });
+            } else {
+                res.json(404, {
+                    status: "ERROR",
+                    message: "Plugin not found"
+                });
+            }
+        });
+});
+
 // Delete Plugin by ID
 router.delete('/:pluginID', function (req, res, next) {
     var Plugin = new plugin({

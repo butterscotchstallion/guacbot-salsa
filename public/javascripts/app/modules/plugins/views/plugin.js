@@ -8,6 +8,7 @@ define('pluginView', function (require) {
     var Handlebars               = require('Handlebars');
     var Backbone                 =  require('Backbone');
     var $                        = require('jquery');
+    var _                        = require('underscore');
     var templateFile             = require('text!/javascripts/app/modules/plugins/templates/index.html');
     var template                 = Handlebars.compile(templateFile);
     var pluginModel              = require('pluginModel');
@@ -21,7 +22,8 @@ define('pluginView', function (require) {
         el: $('.plugins-container'),
         
         events: {
-            'click .message-count-link': 'onMessageCountLinkClicked'
+            'click .message-count-link': 'onMessageCountLinkClicked',
+            'click .save-status'       : 'onSaveStatusButtonClicked'
         },
         
         initialize: function () {
@@ -47,6 +49,22 @@ define('pluginView', function (require) {
             });
         },
         
+        onSaveStatusButtonClicked: function (e) {
+            var enabled = $('input[type="radio"][name="enabled"]:checked').val();
+            var button  = $(e.target);
+            var self    = this;
+            
+            button.button('loading');
+            
+            self.model.set({
+                enabled: enabled
+            })
+            .save()
+            .then(function (model) {
+                button.button('reset');
+            });
+        },
+        
         renderPluginMessageInfo: function (model) { 
             var messageCount = model.get('messageCount');
             var $msg         = $('.message-count');
@@ -62,11 +80,20 @@ define('pluginView', function (require) {
         },
         
         render: function (model) {
-            var modelJSON = model.toJSON();
-            var tpl       = this.template(modelJSON);
+            var modelJSON = model.toJSON();    
+            var disabled  = !model.get('enabled');
+            var data      = _.extend({
+                isDisabled: disabled
+            }, modelJSON);
+            var tpl       = this.template(data);
             
             this.$el.html(tpl);
-
+            
+            //console.log('rendering: ', modelJSON);
+            
+            // until I figure out weird handlebars parse error
+            $('input[name="enabled"][value="' + model.get('enabled') + '"]').attr('checked', true);
+            
             return this;
         },
         
