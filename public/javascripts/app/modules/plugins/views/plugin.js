@@ -5,16 +5,17 @@
 define('pluginView', function (require) {
     "use strict";
     
-    var Handlebars               = require('Handlebars');
-    var Backbone                 =  require('Backbone');
-    var $                        = require('jquery');
-    var _                        = require('underscore');
-    var templateFile             = require('text!/javascripts/app/modules/plugins/templates/index.html');
-    var template                 = Handlebars.compile(templateFile);
-    var pluginModel              = require('pluginModel');
-    var pluginMessageCollection  = require('pluginMessageCollection');
-    var pluginMessageModel       = require('pluginMessageModel');
-    var pluginMessageInfoModel   = require('pluginMessageInfoModel');
+    var Handlebars                  = require('Handlebars');
+    var Backbone                    =  require('Backbone');
+    var $                           = require('jquery');
+    var _                           = require('underscore');
+    var templateFile                = require('text!/javascripts/app/modules/plugins/templates/index.html');
+    var template                    = Handlebars.compile(templateFile);
+    var pluginModel                 = require('pluginModel');
+    var pluginMessageCollection     = require('pluginMessageCollection');
+    var pluginMessageModel          = require('pluginMessageModel');
+    var pluginMessageInfoModel      = require('pluginMessageInfoModel');
+    var dashboardPluginMessagesView = require('dashboardPluginMessagesView');
     
     var pluginView = Backbone.View.extend({
         template      : template,
@@ -30,9 +31,13 @@ define('pluginView', function (require) {
             var self                    = this;
             self.model                  = new pluginModel();
             self.pluginMessageInfoModel = new pluginMessageInfoModel();
+            self.collection             = new pluginMessageCollection({
+                model: pluginMessageModel
+            });
             
             self.listenTo(self.model,                  'change', self.render,                  self);
             self.listenTo(self.pluginMessageInfoModel, 'change', self.renderPluginMessageInfo, self);
+            self.listenTo(self.collection,             'reset',  self.renderMessages,          self);
             
             self.model.fetch({
                 reset: true,
@@ -46,6 +51,28 @@ define('pluginView', function (require) {
                 self.pluginMessageInfoModel.fetch({
                     reset: true
                 });
+            });
+            
+            self.collection.fetch({
+                reset: true
+            });
+        },
+        
+        addMessage: function (message) {
+            var view = new dashboardPluginMessagesView({
+                model: message
+            });
+            
+            $('.dashboard-messages').html(view.render().el);
+        },
+        
+        // this won't work. render with collection as variable or
+        // set up template render first then render collection
+        renderMessages: function () {
+            var self = this;
+            
+            self.collection.each(function (model) {
+                self.addMessage(model);
             });
         },
         

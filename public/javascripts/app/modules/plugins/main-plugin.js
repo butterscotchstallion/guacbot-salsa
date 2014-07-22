@@ -14,18 +14,19 @@ require.config({
         text          : "lib/text",
         underscore    : "lib/underscore.min",
         
-        common                 : "app/modules/common/main",
+        common                     : "app/modules/common/main",
         
         // models
-        pluginModel     : "app/modules/plugins/models/pluginModel",
-        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
+        pluginModel                : "app/modules/plugins/models/pluginModel",
+        pluginMessageModel         : "app/modules/plugins/models/pluginMessageModel",
         pluginMessageInfoModel     : "app/modules/plugins/models/pluginMessageInfoModel",
         
         // collections
-        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
+        pluginMessageCollection    : "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
-        pluginView            : "app/modules/plugins/views/plugin"
+        pluginView                 : "app/modules/plugins/views/plugin",
+        dashboardPluginMessagesView: "app/modules/plugins/views/dashboardPluginMessagesView"
     },
     shim: {
         bootstrap: {
