@@ -63,15 +63,19 @@ define('pluginView', function (require) {
                 model: message
             });
             
-            $('.dashboard-messages').html(view.render().el);
+            $('.dashboard-messages-table-content').append(view.render().el);
         },
         
-        // this won't work. render with collection as variable or
-        // set up template render first then render collection
         renderMessages: function () {
             var self = this;
             
-            self.collection.each(function (model) {
+            var firstFive = self.collection.slice(0, 5);
+            
+            firstFive.sort(function (a, b) {
+                return a.created_at < b.created_at;
+            });
+            
+            _.each(firstFive, function (model) {
                 self.addMessage(model);
             });
         },
