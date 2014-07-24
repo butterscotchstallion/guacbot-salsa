@@ -8,6 +8,7 @@ var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
 var Bookshelf     = app.get('bookshelf');
+var url           = require('url');
 
 // All plugins
 router.get('/', function (req, res, next) {
@@ -247,15 +248,16 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
 // All messages for this plugin
 router.get('/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
+    var urlParts      = url.parse(req.url, true).query;
+    var limit         = parseInt(urlParts.limit, 10) || null;
     
-    PluginMessage.query({
-                    where: {
-                        plugin_id: req.params.pluginID
-                    }
+    if (limit !== null) {
+        Bookshelf.knex('plugin_messages')
+                 .where({
+                    plugin_id: req.params.pluginID
                  })
-                 .fetchAll({
-                    withRelated: ['plugin']
-                 })
+                 .limit(limit)
+                 .innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
                  .then(function (messages) {
                     res.json(200, {
                         status: "OK",
@@ -263,6 +265,20 @@ router.get('/:pluginID/messages', function (req, res, next) {
                         messages: messages
                     });
                 });
+    } else {
+        Bookshelf.knex('plugin_messages')
+                 .where({
+                    plugin_id: req.params.pluginID
+                 })
+                 .innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
+                 .then(function (messages) {
+                    res.json(200, {
+                        status: "OK",
+                        message: null,
+                        messages: messages
+                    });
+                });
+    }
 });
 
 // Plugin message info

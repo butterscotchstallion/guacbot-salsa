@@ -158,6 +158,26 @@ describe('plugin messages api', function() {
                   });
     });
     
+    it('gets all messages for a plugin with limit constraint', function (done) {
+        var limit = 5;
+        
+        superagent.get(BASE_URL + 'plugins/8/messages?limit=' + limit)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.messages).to.be.an('array');
+                      expect(body.messages).to.not.be.empty();
+                      expect(body.messages.length).to.eql(limit);
+                      
+                      done();
+                  });
+    });
+    
     it('gets a single plugin message', function (done) {
         superagent.get(BASE_URL + 'plugins/8/messages/6')
                   .end(function(e, res) {
