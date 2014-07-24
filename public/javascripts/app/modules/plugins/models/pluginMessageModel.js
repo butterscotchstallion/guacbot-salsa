@@ -13,7 +13,18 @@ define('pluginMessageModel', function (require) {
     var pluginMessage = Backbone.Model.extend({
         idAttribute: 'id',
         
-        url        : "/api/v1/plugins/" + pluginID + "/messages/" + pluginMessageID,
+        url        : function () {
+            var limit = "";
+            var url   = [
+                "/api/v1/plugins/",
+                pluginID,
+                "messages",
+                pluginMessageID,
+                limit
+            ].join('/');
+            
+            return url;
+        },
         
         validate   : function (attrs, options) {
             try {

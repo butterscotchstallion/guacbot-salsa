@@ -6,27 +6,29 @@ require.config({
     urlArgs: "bust=" + (new Date()).getTime(),
     
     paths: {
-        jquery        : "lib/jquery.min",
-        bootstrap     : "lib/bootstrap.min",
-        requireLib    : "lib/require.min",
-        Handlebars    : "lib/handlebars",
-        Backbone      : "lib/backbone.min",
-        text          : "lib/text",
-        underscore    : "lib/underscore.min",
+        jquery                         : "lib/jquery.min",
+        bootstrap                      : "lib/bootstrap.min",
+        requireLib                     : "lib/require.min",
+        Handlebars                     : "lib/handlebars",
+        Backbone                       : "lib/backbone.min",
+        text                           : "lib/text",
+        underscore                     : "lib/underscore.min",
         
-        common                     : "app/modules/common/main",
+        // app
+        common                         : "app/modules/common/main",
         
         // models
-        pluginModel                : "app/modules/plugins/models/pluginModel",
-        pluginMessageModel         : "app/modules/plugins/models/pluginMessageModel",
-        pluginMessageInfoModel     : "app/modules/plugins/models/pluginMessageInfoModel",
+        pluginModel                    : "app/modules/plugins/models/pluginModel",
+        pluginMessageModel             : "app/modules/plugins/models/pluginMessageModel",
+        pluginMessageInfoModel         : "app/modules/plugins/models/pluginMessageInfoModel",
         
         // collections
-        pluginMessageCollection    : "app/modules/plugins/collections/pluginMessageCollection",
+        pluginMessageCollection        : "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
-        pluginView                 : "app/modules/plugins/views/plugin",
-        dashboardPluginMessagesView: "app/modules/plugins/views/dashboardPluginMessagesView"
+        pluginView                     : "app/modules/plugins/views/plugin",
+        dashboardPluginMessagesView    : "app/modules/plugins/views/dashboardPluginMessagesView",
+        dashboardPluginMessagesItemView: "app/modules/plugins/views/dashboardPluginMessagesItemView"
     },
     shim: {
         bootstrap: {
