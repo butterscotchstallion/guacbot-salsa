@@ -249,36 +249,26 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
 router.get('/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
     var urlParts      = url.parse(req.url, true).query;
-    var limit         = parseInt(urlParts.limit, 10) || null;
+    var limit         = parseInt(urlParts.limit, 10) || null;    
+    var query         = Bookshelf.knex('plugin_messages');
     
-    if (limit !== null) {
-        Bookshelf.knex('plugin_messages')
-                 .where({
-                    plugin_id: req.params.pluginID
-                 })
-                 .limit(limit)
-                 .innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
-                 .then(function (messages) {
-                    res.json(200, {
-                        status: "OK",
-                        message: null,
-                        messages: messages
-                    });
-                });
-    } else {
-        Bookshelf.knex('plugin_messages')
-                 .where({
-                    plugin_id: req.params.pluginID
-                 })
-                 .innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
-                 .then(function (messages) {
-                    res.json(200, {
-                        status: "OK",
-                        message: null,
-                        messages: messages
-                    });
-                });
+    query.where({
+        plugin_id: req.params.pluginID
+    });
+    
+    if (limit) {
+        query.limit(limit);
     }
+    
+    query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
+         .then(function (messages) {
+            res.json(200, {
+                status: "OK",
+                message: null,
+                messages: messages
+            });
+        });
+
 });
 
 // Plugin message info

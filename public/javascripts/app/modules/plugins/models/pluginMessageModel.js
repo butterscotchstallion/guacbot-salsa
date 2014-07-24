@@ -14,14 +14,20 @@ define('pluginMessageModel', function (require) {
         idAttribute: 'id',
         
         url        : function () {
-            var limit = "";
             var url   = [
                 "/api/v1/plugins/",
                 pluginID,
                 "messages",
-                pluginMessageID,
-                limit
-            ].join('/');
+                pluginMessageID
+            ];
+            
+            if (this.limit) {
+                url.push("?limit=" + this.limit);
+            }
+            
+            url = url.join('/');
+            
+            console.log(url);
             
             return url;
         },

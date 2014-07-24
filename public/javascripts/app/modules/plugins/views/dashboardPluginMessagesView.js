@@ -19,7 +19,7 @@ define('dashboardPluginMessagesView', function (require) {
                 limit: 5
             });
             self.collection             = new pluginMessageCollection({
-                model: pluginMessageModel
+                models: pluginMessageModel
             });
             
             self.listenTo(self.collection,  'reset',  self.render, self);
