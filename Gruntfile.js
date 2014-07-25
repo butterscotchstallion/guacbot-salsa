@@ -17,7 +17,7 @@ module.exports = function(grunt) {
             },
             css: {
                 files: ['scss/**/*.scss'],
-                tasks: ['sass'],
+                tasks: ['scsslint', 'sass'],
                 options: {
                     spawn: false
                 }
@@ -70,6 +70,17 @@ module.exports = function(grunt) {
                     'dist/contact.html': 'src/contact.html'
                 }
             }
+        },
+        scsslint: {
+            allFiles: [
+              'scss/modules/**/*.scss',
+              'scss/*.scss'
+            ],
+            options: {
+                config        : './config/scss-lint.yml',
+                //reporterOutput: 'scss-lint-report.xml',
+                colorizeOutput: true
+            }
         }
     });
 
@@ -79,6 +90,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     //grunt.loadNpmTasks('grunt-contrib-htmlmin');
     //grunt.loadNpmTasks('grunt-uncss');
+    grunt.loadNpmTasks('grunt-scss-lint');
     
     grunt.registerTask('server', ['express:dev', 'watch:express']);
     grunt.registerTask('watchassets', [

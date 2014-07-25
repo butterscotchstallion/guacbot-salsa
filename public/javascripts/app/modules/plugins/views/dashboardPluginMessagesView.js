@@ -15,11 +15,9 @@ define('dashboardPluginMessagesView', function (require) {
         
         initialize: function() {
             var self = this;
-            self.model                  = new pluginMessageModel({
-                limit: 5
-            });
             self.collection             = new pluginMessageCollection({
-                models: pluginMessageModel
+                model: pluginMessageModel,
+                limit: 5
             });
             
             self.listenTo(self.collection,  'reset',  self.render, self);
@@ -49,7 +47,7 @@ define('dashboardPluginMessagesView', function (require) {
             var tpl = this.template();
             
             $('.dashboard-messages').html(tpl);
-            
+
             this.renderMessages(messages);
             
             return this;
