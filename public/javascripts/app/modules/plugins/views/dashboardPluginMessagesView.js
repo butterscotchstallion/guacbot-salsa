@@ -1,4 +1,8 @@
-
+/**
+ * dashboardPluginMessagesView
+ *
+ */
+"use strict";
 
 define('dashboardPluginMessagesView', function (require) {
     var Backbone                        = require('Backbone');
@@ -13,24 +17,26 @@ define('dashboardPluginMessagesView', function (require) {
     var view                            = Backbone.View.extend({
         template  : template,
         
-        initialize: function() {
-            var self = this;
-            self.collection             = new pluginMessageCollection({
+        initialize: function () {
+            var self        = this;
+            self.collection = new pluginMessageCollection({
                 model: pluginMessageModel,
                 limit: 5
             });
             
-            self.listenTo(self.collection,  'reset',  self.render, self);
+            self.listenTo(self.collection, 'reset', self.render, self);
             
             self.collection.fetch({
                 reset: true
             });
         },
         
-        renderMessages: function (messages) {
+        renderMessages: function () {
             var self = this;
             
-            messages.each(function (model) {
+            $('.message-count').text(self.collection.length);
+            
+            self.collection.each(function (model) {
                 self.addMessage(model);
             });
         },
@@ -40,15 +46,15 @@ define('dashboardPluginMessagesView', function (require) {
                 model: message
             });
             
-            $('.dashboard-messages-table-content').append(view.render().el);
+            $('.dashboard-messages-table-body').append(view.render().el);
         },
         
-        render    : function (messages) {  
+        render    : function () {
             var tpl = this.template();
             
             $('.dashboard-messages').html(tpl);
-
-            this.renderMessages(messages);
+            
+            this.renderMessages();
             
             return this;
         }

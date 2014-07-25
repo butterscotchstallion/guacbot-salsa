@@ -16,7 +16,7 @@ define('pluginView', function (require) {
     var pluginMessageInfoModel      = require('pluginMessageInfoModel');
     var dashboardPluginMessagesView = require('dashboardPluginMessagesView');
     
-    var pluginView = Backbone.View.extend({
+    var pluginView                  = Backbone.View.extend({
         template  : template,
         
         el        : $('.plugins-container'),
@@ -35,18 +35,18 @@ define('pluginView', function (require) {
             self.listenTo(self.pluginMessageInfoModel, 'change', self.renderPluginMessageInfo, self);
             
             self.model.fetch({
-                reset: true,
+                reset  : true,
                 success: function (data, options) {
                     // hide loading message     
                 },
-                error: function (e) {
+                error  : function (e) {
                     console.log(e);
                 }
             }).then(function () {
                 self.pluginMessageInfoModel.fetch({
                     reset: true
                 });
-            });          
+            });
         },
         
         onSaveStatusButtonClicked: function (e) {
@@ -89,7 +89,7 @@ define('pluginView', function (require) {
             
             this.$el.html(tpl);
             
-            // until I figure out weird handlebars parse error
+            // disgusting workaround until I figure out weird handlebars parse error
             $('input[name="enabled"][value="' + model.get('enabled') + '"]').attr('checked', true);
             
             new dashboardPluginMessagesView();  

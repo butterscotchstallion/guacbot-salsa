@@ -12,11 +12,7 @@ define('dashboardPluginMessagesItemView', function (require) {
         
         template  : template,
         
-        initialize: function() {
-        
-        },
-        
-        render    : function() {
+        render    : function () {
             var modelJSON = this.model.toJSON();
             
             // We want to render the messages so let's make up some sweet
@@ -32,13 +28,13 @@ define('dashboardPluginMessagesItemView', function (require) {
             };
             
             var msgTpl      = Handlebars.compile(this.model.get('message'));
-            var compiledMsg = msgTpl(data);            
+            var compiledMsg = msgTpl(data);
             var tpl         = this.template(_.extend({
                 compiledMsg: compiledMsg
             }, modelJSON));
             
             this.$el.html(tpl);
-
+            
             return this;
         }
     });

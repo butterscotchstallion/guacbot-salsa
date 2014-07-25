@@ -16,9 +16,6 @@ define('editView', function (require) {
     var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/edit-sidebar.html');
     var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
     
-    var pluginMessageHeaderTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/plugin-message-header.html');
-    var pluginMessageHeaderTemplateCompiled  = Handlebars.compile(pluginMessageHeaderTemplate);
-    
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
     var relatedMessageItemView   = require('relatedMessageItemView');
@@ -327,27 +324,8 @@ define('editView', function (require) {
         }
     });
     
-    var pluginMessageHeaderView = Backbone.View.extend({
-        template: pluginMessageHeaderTemplateCompiled,
-        
-        initialize: function () {
-            var self        = this;
-            
-            self.model = PluginMessageModel;
-            
-            self.listenTo(self.model, 'change add', self.render, self);
-        },
-        
-        render: function (model) {
-            var tpl       = this.template(model.toJSON());
-            
-            $('.plugin-message-header').html(tpl);
-        }
-    });    
-    
     return {
         editView               : editView,
-        sidebarView            : sidebarView,
-        pluginMessageHeaderView: pluginMessageHeaderView
+        sidebarView            : sidebarView
     };
 });

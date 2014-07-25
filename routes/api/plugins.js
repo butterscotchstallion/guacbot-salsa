@@ -256,19 +256,18 @@ router.get('/:pluginID/messages', function (req, res, next) {
         plugin_id: req.params.pluginID
     });
     
-    if (limit) {
+    if (limit > 0) {
         query.limit(limit);
     }
     
     query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
          .then(function (messages) {
-            res.json(200, {
-                status: "OK",
-                message: null,
-                messages: messages
-            });
-        });
-
+                res.json(200, {
+                    status: "OK",
+                    message: null,
+                    messages: messages
+                });
+         });
 });
 
 // Plugin message info

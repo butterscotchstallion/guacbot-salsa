@@ -4,16 +4,20 @@
  */
 define('pluginMessageCollection', function (require) {
     var Backbone                = require('Backbone');
-    var pluginID                = window.app.pluginID;
+    var pluginID                = parseInt(window.app.pluginID, 10);
     
     var pluginMessageCollection = Backbone.Collection.extend({
-        url       : '/api/v1/plugins/' + pluginID + '/messages/',
+        url       : '/api/v1/plugins/' + pluginID + '/messages',
         
         comparator: "name",
         
         initialize: function (options) {
-            if (options && options.limit) {
-                this.url += '?limit=' + options.limit;
+            if (options) {
+                var limit = parseInt(options.limit, 10);
+                
+                if (limit > 0) {
+                    this.url += '?limit=' + limit;
+                }
             }
         },
         

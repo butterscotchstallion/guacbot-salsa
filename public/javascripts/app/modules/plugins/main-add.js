@@ -18,15 +18,13 @@ require.config({
         common        : "app/modules/common/main",
         
         // models
-        pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",        
+        pluginModel     : "app/modules/plugins/models/pluginModel",        
 
         // collections
-        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
-        editView               : "app/modules/plugins/views/edit",
-        relatedMessageItemView : "app/modules/plugins/views/relatedMessageItemView",
-        pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView"
+        addView         : "app/modules/plugins/views/add",
+        pluginHeaderView: "app/modules/plugins/views/pluginHeaderView"
     },
     shim: {
         bootstrap: {
@@ -42,19 +40,16 @@ require.config({
         underscore: {
             exports: '_'
         },
-        editView: {
+        addView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["editView", "common", "pluginMessageHeaderView"], function (editView, common, pluginMessageHeaderView) {
+require(["common", "addView", "pluginHeaderView"], function (common, addView, pluginHeaderView) {
     $(function () {
-        var views = editView;
-        
-        new views.editView();
-        new views.sidebarView();
-        new pluginMessageHeaderView();
+        new addView();
+        new pluginHeaderView();
     });
 });
 

@@ -153,7 +153,7 @@ describe('plugin messages api', function() {
                       expect(body.message).to.eql(null);
                       expect(body.messages).to.be.an('array');
                       expect(body.messages).to.not.be.empty();
-                      expect(body.messages.length).to.be.greaterThan(1);
+                      expect(body.messages.length).to.be.greaterThan(5);
                       
                       done();
                   });
