@@ -24,7 +24,7 @@ require.config({
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
-        editView               : "app/modules/plugins/views/edit",
+        messageView            : "app/modules/plugins/views/messageView",
         relatedMessageItemView : "app/modules/plugins/views/relatedMessageItemView",
         pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView"
     },
@@ -42,18 +42,21 @@ require.config({
         underscore: {
             exports: '_'
         },
-        editView: {
+        messageView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["editView", "common", "pluginMessageHeaderView"], function (editView, common, pluginMessageHeaderView) {
+require(function (require) {
+    var common                  = require('common');
+    var sidebarView             = require('sidebarView');
+    var messageView             = require('messageView');
+    var pluginMessageHeaderView = require('pluginMessageHeaderView');
+    
     $(function () {
-        var views = editView;
-        
-        new views.editView();
-        new views.sidebarView();
+        new messageView();
+        new sidebarView();
         new pluginMessageHeaderView();
     });
 });
