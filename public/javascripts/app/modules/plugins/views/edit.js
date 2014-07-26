@@ -39,24 +39,35 @@ define('editView', function (require) {
     
     // Container view for the whole page
     var editView = Backbone.View.extend({
-        el            : $('.edit-area'),
+        el               : $('.edit-area'),
         
-        template      : editTemplateCompiled,
+        template         : editTemplateCompiled,
         
-        events        : {
+        events           : {
             'click .recompile-button': 'onRecompileClicked',
             'input .parse-me'        : 'onRecompileClicked',
             'focus .parse-me'        : 'onFocusParseMeField',
             'click .save-message'    : 'onSaveMessageButtonClicked',
             'click .delete-button'   : 'onDeletePluginMessageButtonClicked',
+            'click .add-button'      : 'onAddMessageButtonClicked'
         },
         
         initialize: function () {
             var self        = this;
             self.model      = PluginMessageModel;
             
-            self.listenTo(self.model,      'change remove', self.render, self);
-            self.listenTo(self.model,      'invalid',       self.setMessageErrorState, self);
+            self.listenTo(self.model, 'change remove', self.render,               self);
+            self.listenTo(self.model, 'invalid',       self.setMessageErrorState, self);
+            
+            self.selectedMessageID = parseInt(window.app.pluginMessageID, 10);
+        },
+        
+        onAddMessageButtonClicked: function () {
+            this.selectedMessageID = null;
+            this.model.set('message', "<@{{nick}}> This is a new plugin message");
+            this.model.url = "/api/v1/plugins/" + window.app.pluginID + "/messages";
+            
+            $('.plugin-message-subheader').text('New Message');
         },
         
         onDeletePluginMessageButtonClicked: function (e) {
@@ -80,14 +91,23 @@ define('editView', function (require) {
             self.model.set({
                 message  : $('.message').val().trim(),
                 plugin_id: window.app.pluginID,
-                id       : window.app.pluginMessageID
+                id       : self.selectedMessageID
             })
             .save({
-                success: self.onMessageSavedSuccessfully,
-                fail   : self.onMessageSavedFailure
-            }).then(function () {
-                
+                patch: true
+            }).then(function (data) {
+                if (self.model.isNew()) {
+                    self.onNewMessageSavedSuccessfully(data);
+                } else {
+                    self.onMessageSavedSuccessfully(data);
+                }
             });
+        },
+        
+        onNewMessageSavedSuccessfully: function (data, options) {
+            if (data.id) {
+                window.location = "/plugins/" + window.app.pluginID + "/messages/" + data.id;
+            }
         },
         
         onMessageSavedSuccessfully: function () {
@@ -141,7 +161,7 @@ define('editView', function (require) {
                 message: "Biggie Smalls is da illest",
                 originNick: "Bruce Lee",
                 timeAgo: "2 days ago",
-                line : 1                
+                line : 1
             };
             var stringified      = JSON.stringify(templateObject, null, 4);
             var processedMessage = this.processMessage({
@@ -155,6 +175,8 @@ define('editView', function (require) {
             }, modelJSON));
             
             this.$el.html(tpl);
+            
+            console.log('rendering');
             
             // Render preview
             this.renderPreview({
