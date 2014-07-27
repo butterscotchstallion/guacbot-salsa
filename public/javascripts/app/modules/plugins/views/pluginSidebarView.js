@@ -33,6 +33,10 @@ define('pluginSidebarView', function (require) {
         render  : function () {
             var modelJSON = this.model.toJSON();
             
+            modelJSON = _.extend({
+                id: window.app.pluginID
+            }, modelJSON);
+            
             this.$el.html(this.template(modelJSON));
         }
     });

@@ -22,8 +22,6 @@ define('messageEditView', function (require) {
         $('.message-container').addClass('has-error');
     };
     
-    var PluginMessageModel = new pluginMessageModel();
-    
     var view = Backbone.View.extend({
         el               : $('.edit-area'),
         
@@ -40,7 +38,7 @@ define('messageEditView', function (require) {
         
         initialize: function () {
             var self        = this;
-            self.model      = PluginMessageModel;
+            self.model      = new pluginMessageModel();
             
             self.listenTo(self.model, 'change remove', self.render,               self);
             self.listenTo(self.model, 'invalid',       self.setMessageErrorState, self);
@@ -48,7 +46,7 @@ define('messageEditView', function (require) {
             self.selectedMessageID = parseInt(window.app.pluginMessageID, 10);
             
             // Need the template to load in order to access elements present there
-            PluginMessageModel.fetch({
+            self.model.fetch({
                 reset  : true,
                 success: function (data, options) {
                     $(".loading").hide();
@@ -71,7 +69,7 @@ define('messageEditView', function (require) {
             
             var pluginID = window.app.pluginID;
             
-            PluginMessageModel.destroy()
+            this.model.destroy()
                       .then(function () {
                         btn.button('reset');
                         
@@ -170,7 +168,7 @@ define('messageEditView', function (require) {
             
             this.$el.html(tpl);
             
-            //console.log('rendering');
+            //console.log(modelJSON);
             
             // Render preview
             this.renderPreview({

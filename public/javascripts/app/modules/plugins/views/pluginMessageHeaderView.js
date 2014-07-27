@@ -26,9 +26,7 @@ define('pluginMessageHeaderView', function (require) {
         
         render    : function (model) {
             var tpl       = this.template(model.toJSON());
-            
-            console.log(this.$el.length);
-            
+
             this.$el.html(tpl);
         }
     });    
