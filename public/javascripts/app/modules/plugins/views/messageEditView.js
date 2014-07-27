@@ -46,6 +46,14 @@ define('messageEditView', function (require) {
             self.listenTo(self.model, 'invalid',       self.setMessageErrorState, self);
             
             self.selectedMessageID = parseInt(window.app.pluginMessageID, 10);
+            
+            // Need the template to load in order to access elements present there
+            PluginMessageModel.fetch({
+                reset  : true,
+                success: function (data, options) {
+                    $(".loading").hide();
+                }
+            });    
         },
         
         onAddMessageButtonClicked: function () {

@@ -14,9 +14,9 @@ define('pluginSidebarView', function (require) {
     var pluginMessageInfoModel   = require('pluginMessageInfoModel');
     
     var view = Backbone.View.extend({
-        el      : $('.plugin-sidebar'),
+        el        : $('.plugin-sidebar'),
         
-        template: sidebarTemplateCompiled,
+        template  : sidebarTemplateCompiled,
         
         initialize: function () {
             var self = this;
