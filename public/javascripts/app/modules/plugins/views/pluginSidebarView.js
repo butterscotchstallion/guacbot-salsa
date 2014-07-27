@@ -9,9 +9,9 @@ define('pluginSidebarView', function (require) {
     var Backbone                 = require('Backbone');
     var $                        = require('jquery');
     var _                        = require('underscore');
-    var IRCColorParser           = require('IRCColorParser');
     var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/plugin-sidebar.html');
     var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
+    var pluginMessageInfoModel   = require('pluginMessageInfoModel');
     
     var view = Backbone.View.extend({
         el      : $('.plugin-sidebar'),
@@ -19,11 +19,21 @@ define('pluginSidebarView', function (require) {
         template: sidebarTemplateCompiled,
         
         initialize: function () {
-            this.render();
+            var self = this;
+            
+            self.model = new pluginMessageInfoModel();
+            
+            self.listenTo(self.model, 'change remove', self.render, self);
+            
+            console.log('sidebar init');
+            
+            self.model.fetch();
         },
         
         render  : function () {
-            this.$el.html(this.template());
+            var modelJSON = this.model.toJSON();
+            
+            this.$el.html(this.template(modelJSON));
         }
     });
     

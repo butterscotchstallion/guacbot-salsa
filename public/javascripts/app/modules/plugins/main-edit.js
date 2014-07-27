@@ -19,14 +19,16 @@ require.config({
         
         // models
         pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",        
-
+        pluginMessageInfoModel : "app/modules/plugins/models/pluginMessageInfoModel",        
+        
         // collections
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
         messageView            : "app/modules/plugins/views/messageView",
         relatedMessageItemView : "app/modules/plugins/views/relatedMessageItemView",
-        pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView"
+        pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView",
+        pluginSidebarView      : "app/modules/plugins/views/pluginSidebarView",
     },
     shim: {
         bootstrap: {
@@ -48,16 +50,11 @@ require.config({
     }
 });
 
-require(function (require) {
-    var common                  = require('common');
-    var sidebarView             = require('sidebarView');
-    var messageView             = require('messageView');
-    var pluginMessageHeaderView = require('pluginMessageHeaderView');
-    
+require(['common', 'messageView'], function (common, messageView) {
     $(function () {
+        console.log('edit main');
+        
         new messageView();
-        new sidebarView();
-        new pluginMessageHeaderView();
     });
 });
 

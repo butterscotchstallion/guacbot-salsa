@@ -13,12 +13,13 @@ define('messageView', function (require) {
     var editTemplate             = require('text!/javascripts/app/modules/plugins/templates/messages/edit.html');
     var editTemplateCompiled     = Handlebars.compile(editTemplate);
     
-    var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/edit-sidebar.html');
-    var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
+    //var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/messages/edit-sidebar.html');
+    //var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
     
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
-    var relatedMessageItemView   = require('relatedMessageItemView');
+    var pluginSidebarView        = require('pluginSidebarView');
+    var pluginMessageHeaderView  = require('pluginMessageHeaderView');
 
     var PluginMessageModel      = new pluginMessageModel();
     var PluginMessageCollection = new pluginMessageCollection();
@@ -28,6 +29,17 @@ define('messageView', function (require) {
         reset  : true,
         success: function (data, options) {
             $(".loading").hide();
+        }
+    });
+    
+    var view = Backbone.View.extend({
+        initialize: function () {            
+            this.render();
+        },
+        
+        render: function () {
+            new pluginSidebarView();
+            new pluginMessageHeaderView();
         }
     });
     
