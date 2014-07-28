@@ -5,20 +5,26 @@
 define('addView', function (require) {
     "use strict";
     
-    var Handlebars               = require('Handlebars');
-    var Backbone                 = require('Backbone');
-    var $                        = require('jquery');
-    var _                        = require('underscore');
-    var addTemplate             = require('text!/javascripts/app/modules/plugins/templates/messages/add.html');
-    var addTemplateCompiled     = Handlebars.compile(addTemplate);
-
-    var addView = Backbone.View.extend({
+    var Handlebars          = require('Handlebars');
+    var Backbone            = require('Backbone');
+    var $                   = require('jquery');
+    var _                   = require('underscore');
+    var addTemplate         = require('text!/javascripts/app/modules/plugins/templates/messages/add.html');
+    var addTemplateCompiled = Handlebars.compile(addTemplate);
+    
+    var addView             = Backbone.View.extend({
         el        : $('.add-container'),
         
         template  : addTemplateCompiled,
         
         initialize: function () {
             this.render();
+        },
+        
+        onNewMessageSavedSuccessfully: function (data, options) {
+            if (data.id) {
+                window.location = "/plugins/" + window.app.pluginID + "/messages/" + data.id;
+            }
         },
         
         render   : function () {

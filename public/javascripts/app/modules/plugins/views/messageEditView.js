@@ -12,7 +12,7 @@ define('messageEditView', function (require) {
     var IRCColorParser           = require('IRCColorParser');
     var editTemplate             = require('text!/javascripts/app/modules/plugins/templates/messages/edit.html');
     var editTemplateCompiled     = Handlebars.compile(editTemplate);
-
+    
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
     
@@ -20,7 +20,7 @@ define('messageEditView', function (require) {
         $('.parse-error-container').removeClass('hidden');
         $('.template-object-container').addClass('has-error');
         $('.message-container').addClass('has-error');
-    };
+    }
     
     var view = Backbone.View.extend({
         el               : $('.edit-area'),
@@ -36,14 +36,12 @@ define('messageEditView', function (require) {
             'click .add-button'      : 'onAddMessageButtonClicked'
         },
         
-        initialize: function () {
+        initialize: function (options) {
             var self        = this;
-            self.model      = new pluginMessageModel();
+            self.model      = (options && options.model) || new pluginMessageModel();
             
             self.listenTo(self.model, 'change remove', self.render,               self);
             self.listenTo(self.model, 'invalid',       self.setMessageErrorState, self);
-            
-            self.selectedMessageID = parseInt(window.app.pluginMessageID, 10);
             
             // Need the template to load in order to access elements present there
             self.model.fetch({
@@ -52,14 +50,6 @@ define('messageEditView', function (require) {
                     $(".loading").hide();
                 }
             });    
-        },
-        
-        onAddMessageButtonClicked: function () {
-            this.selectedMessageID = null;
-            this.model.set('message', "<@{{nick}}> This is a new plugin message");
-            this.model.url = "/api/v1/plugins/" + window.app.pluginID + "/messages";
-            
-            $('.plugin-message-subheader').text('New Message');
         },
         
         onDeletePluginMessageButtonClicked: function (e) {
@@ -83,23 +73,13 @@ define('messageEditView', function (require) {
             self.model.set({
                 message  : $('.message').val().trim(),
                 plugin_id: window.app.pluginID,
-                id       : self.selectedMessageID
+                id       : window.app.pluginMessageID
             })
             .save({
                 patch: true
             }).then(function (data) {
-                if (self.model.isNew()) {
-                    self.onNewMessageSavedSuccessfully(data);
-                } else {
-                    self.onMessageSavedSuccessfully(data);
-                }
+                self.onMessageSavedSuccessfully(data);                
             });
-        },
-        
-        onNewMessageSavedSuccessfully: function (data, options) {
-            if (data.id) {
-                window.location = "/plugins/" + window.app.pluginID + "/messages/" + data.id;
-            }
         },
         
         onMessageSavedSuccessfully: function () {
@@ -168,7 +148,7 @@ define('messageEditView', function (require) {
             
             this.$el.html(tpl);
             
-            //console.log(modelJSON);
+            console.log(modelJSON);
             
             // Render preview
             this.renderPreview({

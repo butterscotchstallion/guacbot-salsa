@@ -20,11 +20,15 @@ require.config({
         // models
         pluginModel     : "app/modules/plugins/models/pluginModel",        
 
+        pluginMessageModel : "app/modules/plugins/models/pluginMessageModel",        
+        
         // collections
+        pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
         
         // views
         addView         : "app/modules/plugins/views/add",
-        pluginHeaderView: "app/modules/plugins/views/pluginHeaderView"
+        pluginHeaderView: "app/modules/plugins/views/pluginHeaderView",
+        messageEditView: "app/modules/plugins/views/messageEditView"
     },
     shim: {
         bootstrap: {
@@ -46,9 +50,20 @@ require.config({
     }
 });
 
-require(["common", "addView", "pluginHeaderView"], function (common, addView, pluginHeaderView) {
+require(["common", "messageEditView", "pluginHeaderView"], function (common, messageEditView, pluginHeaderView) {
     $(function () {
-        new addView();
+        var newMessageModel = Backbone.Model.extend({
+            attributes: {
+                name       : "ok",
+                message    : "Hello, world!",
+                compiledMsg: "Hello, world!"
+            }
+        });
+        
+        new messageEditView({
+            model: new newMessageModel()
+        });
+        
         new pluginHeaderView();
     });
 });
