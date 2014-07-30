@@ -10,6 +10,50 @@ var fs         = require('fs');
 var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
+describe('logger api', function() {
+    it('gets information about a nick filtered by channel', function (done) {
+        superagent.get(BASE_URL + 'logger/nick/sploosh?channel=#dorkd')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.info).to.be.an('object');
+                      expect(body.info.nick).to.be.ok();
+                      expect(body.info.ts).to.be.ok();
+                      expect(body.info.channel).to.eql('#dorkd');
+                      expect(body.info.host).to.be.ok();
+                      
+                      done();
+                  });
+    });
+    
+    it('gets information about a nick', function (done) {
+        superagent.get(BASE_URL + 'logger/nick/sploosh')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.info).to.be.an('object');
+                      expect(body.info.nick).to.be.ok();
+                      expect(body.info.ts).to.be.ok();
+                      expect(body.info.channel).to.be.ok();
+                      expect(body.info.host).to.be.ok();
+                      
+                      done();
+                  });
+    });
+});
+
 describe('plugins api', function() {
     var pluginID;
     
