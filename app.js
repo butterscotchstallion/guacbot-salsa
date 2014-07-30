@@ -42,7 +42,7 @@ app.use('/', require('./routes/index'));
 
 // API
 app.use('/api/v1/plugins', require('./routes/api/plugins'));
-app.use('/api/v1/logger',  require('./routes/api/logger'));
+app.use('/api/v1/logs',    require('./routes/api/logger'));
 
 app.use('/plugins',        require('./routes/plugins'));
 

@@ -10,37 +10,39 @@ var logger        = require('../../models/logger');
 var Bookshelf     = app.get('bookshelf');
 var url           = require('url');
 
-// Information about a single nick
-router.get('/nick/:nick', function (req, res, next) {
+// Messages!
+router.get('/', function (req, res, next) {
     var qb       = Bookshelf.knex('logs');
     var urlParts = url.parse(req.url, true).query;  
+    var channel  = urlParts.channel;
+    var nick     = urlParts.nick;
+    var limit    = parseInt(urlParts.limit, 10) || 1;
     
-    qb.where({ nick: req.params.nick });
-    
-    var channel = urlParts.channel;
-    
-    console.log('urlparts: ', urlParts);
-    
-    if (channel && channel.length > 0) {
-        qb.where({
-            channel: channel
-        });
+    if (nick && nick.length > 0) {
+        qb.where({ nick: nick });
     }
     
-    qb.limit(1)
-      .orderBy('ts', 'desc')
-      .then(function (info) {
+    if (channel && channel.length > 0) {
+        qb.where({ channel: '#' + channel });
+    }
+    
+    if (limit && limit > 0) {
+        qb.limit(limit);
+    }
+    
+    qb.orderBy('ts', 'desc')
+        .then(function (messages) {
             res.json(200, {
-                status : "OK",
-                info   : info[0]
+                status  : "OK",
+                messages: messages
             });
-      })
-      .catch(function (error) {
-        res.json(200, {
-            status: "ERROR",
-            message: error
+        })
+        .catch(function (error) {
+            res.json(200, {
+                status: "ERROR",
+                message: error
+            });
         });
-      });
 });
 
 module.exports = router;
