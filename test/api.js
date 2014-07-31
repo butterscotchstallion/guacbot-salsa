@@ -11,8 +11,33 @@ var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
 describe('logger api', function() {
+    it('searches for a message', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/?nick=sploosh&channel=dorkd&limit=1&query=lol')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.messages).to.be.an('object');
+                      expect(body.messages.length).to.eql(1);
+                      expect(body.messages[0].nick).to.be.ok();
+                      expect(body.messages[0].ts).to.be.ok();
+                      expect(body.messages[0].channel.toLowerCase()).to.eql('#dorkd');
+                      expect(body.messages[0].host).to.be.ok();
+                      expect(body.messages[0].message.indexOf('lol')).not.to.eql(-1);
+                      
+                      done();
+                  });
+    });
+    
     it('gets a message', function (done) {
-        superagent.get(BASE_URL + 'logs/?nick=sploosh&channel=dorkd&limit=1')
+        superagent.get(BASE_URL + 'logs/messages/?nick=sploosh&channel=dorkd&limit=1')
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
@@ -34,7 +59,7 @@ describe('logger api', function() {
     });
     
     it('gets information about a nick', function (done) {
-        superagent.get(BASE_URL + 'logs/?nick=sploosh&limit=1')
+        superagent.get(BASE_URL + 'logs/messages/?nick=sploosh&limit=1')
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
