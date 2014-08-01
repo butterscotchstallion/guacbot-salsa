@@ -15,6 +15,7 @@ define('pluginView', function (require) {
     var pluginMessageModel          = require('pluginMessageModel');
     var pluginMessageInfoModel      = require('pluginMessageInfoModel');
     var dashboardPluginMessagesView = require('dashboardPluginMessagesView');
+    var pluginSidebarView           = require('pluginSidebarView');
     
     var pluginView                  = Backbone.View.extend({
         template  : template,
@@ -93,6 +94,7 @@ define('pluginView', function (require) {
             $('input[name="enabled"][value="' + model.get('enabled') + '"]').attr('checked', true);
             
             new dashboardPluginMessagesView();  
+            new pluginSidebarView();
             
             return this;
         },

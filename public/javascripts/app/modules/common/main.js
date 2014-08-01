@@ -49,14 +49,10 @@ require(["jquery", "pluginsMenuView"], function ($, pluginsMenuView) {
         new pluginsMenuView();
         
         $(document).ajaxStart(function() {
-            console.log('ajax start');
-            
             $('.loading-spinner').removeClass('hidden');
         });
         
         $(document).ajaxStop(function() {
-            console.log('ajax stop');
-            
             $('.loading-spinner').addClass('hidden');
         });
     });

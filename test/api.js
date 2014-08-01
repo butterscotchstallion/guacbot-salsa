@@ -11,8 +11,8 @@ var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
 describe('logger api', function() {
-    it('searches for a message', function (done) {
-        superagent.get(BASE_URL + 'logs/messages/?nick=sploosh&channel=dorkd&limit=1&query=lol')
+    it('counts messages filtered by date', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count?month=07')
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
@@ -20,6 +20,102 @@ describe('logger api', function() {
                       var body = res.body;
                       
                       console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      expect(body.month).to.eql(7);
+                      
+                      done();
+                  });
+    });
+    
+    it('counts messages filtered by channel and nick', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count?channel=dorkd&nick=sploosh')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      expect(body.channel.toLowerCase()).to.eql('#dorkd');
+                      expect(body.nick.toLowerCase()).to.eql('sploosh');
+                      
+                      done();
+                  });
+    });
+    
+    it('counts messages filtered by channel', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count?channel=dorkd')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      expect(body.channel.toLowerCase()).to.eql('#dorkd');
+                      
+                      done();
+                  });
+    });
+    
+    it('counts messages filtered by nick', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count?nick=sploosh')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      expect(body.nick.toLowerCase()).to.eql('sploosh');
+                      
+                      done();
+                  });
+    });
+    
+    it('counts messages', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      
+                      done();
+                  });
+    });
+    
+    it('searches for a message', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/?nick=sploosh&channel=dorkd&limit=1&query=lol')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();

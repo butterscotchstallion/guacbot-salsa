@@ -28,7 +28,8 @@ require.config({
         // views
         pluginView                     : "app/modules/plugins/views/plugin",
         dashboardPluginMessagesView    : "app/modules/plugins/views/dashboardPluginMessagesView",
-        dashboardPluginMessagesItemView: "app/modules/plugins/views/dashboardPluginMessagesItemView"
+        dashboardPluginMessagesItemView: "app/modules/plugins/views/dashboardPluginMessagesItemView",
+        pluginSidebarView              : "app/modules/plugins/views/pluginSidebarView"
     },
     shim: {
         bootstrap: {
