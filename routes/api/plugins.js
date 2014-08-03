@@ -272,14 +272,14 @@ router.get('/:pluginID/messages', function (req, res, next) {
 
 // Plugin message info
 router.get('/:pluginID/messages/info', function (req, res, next) {
-    Bookshelf.knex('plugin_messages')   
+    Bookshelf.knex('plugin_messages')
              .where({
                     plugin_id: req.params.pluginID                    
                  })
                  .count('* AS messageCount')
                  .then(function (result) {
                     var info = result[0];
-                    
+
                     if (info) {
                         res.json(200, {
                             status : "OK",

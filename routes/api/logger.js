@@ -12,11 +12,12 @@ var Bookshelf     = app.get('bookshelf');
 var url           = require('url');
 
 router.get('/messages/count', function (req, res, next) {
-    var qb       = Bookshelf.knex('logs');
-    var urlParts = url.parse(req.url, true).query;
-    var nick     = urlParts.nick;
-    var channel  = urlParts.channel;
-    var month    = urlParts.month;
+    var qb        = Bookshelf.knex('logs');
+    var urlParts  = url.parse(req.url, true).query;
+    var nick      = urlParts.nick;
+    var channel   = urlParts.channel;
+    var startDate = urlParts.startDate;
+    var endDate   = urlParts.endDate;
     var result   = {
         status: "OK"
     };
@@ -41,18 +42,19 @@ router.get('/messages/count', function (req, res, next) {
         result['channel'] = hashChannel;
     }
     
-    if (month) {
-        var curMonth = moment().month(month);        
-        var start    = moment(curMonth).format(moment.ISO_8601);
-        var end      = moment(curMonth).add(1, 'month').format(moment.ISO_8601);
+    if (startDate) {      
+        qb.where('ts', '>=', startDate);
         
-        //qb.whereBetween('ts', [start, end]);
-        qb.where();
-        
-        result['month'] = month;
+        result['startDate'] = startDate;
     }
     
-    qb.debug();
+    if (endDate) {        
+        qb.where('ts', '<=', endDate);
+        
+        result['endDate'] = endDate;
+    }
+    
+    //qb.debug();
     
     qb.then(function (countResult) {
         res.json(200, _.extend({

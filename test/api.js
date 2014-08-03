@@ -11,21 +11,23 @@ var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
 describe('logger api', function() {
+    var startDate = "2013-01-01 00:00:00";
+    var endDate   = "2014-08-02 00:00:00";
+    
     it('counts messages filtered by date', function (done) {
-        superagent.get(BASE_URL + 'logs/messages/count?month=07')
+        superagent.get(BASE_URL + 'logs/messages/count?startDate='+startDate+'&endDate='+endDate)
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
                       
                       var body = res.body;
                       
-                      console.log(body);
-                      
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
                       expect(body.total).to.be.a('number');
-                      expect(body.month).to.eql(7);
+                      expect(body.startDate).to.eql(startDate);
+                      expect(body.endDate).to.eql(endDate);
                       
                       done();
                   });
