@@ -35,15 +35,9 @@ define('pluginView', function (require) {
             self.listenTo(self.model,                  'change', self.renderAll,               self);
             self.listenTo(self.pluginMessageInfoModel, 'change', self.renderPluginMessageInfo, self);
             
-            self.model.fetch({
-                reset  : true,
-                success: function (data, options) {
-                    // hide loading message     
-                },
-                error  : function (e) {
-                    console.log(e);
-                }
-            }).then(function () {
+            self.model
+                .fetch()
+                .then(function () {
                 self.pluginMessageInfoModel.fetch({
                     reset: true
                 });

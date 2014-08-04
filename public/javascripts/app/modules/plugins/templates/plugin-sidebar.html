@@ -4,6 +4,10 @@
     <a href="/plugins/{{id}}/messages" 
        class="list-group-item message-count-link"><span class="glyphicon glyphicon-envelope"></span> Messages <span class="badge message-count">{{messageCount}}</span></a>
 
+    {{#if isMetaPage}}
+        <a href="/plugins/{{id}}/meta" class="list-group-item"><span class="glyphicon glyphicon-lightning"></span> Meta</a>
+    {{/if}}
+    
     <a href="#" class="list-group-item">Porta ac consectetur ac</a>
     <a href="#" class="list-group-item">Vestibulum at eros</a>
 </div>

@@ -6,11 +6,32 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/:pluginID', function(req, res) {
+    var isMetaAvailable = false;
+    var pluginID        = req.params.pluginID;
+    var plugins         = {
+        logger: 1
+    };
+    
+    var pluginsWithMeta = [
+        plugins.logger
+    ];
+    
+    isMetaAvailable = pluginsWithMeta.indexOf(pluginID) !== -1;
+    
     res.render('plugins/index', { 
         title               : 'Plugin',
         isPluginsPage       : true,
         isPluginMessagesPage: true,
-        pluginID            : req.params.pluginID
+        isMetaAvailable     : isMetaAvailable,
+        pluginID            : pluginID
+    });
+});
+
+router.get('/:pluginID/meta', function(req, res) {
+    res.render('plugins/meta/index', { 
+        title     : 'Plugin :: Meta',
+        isMetaPage: true,
+        pluginID  : req.params.pluginID
     });
 });
 

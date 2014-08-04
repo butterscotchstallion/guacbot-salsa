@@ -18,6 +18,7 @@ router.get('/messages/count', function (req, res, next) {
     var channel   = urlParts.channel;
     var startDate = urlParts.startDate;
     var endDate   = urlParts.endDate;
+    var query     = urlParts.query;
     var result   = {
         status: "OK"
     };
@@ -52,6 +53,12 @@ router.get('/messages/count', function (req, res, next) {
         qb.where('ts', '<=', endDate);
         
         result['endDate'] = endDate;
+    }
+    
+    if (query) {
+        qb.where('message', 'LIKE', query);
+        
+        result['query'] = query;
     }
     
     //qb.debug();

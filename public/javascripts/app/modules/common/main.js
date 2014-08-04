@@ -13,6 +13,7 @@ require.config({
         Backbone      : "lib/backbone.min",
         text          : "lib/text",
         underscore    : "lib/underscore.min",
+        typeahead     : "lib/typeahead",
         
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
@@ -22,7 +23,8 @@ require.config({
         
         // views
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
-        pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem"
+        pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
+        menuSearchView     : "app/modules/common/views/menuSearchView"
     },
     shim: {
         bootstrap: {
@@ -40,6 +42,9 @@ require.config({
         },
         pluginsMenuView: {
             deps: ['Backbone', 'bootstrap']
+        },
+        typeahead: {
+            deps: ['bootstrap']
         }
     }
 });

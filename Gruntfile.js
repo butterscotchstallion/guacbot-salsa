@@ -9,7 +9,10 @@ module.exports = function(grunt) {
         },
         watch: {
             express: {
-                files:  [ 'Gruntfile.js', 'app.js', 'routes/*.js' ],
+                files:  [ 'Gruntfile.js',   
+                          'app.js', 
+                          'routes/**/*.js',
+                          'test/**/*.js'],
                 tasks:  [ 'express:dev' ],
                 options: {
                     spawn: false

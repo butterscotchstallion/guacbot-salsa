@@ -9,6 +9,7 @@ define('pluginsMenuView', function (require) {
     var pluginsCollection   = require('pluginsCollection');
     var pluginsModel        = require('pluginsModel');
     var pluginsMenuItemView = require('pluginsMenuItemView');
+    var menuSearchView      = require('menuSearchView');
     
     var pluginsMenuView = Backbone.View.extend({
         initialize: function() {
@@ -20,8 +21,7 @@ define('pluginsMenuView', function (require) {
             this.listenTo(this.collection, 'reset', this.addPlugins, this);
             
             this.collection.fetch({
-                reset: true,
-                
+                reset  : true,
                 success: function () {
                     $('.plugin-count').removeClass('hidden')
                                       .text(self.collection.length);
@@ -43,11 +43,14 @@ define('pluginsMenuView', function (require) {
             self.collection.each(function (message) {
                 self.addPlugin(message);
             });
+            
+            self.render();
         },
         
         render    : function() {
-
-        
+            new menuSearchView({
+                plugins: this.collection.toJSON()
+            });
         }
     });
     

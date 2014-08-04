@@ -41,10 +41,11 @@ app.set('bookshelf', bookshelf);
 app.use('/', require('./routes/index'));
 
 // API
-app.use('/api/v1/plugins', require('./routes/api/plugins'));
-app.use('/api/v1/logs',    require('./routes/api/logger'));
+app.use('/api/v1/plugins',      require('./routes/api/plugins'));
+app.use('/api/v1/logs',         require('./routes/api/logger'));
+app.use('/api/v1/autocomplete', require('./routes/api/autocomplete'));
 
-app.use('/plugins',        require('./routes/plugins'));
+app.use('/plugins',             require('./routes/plugins'));
 
 process.on('error', function (e) {
     console.log(e.stack);
@@ -65,7 +66,7 @@ if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         
-        console.dir(err);
+        console.log('500: ', err);
         
         res.render('error', {
             message: err.message,

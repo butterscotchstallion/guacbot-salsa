@@ -10,9 +10,52 @@ var fs         = require('fs');
 var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
+describe('autocomplete api', function() {
+    var query = "squire";
+    
+    it('autocompletes plugin names', function (done) {
+        superagent.get(BASE_URL + 'autocomplete/plugins?query=' + query)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.plugins).to.be.an('object');
+                      expect(body.plugins.length).to.be.greaterThan(0);
+                      
+                      done();
+                  });
+    });
+});
+
 describe('logger api', function() {
-    var startDate = "2013-01-01 00:00:00";
+    var startDate = "2014-07-01 00:00:00";
     var endDate   = "2014-08-02 00:00:00";
+    var query     = "chipotle";
+    
+    it('counts messages filtered by search query', function (done) {
+        superagent.get(BASE_URL + 'logs/messages/count?query=' + query)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.total).to.be.a('number');
+                      expect(body.query).to.eql(query);
+                      
+                      done();
+                  });
+    });
     
     it('counts messages filtered by date', function (done) {
         superagent.get(BASE_URL + 'logs/messages/count?startDate='+startDate+'&endDate='+endDate)
@@ -41,8 +84,6 @@ describe('logger api', function() {
                       
                       var body = res.body;
                       
-                      console.log(body);
-                      
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
@@ -62,8 +103,6 @@ describe('logger api', function() {
                       
                       var body = res.body;
                       
-                      console.log(body);
-                      
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
@@ -81,8 +120,6 @@ describe('logger api', function() {
                       expect(res.status).to.eql(200);
                       
                       var body = res.body;
-                      
-                      console.log(body);
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
@@ -205,14 +242,15 @@ describe('plugins api', function() {
         superagent.post(BASE_URL + 'plugins')                  
                   .send({
                     name    : "test plugin",
-                    filename: "test-plugin"
+                    filename: "test-plugin",
+                    enabled : 0
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(201);
                       
                       var body = res.body;
-
+                      
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
