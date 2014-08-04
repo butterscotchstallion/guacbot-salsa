@@ -8,7 +8,7 @@ var _             = require('underscore');
 var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var logger        = require('../../models/logger');
-var Bookshelf     = app.get('bookshelf');
+var Bookshelf     = require('../../models/index');
 var url           = require('url');
 
 router.get('/messages/count', function (req, res, next) {

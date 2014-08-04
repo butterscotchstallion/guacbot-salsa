@@ -40,11 +40,15 @@ define('menuSearchView', function (require) {
                     return filename;
                 },
                 
-                displayKey: 'name',
-                hint      : true
-            })
-            .on('typeahead:selected', function ($e,  datum) {
+                displayKey     : 'name',
+                hint           : true,
+                items          : 10
+                
+            });
+            
+            selector.on('typeahead:selected typeahead:autocompleted', function ($e,  datum) {
                 console.log('ayo:', datum);
+                debugger;
             });
         },
         

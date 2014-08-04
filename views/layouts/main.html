@@ -38,7 +38,7 @@
                 <ul class="nav navbar-nav">
                     <li {{#if isHomepage}}class="active"{{/if}}><a href="/">Home</a></li>
             
-                    <li class="dropdown">
+                    <li class="dropdown{{#if isPluginsPage}} active{{/if}}">
                         <a href="#" 
                            class="dropdown-toggle" 
                            data-toggle="dropdown">Plugins <span class="badge plugin-count hidden">0</span> <span class="caret"></span></a>
@@ -53,6 +53,8 @@
                     <div class="form-group">
                         <div class="ac-wrapper">
                             <input type="text" 
+                                   autocomplete="off"
+                                   name="pluginID"
                                    class="form-control menu-autocomplete" 
                                    placeholder="Search">
                         </div>

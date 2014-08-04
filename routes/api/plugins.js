@@ -7,7 +7,7 @@ var moment        = require('moment');
 var router        = express.Router();
 var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
-var Bookshelf     = app.get('bookshelf');
+var Bookshelf     = require('../../models/index');
 var url           = require('url');
 
 // All plugins

@@ -4,7 +4,7 @@
  */
 "use strict";
 var Checkit       = require('checkit');
-var bookshelf     = app.get('bookshelf');
+var bookshelf     = require('./index');
 var moment        = require('moment');
 var checkit       = new Checkit({
     name    : ['required'],

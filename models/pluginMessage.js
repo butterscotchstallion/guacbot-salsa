@@ -5,7 +5,7 @@
 "use strict";
 
 var Checkit       = require('checkit');
-var bookshelf     = app.get('bookshelf');
+var bookshelf     = require('./index');
 var plugin        = require('../models/plugin'); 
 
 var Plugin        = new plugin();

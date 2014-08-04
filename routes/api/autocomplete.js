@@ -7,7 +7,7 @@ var moment        = require('moment');
 var _             = require('underscore');
 var router        = express.Router();
 var plugin        = require('../../models/plugin');
-var Bookshelf     = app.get('bookshelf');
+var Bookshelf     = require('../../models/index');
 var url           = require('url');
 
 router.get('/plugins', function (req, res, next) {
