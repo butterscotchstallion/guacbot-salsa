@@ -52,10 +52,8 @@ router.get('/:pluginID', function (req, res, next) {
 
 // Create plugin
 router.post('/', function (req, res, next) {
-    var pluginID = req.param('pluginID');
     var filename = req.param('filename');
-    var name     = req.param('name');
-    
+    var name     = req.param('name');    
     var model    = new plugin();        
 
     model.save({

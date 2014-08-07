@@ -32,6 +32,7 @@ app.use('/',                    require('./routes/index'));
 app.use('/api/v1/plugins',      require('./routes/api/plugins'));
 app.use('/api/v1/logs',         require('./routes/api/logger'));
 app.use('/api/v1/autocomplete', require('./routes/api/autocomplete'));
+app.use('/api/v1/notes',        require('./routes/api/note'));
 
 app.use('/plugins',             require('./routes/plugins'));
 

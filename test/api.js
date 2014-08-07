@@ -10,6 +10,117 @@ var fs         = require('fs');
 var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
+describe('note api', function() {
+    it('gets a list of filtered notes', function (done) {
+        var origin  = 'chillulum';
+        var dest    = 'n';
+        var channel = 'guacamole';
+        
+        superagent.get(BASE_URL + 'notes?originNick='+origin+'&dest_nick='+dest+'&channel='+channel)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.notes).to.be.an('object');
+                      
+                      for (var j = 0; j < body.notes.length; j++) {
+                        expect(body.notes[j].origin_nick).to.eql(origin);
+                        expect(body.notes[j].dest_nick).to.eql(dest);
+                        expect(body.notes[j].channel).to.eql('#' + channel);
+                      }
+                      
+                      done();
+                  });
+    });
+    
+    it('gets a list of notes', function (done) {
+        superagent.get(BASE_URL + 'notes')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.notes).to.be.an('object');
+                      
+                      done();
+                  });
+    });
+    
+    it('gets a list of notes limit 1', function (done) {
+        superagent.get(BASE_URL + 'notes?limit=1')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.notes).to.be.an('object');
+                      expect(body.notes.length).to.eql(1);
+                      expect(body.limit).to.eql(1);
+                      
+                      done();
+                  });
+    });
+    
+    it('gets a specific note', function (done) {
+        superagent.get(BASE_URL + 'notes/40')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.note).to.be.an('object');
+                      expect(body.note.id).to.eql(40);
+                      expect(body.note.origin_nick).to.be.ok();
+                      expect(body.note.dest_nick).to.be.ok();
+                      expect(body.note.message).to.be.ok();
+                      expect(body.note.channel).to.be.ok();
+                      
+                      done();
+                  });
+    });
+    
+    it('creates a note', function (done) {
+        superagent.post(BASE_URL + 'notes')
+                  .send({
+                    originNick: "brother muzzone",
+                    destNick  : "omar",
+                    message   : "I see you favor a .45",
+                    channel   : "#baltimore"
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(201);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.id).to.be.ok();
+                      
+                      done();
+                  });
+    });
+});
+
+
 describe('autocomplete api', function() {
     var query = "squire";
     
@@ -20,8 +131,6 @@ describe('autocomplete api', function() {
                       expect(res.status).to.eql(200);
                       
                       var body = res.body;
-                      
-                      console.log(body);
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
