@@ -11,6 +11,8 @@ var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL   = config.baseURL;
 
 describe('note api', function() {
+    var id;
+    
     it('gets a list of filtered notes', function (done) {
         var origin  = 'chillulum';
         var dest    = 'n';
@@ -74,23 +76,17 @@ describe('note api', function() {
                   });
     });
     
-    it('gets a specific note', function (done) {
-        superagent.get(BASE_URL + 'notes/40')
+    it('fails to get a non-existent note', function (done) {
+        superagent.get(BASE_URL + 'notes/lol')
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
-                      expect(res.status).to.eql(200);
+                      expect(res.status).to.eql(404);
                       
                       var body = res.body;
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
-                      expect(body.status).to.eql("OK");
-                      expect(body.note).to.be.an('object');
-                      expect(body.note.id).to.eql(40);
-                      expect(body.note.origin_nick).to.be.ok();
-                      expect(body.note.dest_nick).to.be.ok();
-                      expect(body.note.message).to.be.ok();
-                      expect(body.note.channel).to.be.ok();
+                      expect(body.status).to.eql("ERROR");
                       
                       done();
                   });
@@ -115,11 +111,68 @@ describe('note api', function() {
                       expect(body.status).to.eql("OK");
                       expect(body.id).to.be.ok();
                       
+                      id = body.id;
+                      
+                      done();
+                  });
+    });
+    
+    it('gets a specific note', function (done) {
+        superagent.get(BASE_URL + 'notes/' + id)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.note).to.be.an('object');
+                      expect(body.note.id).to.eql(id);
+                      expect(body.note.origin_nick).to.be.ok();
+                      expect(body.note.dest_nick).to.be.ok();
+                      expect(body.note.message).to.be.ok();
+                      expect(body.note.channel).to.be.ok();
+                      
+                      done();
+                  });
+    });
+    
+    it('deletes a specific note', function (done) {
+        superagent.del(BASE_URL + 'notes/' + id)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('fails to delete a non-existent note', function (done) {
+        superagent.get(BASE_URL + 'notes/' + id)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      console.log(body);
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
                       done();
                   });
     });
 });
-
 
 describe('autocomplete api', function() {
     var query = "squire";

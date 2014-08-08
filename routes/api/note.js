@@ -10,6 +10,42 @@ var note          = require('../../models/note');
 var Bookshelf     = require('../../models/index');
 var url           = require('url');
 
+// Delete a note
+router.delete('/:noteID', function (req, res, next) {
+    var id     = req.params.noteID;
+    var model  = new note({
+        id: id
+    });
+    
+    var errback = function (error) {
+        res.status(200).json({
+            status: "ERROR",
+            message: error
+        });
+    };
+    
+    model.fetch()
+          .then(function (note) {
+                if (note) {
+                    model.destroy()
+                         .then(function (message) {
+                            res.status(200).json({
+                                status : "OK",
+                                message: "Note deleted successfully."
+                            });
+                        })
+                        .catch(errback);
+                        
+                } else {
+                    res.status(404).json({
+                        status: "ERROR",
+                        message: "Note not found"
+                    });
+                }
+          })
+          .catch(errback);
+});
+
 // Create a note
 router.post('/', function (req, res, next) {
     var originNick = req.param('originNick');
@@ -28,16 +64,14 @@ router.post('/', function (req, res, next) {
             res.location(['/notes', 
                           model.get('id')].join('/'));
             
-            res.json(201, {
+            res.status(201).json({
                 status : "OK",
                 message: "Note created successfully",
                 id     : parseInt(model.get('id'), 10)
             });
           })
           .catch(function (error) {
-                console.log(error);
-                
-                res.json(200, {
+                res.status(200).json({
                     status: "ERROR",
                     message: error
                 });
@@ -57,18 +91,23 @@ router.get('/:noteID', function (req, res, next) {
     });
     
     qb.then(function (note) {
-            console.log(note[0]);
-        
-            res.json(200, _.extend({
+        if (note && note.length > 0) {
+            res.status(200).json(_.extend({
                 note: note[0]
             }, result));
-        })
-        .catch(function (error) {
-            res.json(200, {
+        } else {
+            res.status(404).json({
                 status: "ERROR",
-                message: error
+                message: "Note not found"
             });
+        }
+    })
+    .catch(function (error) {
+        res.status(200).json({
+            status: "ERROR",
+            message: error
         });
+    });
 });
 
 // List notes
@@ -114,12 +153,12 @@ router.get('/', function (req, res, next) {
     }
         
     qb.then(function (notes) {
-            res.json(200, _.extend({
+            res.status(200).json(_.extend({
                 notes: notes
             }, result));
         })
         .catch(function (error) {
-            res.json(200, {
+            res.status(200).json({
                 status: "ERROR",
                 message: error
             });
