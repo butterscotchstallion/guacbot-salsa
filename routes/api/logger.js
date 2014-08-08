@@ -64,12 +64,12 @@ router.get('/messages/count', function (req, res, next) {
     //qb.debug();
     
     qb.then(function (countResult) {
-        res.json(200, _.extend({
+        res.status(200).json(_.extend({
             total: countResult[0].total
         }, result));
     })
     .catch(function (error) {
-        res.json(200, {
+        res.status(200).json({
             status: "ERROR",
             message: error
         });
@@ -103,13 +103,13 @@ router.get('/messages', function (req, res, next) {
     
     qb.orderBy('ts', 'desc')
         .then(function (messages) {
-            res.json(200, {
+            res.status(200).json({
                 status  : "OK",
                 messages: messages
             });
         })
         .catch(function (error) {
-            res.json(200, {
+            res.status(200).json({
                 status: "ERROR",
                 message: error
             });

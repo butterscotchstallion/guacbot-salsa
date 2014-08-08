@@ -5,13 +5,52 @@
 "use strict";
 
 var superagent = require('superagent');
-var expect     = require('expect.js');
-var fs         = require('fs');
-var config     = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
-var BASE_URL   = config.baseURL;
+var expect      = require('expect.js');
+var fs          = require('fs');
+var config      = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
+var BASE_URL    = config.baseURL;
+var qs          = require('querystring');
 
 describe('note api', function() {
     var id;
+    
+    it('gets a list of delivered notes', function (done) {
+        var origin  = 'chillulum';
+        var dest    = 'n';
+        var channel = 'guacamole';
+        
+        var payload = {
+            originNick: origin,
+            destNick  : dest,
+            channel   : channel,
+            delivered : 1
+        };
+        
+        var fmt  = qs.stringify(payload);        
+        var earl = BASE_URL + 'notes/?' + fmt;
+        
+        superagent.get(earl)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.notes).to.be.an('object');
+                      
+                      for (var j = 0; j < body.notes.length; j++) {
+                        expect(body.notes[j].origin_nick).to.eql(origin);
+                        expect(body.notes[j].dest_nick).to.eql(dest);
+                        expect(body.notes[j].channel).to.eql('#' + channel);
+                        expect(body.notes[j].delivered).to.eql(1);
+                      }
+                      
+                      done();
+                  });
+    });
     
     it('gets a list of filtered notes', function (done) {
         var origin  = 'chillulum';
@@ -139,6 +178,51 @@ describe('note api', function() {
                   });
     });
     
+    it('updates a specific note', function (done) {
+        superagent.put(BASE_URL + 'notes/' + id)
+                  .send({
+                    originNick: "Iggy Azalea",
+                    destNick  : "sploosh",
+                    message   : "First thing's first: I'm the realest",
+                    channel   : "#swag",
+                    delivered : 1
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('fails to update a non-existent note', function (done) {
+        superagent.put(BASE_URL + 'notes/OMARCOMIN!!!')
+                  .send({
+                    originNick: "Iggy Azalea",
+                    destNick  : "sploosh",
+                    message   : "First thing's first: I'm the realest",
+                    channel   : "#swag"
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+    
     it('deletes a specific note', function (done) {
         superagent.del(BASE_URL + 'notes/' + id)
                   .end(function(e, res) {
@@ -156,14 +240,12 @@ describe('note api', function() {
     });
     
     it('fails to delete a non-existent note', function (done) {
-        superagent.get(BASE_URL + 'notes/' + id)
+        superagent.del(BASE_URL + 'notes/' + id)
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
                       expect(res.status).to.eql(404);
                       
                       var body = res.body;
-                      
-                      console.log(body);
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();

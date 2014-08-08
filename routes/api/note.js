@@ -46,6 +46,53 @@ router.delete('/:noteID', function (req, res, next) {
           .catch(errback);
 });
 
+// Update a note
+router.put('/:noteID', function (req, res, next) {
+    var originNick = req.param('originNick');
+    var destNick   = req.param('destNick');    
+    var channel    = req.param('channel');    
+    var message    = req.param('message');
+    var id         = req.params.noteID;
+    var model      = new note({
+        id: id
+    });
+    
+    var options = { patch: true };
+    
+    model.fetch()
+         .then(function (note) {
+            if (note) {
+                model.save({
+                    origin_nick: originNick,
+                    dest_nick  : destNick,
+                    channel    : channel,
+                    message    : message
+                  }, options)
+                  .then(function (model) {
+                    res.location(['/notes', 
+                                  model.get('id')].join('/'));
+                    
+                    res.status(200).json({
+                        status : "OK",
+                        message: "Note updated successfully",
+                        id     : parseInt(model.get('id'), 10)
+                    });
+                  })
+                  .catch(function (error) {
+                        res.status(200).json({
+                            status: "ERROR",
+                            message: error
+                        });
+                  });
+            } else {
+                res.status(404).json({
+                    status: "ERROR",
+                    message: "Note not found"
+                });
+            }
+        });
+});
+
 // Create a note
 router.post('/', function (req, res, next) {
     var originNick = req.param('originNick');
@@ -78,7 +125,7 @@ router.post('/', function (req, res, next) {
           });
 });
 
-// A specific note
+// Get a specific note
 router.get('/:noteID', function (req, res, next) {
     var qb     = Bookshelf.knex('notes');
     var id     = req.params.noteID;
@@ -151,7 +198,7 @@ router.get('/', function (req, res, next) {
         
         result['limit'] = limit;
     }
-        
+    
     qb.then(function (notes) {
             res.status(200).json(_.extend({
                 notes: notes
@@ -166,3 +213,5 @@ router.get('/', function (req, res, next) {
 });
 
 module.exports = router;
+
+

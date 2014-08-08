@@ -16,7 +16,7 @@ router.get('/', function (req, res, next) {
     
     Plugin.fetchAll()
           .then(function (plugins) {
-                res.json(200, {
+                res.status(200).json({
                     status  : "OK",
                     message : null,
                     plugins : plugins || []
@@ -36,13 +36,13 @@ router.get('/:pluginID', function (req, res, next) {
           .fetch()
           .then(function (plugin) {
             if (plugin) {
-                res.json(200, {
+                res.status(200).json({
                     status : "OK",
                     message: null,
                     plugin : plugin
                 });
             } else {
-                res.json(404, {
+                res.status(404).json({
                     status: "ERROR",
                     message: "Plugin not found"
                 });
@@ -64,14 +64,14 @@ router.post('/', function (req, res, next) {
             res.location(['/plugins', 
                           model.get('id')].join('/'));
             
-            res.json(201, {
+            res.status(201).json({
                 status : "OK",
                 message: "Plugin created successfully",
                 id     : parseInt(model.get('id'), 10)
             });
           })
             .catch(function (error) {
-                res.json(200, {
+                res.status(200).json({
                     status: "ERROR",
                     message: error
                 });
@@ -102,19 +102,19 @@ router.put('/:pluginID', function (req, res, next) {
                         .then(function (model) {                        
                             res.location(['/plugins', pluginID].join('/'));
                             
-                            res.json(200, {
+                            res.status(200).json({
                                 status : "OK",
                                 message: "Plugin updated"
                             });
                         })
                         .catch(function (error) {
-                            res.json(200, {
+                            res.status(200).json({
                                 status: "ERROR",
                                 message: error
                             });
                         });
             } else {
-                res.json(404, {
+                res.status(404).json({
                     status: "ERROR",
                     message: "Plugin not found"
                 });
@@ -133,19 +133,19 @@ router.delete('/:pluginID', function (req, res, next) {
                 if (model) {                    
                     Plugin.destroy()
                          .then(function (message) {
-                            res.json(200, {
+                            res.status(200).json({
                                 status       : "OK",
                                 message      : "Plugin deleted successfully."
                             });
                         })
                         .catch(function (error) {
-                            res.json(200, {
+                            res.status(200).json({
                                 status: "ERROR",
                                 message: error
                             });
                         });
                 } else {
-                    res.json(404, {
+                    res.status(404).json({
                         status: "ERROR",
                         message: "Plugin not found"
                     });
@@ -180,14 +180,14 @@ router.post('/:pluginID/messages', function (req, res, next) {
                           'messages',
                           id].join('/'));
             
-            res.json(201, {
+            res.status(201).json({
                 status: "OK",
                 message: "Plugin message created successfully",
                 id     : id
             });
           })
             .catch(function (error) {
-                res.json(200, {
+                res.status(200).json({
                     status: "ERROR",
                     message: error
                 });
@@ -223,19 +223,19 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
                                       'messages',
                                       messageID].join('/'));
                             
-                            res.json(200, {
+                            res.status(200).json({
                                 status : "OK",
                                 message: "Plugin message updated"
                             });
                         })
                         .catch(function (error) {
-                            res.json(200, {
+                            res.status(200).json({
                                 status: "ERROR",
                                 message: error
                             });
                         });
             } else {
-                res.json(404, {
+                res.status(404).json({
                     status: "ERROR",
                     message: "Message not found"
                 });
@@ -260,7 +260,7 @@ router.get('/:pluginID/messages', function (req, res, next) {
     
     query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
          .then(function (messages) {
-                res.json(200, {
+                res.status(200).json({
                     status: "OK",
                     message: null,
                     messages: messages
@@ -279,13 +279,13 @@ router.get('/:pluginID/messages/info', function (req, res, next) {
                     var info = result[0];
 
                     if (info) {
-                        res.json(200, {
+                        res.status(200).json({
                             status : "OK",
                             message: null,
                             info   : info
                         });
                     } else {
-                        res.json(500, {
+                        res.status(200).json({
                             status       : "ERROR",
                             message      : "Error retrieving message info"
                         });
@@ -309,13 +309,13 @@ router.get('/:pluginID/messages/:pluginMessageID', function (req, res, next) {
                  })
                  .then(function (message) {
                     if (message) {
-                        res.json(200, {
+                        res.status(200).json({
                             status       : "OK",
                             message      : null,
                             pluginMessage: message
                         });
                     } else {
-                        res.json(404, {
+                        res.status(404).json({
                             status       : "ERROR",
                             message      : "Plugin message not found"
                         });
@@ -335,19 +335,19 @@ router.delete('/:pluginID/messages/:pluginMessageID', function (req, res, next) 
                     if (model) {                    
                         PluginMessage.destroy()
                                      .then(function (message) {
-                                        res.json(200, {
+                                        res.status(200).json({
                                             status       : "OK",
                                             message      : "Plugin message deleted successfully."
                                         });
                                     })
                                     .catch(function (error) {
-                                        res.json(200, {
+                                        res.status(200).json({
                                             status: "ERROR",
                                             message: error
                                         });
                                     });
                     } else {
-                        res.json(404, {
+                        res.status(404).json({
                             status: "ERROR",
                             message: "Message not found"
                         });
