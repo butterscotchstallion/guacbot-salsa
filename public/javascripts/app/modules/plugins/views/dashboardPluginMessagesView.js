@@ -19,15 +19,18 @@ define('dashboardPluginMessagesView', function (require) {
         
         initialize: function () {
             var self        = this;
+            
             self.collection = new pluginMessageCollection({
                 model: pluginMessageModel,
                 limit: 5
             });
             
-            self.listenTo(self.collection, 'reset', self.render, self);
+            //self.listenTo(self.collection, 'reset', self.render, self);
             
             self.collection.fetch({
-                reset: true
+                success: function () {
+                    self.render();
+                }
             });
         },
         

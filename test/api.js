@@ -140,7 +140,7 @@ describe('note api', function() {
                     channel   : "#baltimore"
                   })
                   .end(function(e, res) {
-                      expect(e).to.eql(null);           
+                      expect(e).to.eql(null); 
                       expect(res.status).to.eql(201);
                       
                       var body = res.body;
@@ -184,8 +184,7 @@ describe('note api', function() {
                     originNick: "Iggy Azalea",
                     destNick  : "sploosh",
                     message   : "First thing's first: I'm the realest",
-                    channel   : "#swag",
-                    delivered : 1
+                    channel   : "#swag"
                   })
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
@@ -196,6 +195,39 @@ describe('note api', function() {
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('marks a note as delivered', function (done) {
+        superagent.put(BASE_URL + 'notes/' + id)
+                  .send({ delivered : 1 })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                  });
+                  
+        superagent.get(BASE_URL + 'notes/' + id)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      expect(body.note).to.be.an('object');
+                      expect(body.note.delivered).to.eql(1);
+                      expect(body.note.origin_nick).to.eql("Iggy Azalea");
+                      expect(body.note.dest_nick).to.eql("sploosh");
                       
                       done();
                   });

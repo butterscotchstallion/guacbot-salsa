@@ -10,6 +10,18 @@ var note          = require('../../models/note');
 var Bookshelf     = require('../../models/index');
 var url           = require('url');
 
+_.mixin({
+  compactObject : function(o) {
+     var clone = _.clone(o);
+     _.each(clone, function(v, k) {
+       if(!v) {
+         delete clone[k];
+       }
+     });
+     return clone;
+  }
+});
+
 // Delete a note
 router.delete('/:noteID', function (req, res, next) {
     var id     = req.params.noteID;
@@ -52,33 +64,55 @@ router.put('/:noteID', function (req, res, next) {
     var destNick   = req.param('destNick');    
     var channel    = req.param('channel');    
     var message    = req.param('message');
+    var delivered  = parseInt(req.param('delivered'), 10);
     var id         = req.params.noteID;
     var model      = new note({
         id: id
     });
     
     var options = { patch: true };
+    var payload = {};
+    
+    if (originNick) {
+        payload.origin_nick = originNick;
+    }
+    
+    if (channel) {
+        payload.channel = channel;
+    }
+    
+    if (destNick) {
+        payload.dest_nick = destNick;
+    }
+    
+    if (message) {
+        payload.message = message;
+    }
+    
+    if ([0, 1].indexOf(delivered) !== -1) {
+        payload.delivered = delivered;
+    }
     
     model.fetch()
          .then(function (note) {
             if (note) {
-                model.save({
-                    origin_nick: originNick,
-                    dest_nick  : destNick,
-                    channel    : channel,
-                    message    : message
-                  }, options)
-                  .then(function (model) {
-                    res.location(['/notes', 
-                                  model.get('id')].join('/'));
-                    
-                    res.status(200).json({
-                        status : "OK",
-                        message: "Note updated successfully",
-                        id     : parseInt(model.get('id'), 10)
-                    });
+                //var noteJSON      = note.toJSON();                
+                //var payload       = _.extend(noteJSON, compactedNote);
+                
+                model.save(payload, options)
+                     .then(function (model) {
+                        res.location(['/notes', 
+                                      model.get('id')].join('/'));
+                        
+                        res.status(200).json({
+                            status : "OK",
+                            message: "Note updated successfully",
+                            id     : parseInt(model.get('id'), 10)
+                        });
                   })
                   .catch(function (error) {
+                        console.log('errrr: ' + error);
+                        
                         res.status(200).json({
                             status: "ERROR",
                             message: error
@@ -118,6 +152,8 @@ router.post('/', function (req, res, next) {
             });
           })
           .catch(function (error) {
+                console.log(error);
+                
                 res.status(200).json({
                     status: "ERROR",
                     message: error

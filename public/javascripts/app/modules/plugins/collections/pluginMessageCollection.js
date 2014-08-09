@@ -12,7 +12,7 @@ define('pluginMessageCollection', function (require) {
         comparator: "name",
         
         initialize: function (options) {
-            if (options) {
+            if (options) {                
                 var limit = parseInt(options.limit, 10);
                 
                 if (limit > 0) {

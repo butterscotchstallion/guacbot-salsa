@@ -14,7 +14,7 @@ define('dashboardPluginMessagesItemView', function (require) {
         
         render    : function () {
             var modelJSON = this.model.toJSON();
-            
+
             // We want to render the messages so let's make up some sweet
             // fake data for display purposes and add a property representing
             // that compiled message.
@@ -34,7 +34,7 @@ define('dashboardPluginMessagesItemView', function (require) {
             }, modelJSON));
             
             this.$el.html(tpl);
-            
+
             return this;
         }
     });
