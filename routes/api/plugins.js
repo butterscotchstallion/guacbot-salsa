@@ -247,8 +247,15 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
 router.get('/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
     var urlParts      = url.parse(req.url, true).query;
-    var limit         = parseInt(urlParts.limit, 10) || null;    
-    var query         = Bookshelf.knex('plugin_messages');
+    var limit         = parseInt(urlParts.limit, 10) || null;
+    var cols          = [
+        'plugin_messages.id AS id',
+        'plugin_messages.message AS message',
+        'plugin_messages.plugin_id AS plugin_id',
+        'plugin_messages.created_at AS created_at',
+        'plugin_messages.name AS name'
+    ];
+    var query         = Bookshelf.knex.select(cols).from('plugin_messages');
     
     query.where({
         plugin_id: req.params.pluginID
@@ -260,6 +267,8 @@ router.get('/:pluginID/messages', function (req, res, next) {
     
     query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
          .then(function (messages) {
+                console.log(messages);
+                
                 res.status(200).json({
                     status: "OK",
                     message: null,
