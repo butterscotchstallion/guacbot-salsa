@@ -82,9 +82,8 @@ define('listView', function (require) {
         },
         
         addName: function (model) {
-            var name = model.get('name');
-
-            var $option = $('<option />', {
+            var name        = model.get('name');
+            var $option     = $('<option />', {
                 value: name,
                 text : name
             });
@@ -93,11 +92,16 @@ define('listView', function (require) {
         },
         
         addNames: function () {
-            var self = this;
+            var self        = this;
+            var currentName = this.getQueryStringParameter('name');
             
             this.names.each(function (n) {
                 self.addName(n);
             });
+            
+            var currentItem = $('.plugin-name option[value="' + currentName + '"]');
+            
+            currentItem.attr('selected', 'selected');
         },
         
         addAll: function () {
