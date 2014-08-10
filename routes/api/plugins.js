@@ -9,6 +9,7 @@ var pluginMessage = require('../../models/pluginMessage');
 var plugin        = require('../../models/plugin');
 var Bookshelf     = require('../../models/index');
 var url           = require('url');
+var _             = require('underscore');
 
 // All plugins
 router.get('/', function (req, res, next) {
@@ -248,12 +249,16 @@ router.get('/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
     var urlParts      = url.parse(req.url, true).query;
     var limit         = parseInt(urlParts.limit, 10) || null;
+    var name          = urlParts.name;
     var cols          = [
         'plugin_messages.id AS id',
         'plugin_messages.message AS message',
         'plugin_messages.plugin_id AS plugin_id',
         'plugin_messages.created_at AS created_at',
-        'plugin_messages.name AS name'
+        'plugin_messages.name AS name',
+        'plugins.id AS pluginID',
+        'plugins.filename',
+        'plugins.enabled'
     ];
     var query         = Bookshelf.knex.select(cols).from('plugin_messages');
     
@@ -263,6 +268,12 @@ router.get('/:pluginID/messages', function (req, res, next) {
     
     if (limit > 0) {
         query.limit(limit);
+    }
+    
+    if (name && name.length > 0) {
+        query.where({
+            "plugin_messages.name": name
+        });
     }
     
     query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
@@ -299,6 +310,24 @@ router.get('/:pluginID/messages/info', function (req, res, next) {
                             message      : "Error retrieving message info"
                         });
                     }
+                });
+});
+
+// Names
+router.get('/:pluginID/messages/names', function (req, res, next) {
+    Bookshelf.knex
+             .distinct()
+             .select('name')
+             .from('plugin_messages')
+             .where({
+                    plugin_id: req.params.pluginID                    
+                 })
+                 .then(function (result) {
+                    res.status(200).json({
+                        status : "OK",
+                        message: null,
+                        names  : result
+                    });                   
                 });
 });
 

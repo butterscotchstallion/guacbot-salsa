@@ -7,21 +7,10 @@
            value="{{id}}">
 </td>
 
-<td class="col-plugin-name">
-    <a href="/plugins/{{plugin.id}}/messages/{{id}}">{{plugin.filename}}</a>
+<td class="col-plugin-name" title="{{message}}">
+    <a href="/plugins/{{pluginID}}/messages/{{id}}">{{filename}}</a>
 </td>
 
 <td class="col-message-name">
     <a href="?name={{name}}"><code>{{name}}</code></a>
-</td>
-
-<td class="col-message">
-    <a href="#"
-       data-toggle="modal"
-       data-target="#message-modal"
-       data-message="{{message}}"
-       data-message-id="{{id}}"
-       data-message-name="{{name}}"
-       data-plugin-name="{{pluginName}}"
-       class="btn btn-default message-link"><span class="glyphicon glyphicon-envelope"></span> View Message</a>
 </td>

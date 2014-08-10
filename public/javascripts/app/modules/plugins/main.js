@@ -21,6 +21,7 @@ require.config({
         
         // collections
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
+        pluginMessageNameCollection: "app/modules/plugins/collections/pluginMessageNameCollection",
         
         // views
         listView               : "app/modules/plugins/views/list",

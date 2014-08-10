@@ -10,6 +10,7 @@ var fs          = require('fs');
 var config      = JSON.parse(fs.readFileSync("../config/api.json", 'utf8'));
 var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
+var _           = require('underscore');
 
 describe('note api', function() {
     var id;
@@ -637,6 +638,45 @@ describe('plugin messages api', function() {
                       expect(body.messages).to.be.an('array');
                       expect(body.messages).to.not.be.empty();
                       expect(body.messages.length).to.be.greaterThan(5);
+                      
+                      done();
+                  });
+    });
+    
+    it('gets all messages for a plugin by name', function (done) {
+        superagent.get(BASE_URL + 'plugins/8/messages?name=delivered')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.messages).to.be.an('array');
+                      expect(body.messages).to.not.be.empty();
+                      expect(body.messages.length).to.be.greaterThan(5);
+                      
+                      _.each(body.messages, function (k, v) {
+                        expect(body.messages[v].name).to.eql('delivered');
+                      });
+                      
+                      done();
+                  });
+    });
+    
+    it('gets all names for plugin messgaes', function (done) {
+        superagent.get(BASE_URL + 'plugins/8/messages/names')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);        
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.names).to.be.an('array');
+                      expect(body.names).to.not.be.empty();
                       
                       done();
                   });

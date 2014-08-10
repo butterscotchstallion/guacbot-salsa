@@ -1,8 +1,34 @@
 <h1>Messages</h1>
 
+<!--
 <div class="alert alert-info message-count-msg hidden">
     <strong id="message-count"></strong> messages found.
 </div>
+-->
+
+<fieldset role="form" class="search-fieldset">
+    <legend>Search</legend>
+    
+    <form class="form-inline" role="form" id="search-form" method="get">
+        <div class="form-group">        
+            <select class="form-control plugin-name" name="name">
+                <option value="">Any</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <input type="text"
+                   class="form-control"
+                   name="query"
+                   placeholder="Enter a search term">
+        </div>
+        
+        <div class="form-group">
+            <button type="submit"
+                    class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
+        </div>
+    </form>
+</fieldset>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -11,7 +37,6 @@
                 <th><input type="checkbox" class="select-all"></th>
                 <th>Plugin</th>
                 <th>Name</th>
-                <th>Message</th>
             </tr>
         </thead>
         <tbody id="pluginMessageTableBody">

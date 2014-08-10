@@ -52,12 +52,10 @@ require.config({
 
 require(["common", "messageEditView", "pluginHeaderView"], function (common, messageEditView, pluginHeaderView) {
     $(function () {
-        var newMessageModel = Backbone.Model.extend({
-            attributes: {
-                name       : "ok",
-                message    : "Hello, world!",
-                compiledMsg: "Hello, world!"
-            }
+        var newMessageModel = Backbone.Model.extend({}, {
+            name       : "ok",
+            message    : "Hello, world!",
+            compiledMsg: "Hello, world!"            
         });
         
         new messageEditView({

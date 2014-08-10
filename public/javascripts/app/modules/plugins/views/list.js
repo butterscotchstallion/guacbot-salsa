@@ -20,30 +20,42 @@ define('listView', function (require) {
         }
     });
     
-    var pluginMessageModel        = require('pluginMessageModel');
-    var pluginMessageCollection   = require('pluginMessageCollection');
-    var pluginMessageItemView     = require('pluginMessageItemView');
-    
-    var MessageCollection         = new pluginMessageCollection();
-    
-    var listView                  = Backbone.View.extend({
+    var pluginMessageModel          = require('pluginMessageModel');
+    var pluginMessageCollection     = require('pluginMessageCollection');
+    var pluginMessageNameCollection = require('pluginMessageNameCollection');
+    var pluginMessageItemView       = require('pluginMessageItemView');
+
+    var listView                    = Backbone.View.extend({
         el: $('body'),
         
         initialize: function () {
-            this.collection = MessageCollection;
+            var name = this.getQueryStringParameter('name');
+            
+            this.collection = new pluginMessageCollection({
+                name: name
+            });
+            
+            this.names      = new pluginMessageNameCollection({
+                
+            });
             
             //this.listenTo(this.collection, 'reset add change remove', this.render, this);
-            this.listenTo(this.collection, 'reset',                   this.addAll, this);
+            this.listenTo(this.collection, 'reset', this.addAll, this);
+            this.listenTo(this.names,      'reset', this.addNames, this);
 
             var self = this;
             
             this.collection.fetch({
-                reset: true,
+                reset  : true,
                 success: function (data, options) {
                     $(".loading-row").hide();
                     $('.message-count-msg').removeClass('hidden');
                     $('#message-count').text(data.length);
                 }
+            });
+            
+            this.names.fetch({
+                reset: true
             });
         },
         
@@ -69,12 +81,38 @@ define('listView', function (require) {
             $("#pluginMessageTableBody").append(view.render().el);
         },
         
+        addName: function (model) {
+            var name = model.get('name');
+
+            var $option = $('<option />', {
+                value: name,
+                text : name
+            });
+            
+            $('.plugin-name').append($option);
+        },
+        
+        addNames: function () {
+            var self = this;
+            
+            this.names.each(function (n) {
+                self.addName(n);
+            });
+        },
+        
         addAll: function () {
             var self = this;
             
-            MessageCollection.each(function (message) {
+            self.collection.each(function (message) {
                 self.addOne(message);
             });
+        },
+        
+        getQueryStringParameter: function (name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
     });
     
