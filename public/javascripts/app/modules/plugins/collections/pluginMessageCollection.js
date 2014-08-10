@@ -15,10 +15,15 @@ define('pluginMessageCollection', function (require) {
         
         initialize: function (options) {
             if (options) {                
-                var limit = parseInt(options.limit, 10);
+                var limit  = parseInt(options.limit, 10);
+                var offset = parseInt(options.offset, 10);
                 
                 if (limit > 0) {
                     this.url += '&limit=' + limit;
+                }
+                
+                if (offset > 0) {
+                    this.url += '&offset=' + offset;
                 }
                 
                 if (options.name) {

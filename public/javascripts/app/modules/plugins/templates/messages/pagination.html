@@ -1,0 +1,11 @@
+<ul class="pagination">
+    <li><a href="#">&laquo;</a></li>
+  
+    {{#each pages}}
+        <li{{#if isCurrent}} class="active"{{/if}}>
+            <a href="{{url}}">{{displayText}}</a>
+        </li>
+    {{/each}}
+    
+    <li><a href="#">&raquo;</a></li>
+</ul>

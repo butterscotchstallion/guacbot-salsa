@@ -16,6 +16,7 @@ require.config({
         
         // app
         common                         : "app/modules/common/main",
+        pagination                     : "app/modules/common/lib/pagination",
         
         // models
         pluginModel                    : "app/modules/plugins/models/pluginModel",

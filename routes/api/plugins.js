@@ -248,7 +248,8 @@ router.put('/:pluginID/messages/:messageID', function (req, res, next) {
 router.get('/:pluginID/messages', function (req, res, next) {
     var PluginMessage = new pluginMessage();
     var urlParts      = url.parse(req.url, true).query;
-    var limit         = parseInt(urlParts.limit, 10) || null;
+    var limit         = parseInt(urlParts.limit, 10)  || null;
+    var offset        = parseInt(urlParts.offset, 10) || null;
     var name          = urlParts.name;
     var query         = urlParts.query;
     var cols          = [
@@ -274,6 +275,10 @@ router.get('/:pluginID/messages', function (req, res, next) {
         qb.limit(limit);
     }
     
+    if (offset > 0) {
+        qb.offset(offset);
+    }
+    
     if (name && name.length > 0) {
         qb.where({
             "plugin_messages.name": name
@@ -296,15 +301,33 @@ router.get('/:pluginID/messages', function (req, res, next) {
 
 // Plugin message info
 router.get('/:pluginID/messages/info', function (req, res, next) {
+    var urlParts     = url.parse(req.url, true).query;
+    var itemsPerPage = parseInt(urlParts.itemsPerPage, 10) || 10;
+    
     Bookshelf.knex('plugin_messages')
              .where({
                     plugin_id: req.params.pluginID                    
                  })
                  .count('* AS messageCount')
                  .then(function (result) {
-                    var info = result[0];
-
-                    if (info) {
+                    if (result && result[0]) {
+                        /**
+                         * Use total message count to generate an array of page numbers
+                         * for use with pagination
+                         *
+                         */
+                        var pages    = [];
+                        var numPages = Math.ceil(result[0].messageCount / itemsPerPage);
+                        
+                        for (var j = 0; j < numPages; j++) {
+                            pages.push((j+1));
+                        }
+                        
+                        // Combine total messages result with other pertinent information
+                        var info = _.extend(result[0], {
+                            pages: pages
+                        });
+                        
                         res.status(200).json({
                             status : "OK",
                             message: null,

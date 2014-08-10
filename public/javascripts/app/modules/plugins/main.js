@@ -15,9 +15,11 @@ require.config({
         underscore    : "lib/underscore.min",
         
         common                 : "app/modules/common/main",
+        pagination             : "app/modules/common/lib/pagination",
         
         // models
         pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
+        pluginMessageInfoModel     : "app/modules/plugins/models/pluginMessageInfoModel",
         
         // collections
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",

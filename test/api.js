@@ -753,7 +753,9 @@ describe('plugin messages api', function() {
                       expect(res.status).to.eql(200);
                       
                       var body = res.body; 
-                        
+                      
+                      console.log(body);
+                      
                       expect(body.status).to.eql("OK");
                       expect(body.message).to.eql(null);
                       expect(body.info.messageCount).to.be.ok();
