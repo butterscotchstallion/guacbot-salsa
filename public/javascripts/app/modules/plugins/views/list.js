@@ -19,30 +19,24 @@ define('listView', function (require) {
     var listView                    = Backbone.View.extend({
         el: $('body'),
         
-        initialize: function () {
-            this.name   = this.getQueryStringParameter('name');
-            this.query  = this.getQueryStringParameter('query');
-            this.offset = this.getQueryStringParameter('offset');
-            
+        initialize: function () {            
+            var self        = this;
+            this.name       = this.getQueryStringParameter('name');
+            this.query      = this.getQueryStringParameter('query');
+            this.offset     = parseInt(this.getQueryStringParameter('offset'), 10) || 0;
+            this.limit      = parseInt(this.getQueryStringParameter('limit'),  10) || 10;
+            this.names      = new pluginMessageNameCollection();
+            this.info       = new pluginMessageInfoModel();
             this.collection = new pluginMessageCollection({
                 name  : this.name,
                 query : this.query,                
                 offset: this.offset,
-                limit : 10,
+                limit : this.limit,
             });
             
-            this.names      = new pluginMessageNameCollection({
-                
-            });
-            
-            this.info       = new pluginMessageInfoModel();
-            
-            //this.listenTo(this.collection, 'reset add change remove', this.render, this);
             this.listenTo(this.collection, 'reset',  this.addAll,     this);
             this.listenTo(this.names,      'reset',  this.addNames,   this);
             this.listenTo(this.info,       'change', this.renderInfo, this);
-            
-            var self = this;
             
             this.collection.fetch({
                 reset  : true,
@@ -130,7 +124,11 @@ define('listView', function (require) {
             var currentPage  = this.limit > 0 ? Math.floor(this.limit / itemsPerPage) : 1;
             var templateData = pagination.getInfo({
                 pages      : pages,
-                currentPage: currentPage
+                currentPage: currentPage,
+                limit      : this.limit,
+                offset     : this.getQueryStringParameter('offset'),
+                name       : this.name,
+                query      : this.query                
             });
             
             var html  = tpl(templateData);
