@@ -643,6 +643,27 @@ describe('plugin messages api', function() {
                   });
     });
     
+    it('gets all messages for a plugin filtered by query', function (done) {
+        superagent.get(BASE_URL + 'plugins/8/messages?query=fatness')
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);                      
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body; 
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.message).to.eql(null);
+                      expect(body.messages).to.be.an('array');
+                      expect(body.messages).to.not.be.empty();
+                      
+                      _.each(body.messages, function (key, value) {
+                        expect(body.messages[value].message).to.contain('fatness');
+                      });
+                      
+                      done();
+                  });
+    });
+    
     it('gets all messages for a plugin by name', function (done) {
         superagent.get(BASE_URL + 'plugins/8/messages?name=delivered')
                   .end(function(e, res) {

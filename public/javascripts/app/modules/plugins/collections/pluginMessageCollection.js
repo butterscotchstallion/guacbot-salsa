@@ -24,6 +24,10 @@ define('pluginMessageCollection', function (require) {
                 if (options.name) {
                     this.url += '&name=' + options.name;
                 }
+                
+                if (options.query) {
+                    this.url += '&query=' + options.query;
+                }
             }
         },
         

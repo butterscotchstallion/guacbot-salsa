@@ -29,10 +29,12 @@ define('listView', function (require) {
         el: $('body'),
         
         initialize: function () {
-            var name = this.getQueryStringParameter('name');
+            this.name  = this.getQueryStringParameter('name');
+            this.query = this.getQueryStringParameter('query');
             
             this.collection = new pluginMessageCollection({
-                name: name
+                name : this.name,
+                query: this.query
             });
             
             this.names      = new pluginMessageNameCollection({
@@ -60,7 +62,12 @@ define('listView', function (require) {
         },
         
         events: {
-            'click .message-link': 'onMessageModalLinkClicked'
+            'click .message-link': 'onMessageModalLinkClicked',
+            'click .reset-button': 'onResetButtonClicked'
+        },
+        
+        onResetButtonClicked: function () {
+            window.location = "/plugins/" + window.app.pluginID + "/messages";
         },
         
         onMessageModalLinkClicked: function (e) {
@@ -93,15 +100,16 @@ define('listView', function (require) {
         
         addNames: function () {
             var self        = this;
-            var currentName = this.getQueryStringParameter('name');
             
             this.names.each(function (n) {
                 self.addName(n);
             });
             
-            var currentItem = $('.plugin-name option[value="' + currentName + '"]');
+            var currentItem = $('.plugin-name option[value="' + this.name + '"]');
             
             currentItem.attr('selected', 'selected');
+            
+            $('.query').val(this.query);
         },
         
         addAll: function () {

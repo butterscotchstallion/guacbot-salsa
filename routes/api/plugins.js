@@ -250,6 +250,7 @@ router.get('/:pluginID/messages', function (req, res, next) {
     var urlParts      = url.parse(req.url, true).query;
     var limit         = parseInt(urlParts.limit, 10) || null;
     var name          = urlParts.name;
+    var query         = urlParts.query;
     var cols          = [
         'plugin_messages.id AS id',
         'plugin_messages.message AS message',
@@ -260,26 +261,31 @@ router.get('/:pluginID/messages', function (req, res, next) {
         'plugins.filename',
         'plugins.enabled'
     ];
-    var query         = Bookshelf.knex.select(cols).from('plugin_messages');
     
-    query.where({
+    var qb         = Bookshelf.knex
+                                 .select(cols)
+                                 .from('plugin_messages');
+    
+    qb.where({
         plugin_id: req.params.pluginID
     });
     
     if (limit > 0) {
-        query.limit(limit);
+        qb.limit(limit);
     }
     
     if (name && name.length > 0) {
-        query.where({
+        qb.where({
             "plugin_messages.name": name
         });
     }
     
-    query.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
+    if (query && query.length > 0) {
+        qb.where("message", 'LIKE', '%' + query + '%');
+    }
+    
+    qb.innerJoin('plugins', 'plugin_messages.plugin_id', 'plugins.id')
          .then(function (messages) {
-                console.log(messages);
-                
                 res.status(200).json({
                     status: "OK",
                     message: null,

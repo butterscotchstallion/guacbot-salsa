@@ -111,8 +111,6 @@ router.put('/:noteID', function (req, res, next) {
                         });
                   })
                   .catch(function (error) {
-                        console.log('errrr: ' + error);
-                        
                         res.status(200).json({
                             status: "ERROR",
                             message: error
@@ -152,8 +150,6 @@ router.post('/', function (req, res, next) {
             });
           })
           .catch(function (error) {
-                console.log(error);
-                
                 res.status(200).json({
                     status: "ERROR",
                     message: error
