@@ -14,28 +14,55 @@ define('pagination', function (require) {
         var isCurrent  = false;
         var isFirst    = false;
         var isLast     = false;
+        var offset     = 0;
+        var next       = 0;
+        var prev       = 0;
+        var canPrev    = false;
+        var canNext    = false;
         var serialized = "";
         var lastPage   = _.last(options.pages);
         var info       = {
             pages: []
         };
         
+        if (options.currentPage > 1) {
+            prev    = options.currentPage - 1;
+            canPrev = true;
+        }
+        
+        if (options.currentPage < lastPage) {
+            next    = options.currentPage + 1;
+            canNext = true;
+        }
+        
+        var urlParams  = _.extend({
+            limit  : options.limit            
+        }, options.urlComponents);
+        
+        info.isFirst   = options.currentPage === 1;
+        info.isLast    = options.currentPage === lastPage;
+        info.prevURL   = '?' + p.serialize(_.extend(urlParams, {
+            page: prev
+        }));
+        info.nextURL   = '?' + p.serialize(_.extend(urlParams, {
+            page: next
+        }));
+        
         _.each(options.pages, function (value, key) {
             isCurrent  = value == options.currentPage;
-            isFirst    = value === 0;
-            isLast     = lastPage;
-            serialized = '?' + p.serialize(_.extend({
-                limit  : options.limit,
-                offset : options.offset,
-                page   : value
-            }, options.urlComponents));
+            offset     = (options.limit * value);
+            serialized = '?' + p.serialize(_.extend(urlParams, {
+                offset : offset,
+                page   : (offset / options.itemsPerPage)
+            }));
             
             info.pages.push({
                 isCurrent  : isCurrent,
-                isFirst    : isFirst,
-                isLast     : isLast,
                 url        : serialized,
-                displayText: value
+                displayText: value,
+                lastPage   : lastPage,
+                canNext    : canNext,
+                canPrev    : canPrev
             });
         });
         

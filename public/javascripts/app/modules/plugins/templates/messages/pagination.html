@@ -1,11 +1,17 @@
 <ul class="pagination">
-    <li><a href="#">&laquo;</a></li>
-  
+    <li{{#if isFirst}} class="disabled"{{/if}}>
+        <a href="{{prevURL}}" 
+           class="previous-page {{#if isFirst}}disabled{{/if}}">&laquo;</a>
+    </li>
+    
     {{#each pages}}
         <li{{#if isCurrent}} class="active"{{/if}}>
             <a href="{{url}}">{{displayText}}</a>
         </li>
     {{/each}}
     
-    <li><a href="#">&raquo;</a></li>
+    <li{{#if isLast}} class="active"{{/if}}>
+        <a href="{{nextURL}}" 
+           class="last-page">&raquo;</a>
+    </li>
 </ul>

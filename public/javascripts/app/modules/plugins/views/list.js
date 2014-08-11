@@ -121,14 +121,15 @@ define('listView', function (require) {
             var tpl          = Handlebars.compile(paginationTemplate);
             var pages        = this.info.get('pages');
             var itemsPerPage = 10;
-            var currentPage  = this.limit > 0 ? Math.floor(this.limit / itemsPerPage) : 1;
+            var currentPage  = parseInt(this.getQueryStringParameter('page'), 10);
             var templateData = pagination.getInfo({
-                pages      : pages,
-                currentPage: currentPage,
-                limit      : this.limit,
-                offset     : this.getQueryStringParameter('offset'),
-                name       : this.name,
-                query      : this.query                
+                pages       : pages,
+                currentPage : currentPage,
+                limit       : this.limit,
+                offset      : this.getQueryStringParameter('offset'),
+                name        : this.name,
+                query       : this.query,
+                itemsPerPage: itemsPerPage       
             });
             
             var html  = tpl(templateData);
