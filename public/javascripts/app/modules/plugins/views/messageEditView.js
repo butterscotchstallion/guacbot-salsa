@@ -36,20 +36,36 @@ define('messageEditView', function (require) {
             'click .add-button'      : 'onAddMessageButtonClicked'
         },
         
-        initialize: function (options) {
+        initialize: function () {
             var self        = this;
-            self.model      = (options && options.model) || new pluginMessageModel();
+            self.messages   = new pluginMessageCollection();
             
-            self.listenTo(self.model, 'change remove', self.render,               self);
-            self.listenTo(self.model, 'invalid',       self.setMessageErrorState, self);
+            //self.listenTo(self.model,    'invalid', self.setMessageErrorState, self);
+            self.listenTo(self.messages, 'reset',   self.render,               self);
             
-            // Need the template to load in order to access elements present there
+            /*
             self.model.fetch({
                 reset  : true,
                 success: function (data, options) {
                     $(".loading").hide();
                 }
-            });    
+            });
+            */
+            
+            self.messages.fetch({
+                reset: true
+            });
+        },
+        
+        onAddMessageButtonClicked: function (e) {
+            e.preventDefault();
+            
+            this.model.clear();
+            this.model.set({
+                message: "Hello, world!"
+            });
+            
+            console.log('cleared');
         },
         
         onDeletePluginMessageButtonClicked: function (e) {
@@ -72,20 +88,41 @@ define('messageEditView', function (require) {
             
             self.model.set({
                 message  : $('.message').val().trim(),
-                plugin_id: window.app.pluginID,
-                id       : window.app.pluginMessageID
-            })
-            .save({
-                patch: true
-            }).then(function (data) {
-                self.onMessageSavedSuccessfully(data);                
+                name     : $('#plugin-message-name').val().trim(),
+                plugin_id: window.app.pluginID
             });
+            
+            var isNew = self.model.isNew();
+            
+            console.log('isNew: ', isNew);
+            
+            if (isNew) {
+                self.messages.create(self.model, {
+                    success: function(newMessage) {
+                        window.location = [
+                            "/plugins/",
+                            newMessage.get('plugin_id'),
+                            "/messages/",
+                            newMessage.get('id')
+                        ].join('');
+                    }
+                });
+            } else {
+                self.model.save()
+                          .then(self.onMessageSavedSuccessfully);
+            }
         },
         
         onMessageSavedSuccessfully: function () {
             console.log('save success');
             
-            $('.save-successful-msg').removeClass('hidden');
+            var $msg = $('.save-successful-msg');
+            
+            $msg.removeClass('hidden');
+            
+            window.setTimeout(function () {
+                $msg.addClass('hidden');
+            }, 3000);
         },
         
         onMessageSavedFailure: function (e) {
@@ -126,14 +163,15 @@ define('messageEditView', function (require) {
         
         render        : function () {
             // Render main template
+            this.model           = this.messages.get(window.app.pluginMessageID);
             var modelJSON        = this.model.toJSON();
             var templateObject   = {
-                recipient: "PrgmrBill",
-                nick: "Cayenne",
-                message: "Biggie Smalls is da illest",
+                recipient : "PrgmrBill",
+                nick      : "Cayenne",
+                message   : "Biggie Smalls is da illest",
                 originNick: "Bruce Lee",
-                timeAgo: "2 days ago",
-                line : 1
+                timeAgo   : "2 days ago",
+                line      : 1
             };
             var stringified      = JSON.stringify(templateObject, null, 4);
             var processedMessage = this.processMessage({
@@ -148,7 +186,7 @@ define('messageEditView', function (require) {
             
             this.$el.html(tpl);
             
-            console.log(modelJSON);
+            console.log('model JSON: ', modelJSON);
             
             // Render preview
             this.renderPreview({
@@ -241,7 +279,7 @@ define('messageEditView', function (require) {
         },
     
         renderPreview: function (options) {
-            var template = this.compile(options);
+            var template = this.compile(_.extend(this.model.toJSON(), options));
             
             $('.message-preview').html(template);
         },

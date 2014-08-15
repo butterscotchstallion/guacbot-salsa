@@ -43,7 +43,7 @@ define('listView', function (require) {
                 success: function (data, options) {
                     $(".loading-row").hide();
                     $('.message-count-msg').removeClass('hidden');
-                    $('#message-count').text(data.length);
+                    $('.message-count').text(data.length);
                 }
             });
             

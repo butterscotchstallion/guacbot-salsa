@@ -50,18 +50,15 @@ require.config({
     }
 });
 
-require(["common", "messageEditView", "pluginHeaderView"], function (common, messageEditView, pluginHeaderView) {
+var deps = [
+    "common", 
+    "messageEditView", 
+    "pluginHeaderView"
+];
+
+require(deps, function (common, messageEditView, pluginHeaderView) {
     $(function () {
-        var newMessageModel = Backbone.Model.extend({}, {
-            name       : "ok",
-            message    : "Hello, world!",
-            compiledMsg: "Hello, world!"            
-        });
-        
-        new messageEditView({
-            model: new newMessageModel()
-        });
-        
+        new messageEditView();        
         new pluginHeaderView();
     });
 });

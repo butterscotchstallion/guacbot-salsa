@@ -1,18 +1,38 @@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-success alert-dismissible save-successful-msg plugin-message-alert hidden" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <strong>Huzzah!</strong> Message saved.
+        </div>
+        
+        <div class="alert alert-danger alert-dismissible save-failure-msg plugin-message-alert hidden" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <strong>Ack!</strong> There was a problem saving this message.
+        </div>
+    </div>
+</div>
+
 <div class="row parse-error-container hidden">
     <div class="col-md-12">
         <div class="alert alert-danger alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <strong>Warning!</strong> There was a problem parsing your message.
-        </div>
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <strong>Warning!</strong> There was a problem parsing your message.
+        </div>   
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-7">
-        <h2 class="subheader">Preview</h2>
+        <!--<h2 class="subheader">{{name}}</h2>-->
+        <input type="text"
+               class="form-control input-lg"
+               id="plugin-message-name"
+               value="{{name}}"
+               maxlength="45">
     </div>
     
-    <div class="col-md-5">
+    <div class="col-md-5 plugin-message-controls">
         <div class="btn-toolbar pull-right" role="toolbar">
             <div class="btn-group">
                 <a href="#" 
@@ -23,7 +43,7 @@
             
             <div class="btn-group">
                 <a href="/plugins/{{plugin_id}}/messages/add"
-                   class="btn btn-info"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                   class="btn btn-info add-button"><span class="glyphicon glyphicon-plus"></span> Add</a>
             </div>
 
             <div class="btn-group">                    
@@ -35,17 +55,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="alert alert-success alert-dismissible save-successful-msg hidden" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Huzzah!</strong> Message saved.
-        </div>
-        
-        <div class="alert alert-danger alert-dismissible save-failure-msg hidden" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Ack!</strong> There was a problem saving this message.
-        </div>
-        
+    <div class="col-md-12">        
         <div class="message-preview monospace">
             {{{compiledMessage}}}
         </div>

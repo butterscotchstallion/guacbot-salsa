@@ -9,7 +9,11 @@ define('pluginMessageCollection', function (require) {
     var pluginID                = parseInt(window.app.pluginID, 10);
     
     var pluginMessageCollection = Backbone.Collection.extend({
-        url       : '/api/v1/plugins/' + pluginID + '/messages?a=1',
+        urlRoot    : '/api/v1/plugins/' + pluginID + '/messages',
+        
+        url        : function () {
+            return this.urlRoot;
+        },
         
         comparator: "name",
         

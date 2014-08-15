@@ -317,7 +317,7 @@ router.get('/:pluginID/messages/info', function (req, res, next) {
                          *
                          */
                         var pages    = [];
-                        var numPages = Math.ceil(result[0].messageCount / itemsPerPage);
+                        var numPages = Math.floor(result[0].messageCount / itemsPerPage);
                         
                         for (var j = 0; j < numPages; j++) {
                             pages.push((j+1));

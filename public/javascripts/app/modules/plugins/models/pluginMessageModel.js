@@ -14,6 +14,7 @@ define('pluginMessageModel', function (require) {
         idAttribute: 'id',
         
         url        : "/api/v1/plugins/" + pluginID + "/messages/" + pluginMessageID,
+        urlRoot      : "/api/v1/plugins/" + pluginID + "/messages/",
         
         validate   : function (attrs, options) {
             /**
