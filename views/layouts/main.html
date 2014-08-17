@@ -36,12 +36,12 @@
             
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li {{#if isHomepage}}class="active"{{/if}}><a href="/">Home</a></li>
+                    <li {{#if isHomepage}}class="active"{{/if}}><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
             
                     <li class="dropdown{{#if isPluginsPage}} active{{/if}}">
                         <a href="#" 
                            class="dropdown-toggle" 
-                           data-toggle="dropdown">Plugins <span class="badge plugin-count hidden">0</span> <span class="caret"></span></a>
+                           data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Plugins <span class="badge plugin-count hidden">0</span> <span class="caret"></span></a>
                         
                         <ul class="dropdown-menu plugins-menu" role="menu"></ul>
                     </li>

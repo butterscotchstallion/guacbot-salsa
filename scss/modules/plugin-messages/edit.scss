@@ -4,6 +4,7 @@
     background-color: #000;
     padding: 1em;
     color: #c0c0c0;
+    box-shadow: 0 5px 5px #666;
     
     strong {
         color: #fff;
@@ -40,16 +41,9 @@ textarea.monospace {
     border-bottom: 1px dotted #666;
 }
 
-.plugin-message-controls {
-    padding-top: 1em;
-}
-
 .plugin-message-alert {
     margin: 0 0 1em 0;
 }   
-
-
-
 
 
 

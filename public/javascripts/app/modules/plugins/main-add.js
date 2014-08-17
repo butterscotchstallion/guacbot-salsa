@@ -58,7 +58,11 @@ var deps = [
 
 require(deps, function (common, messageEditView, pluginHeaderView) {
     $(function () {
-        new messageEditView();        
+        
+        new messageEditView({
+            model: model
+        });
+        
         new pluginHeaderView();
     });
 });

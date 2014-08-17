@@ -17,7 +17,9 @@ define('messageView', function (require) {
         render: function () {
             new pluginSidebarView();
             new pluginMessageHeaderView();
-            new messageEditView();
+            new messageEditView({
+                id: window.app.pluginMessageID
+            });
         }
     });
 

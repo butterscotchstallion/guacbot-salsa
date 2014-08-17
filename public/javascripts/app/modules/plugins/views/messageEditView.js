@@ -36,9 +36,14 @@ define('messageEditView', function (require) {
             'click .add-button'      : 'onAddMessageButtonClicked'
         },
         
-        initialize: function () {
+        initialize: function (options) {
             var self        = this;
             self.messages   = new pluginMessageCollection();
+            
+            if (options) {
+                self.id    = options.id;
+                self.model = options.model;
+            }
             
             //self.listenTo(self.model,    'invalid', self.setMessageErrorState, self);
             self.listenTo(self.messages, 'reset',   self.render,               self);
@@ -53,15 +58,19 @@ define('messageEditView', function (require) {
             */
             
             self.messages.fetch({
-                reset: true
+                reset: true,
+                success: function () {
+                    //self.listenTo(self.model, 'change', self.render, self);
+                }
             });
         },
         
         onAddMessageButtonClicked: function (e) {
             e.preventDefault();
             
-            this.model.clear();
             this.model.set({
+                id     : null,
+                name   : "ok",
                 message: "Hello, world!"
             });
             
@@ -163,7 +172,10 @@ define('messageEditView', function (require) {
         
         render        : function () {
             // Render main template
-            this.model           = this.messages.get(window.app.pluginMessageID);
+            if (!this.model) {
+                this.model       = this.messages.get(this.id);
+            }
+            
             var modelJSON        = this.model.toJSON();
             var templateObject   = {
                 recipient : "PrgmrBill",
