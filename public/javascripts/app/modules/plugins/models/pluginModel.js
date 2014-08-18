@@ -10,7 +10,17 @@ define('pluginModel', function (require) {
     var model         = Backbone.Model.extend({
         idAttribute: 'id',
         
-        url        : "/api/v1/plugins/" + window.app.pluginID,
+        urlRoot    : "/api/v1/plugins/",
+        
+        url        : function () {
+            var url = this.urlRoot;
+            
+            //if (!this.isNew()) {
+                url += window.app.pluginID;
+            //}
+            
+            return url;
+        },
         
         parse      : function (response, options) {
             return response.plugin;

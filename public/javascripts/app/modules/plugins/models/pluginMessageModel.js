@@ -13,8 +13,11 @@ define('pluginMessageModel', function (require) {
     var pluginMessage   = Backbone.Model.extend({
         idAttribute: 'id',
         
-        url        : "/api/v1/plugins/" + pluginID + "/messages/" + pluginMessageID,
+        url          : "/api/v1/plugins/" + pluginID + "/messages/" + pluginMessageID,
+        
         urlRoot      : "/api/v1/plugins/" + pluginID + "/messages/",
+        
+        hasTimestamps: ['created_at'],
         
         validate   : function (attrs, options) {
             /**

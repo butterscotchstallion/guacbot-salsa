@@ -37,38 +37,31 @@ define('messageEditView', function (require) {
         },
         
         initialize: function (options) {
-            var self        = this;
-            self.messages   = new pluginMessageCollection();
+            var self      = this;
+            self.model    = options.model;
+            self.messages = options.collection;
             
-            if (options) {
-                self.id    = options.id;
-                self.model = options.model;
+            self.listenTo(self.model, 'invalid', self.setMessageErrorState, self);
+            self.listenTo(self.model, 'change',  self.render,               self);
+            
+            if (!options.isNew) {
+                self.model.fetch({
+                    success: function (data, options) {
+                        $(".loading").hide();
+                    }
+                });
+            } else {
+                this.render();
             }
-            
-            //self.listenTo(self.model,    'invalid', self.setMessageErrorState, self);
-            self.listenTo(self.messages, 'reset',   self.render,               self);
-            
-            /*
-            self.model.fetch({
-                reset  : true,
-                success: function (data, options) {
-                    $(".loading").hide();
-                }
-            });
-            */
-            
-            self.messages.fetch({
-                reset: true,
-                success: function () {
-                    //self.listenTo(self.model, 'change', self.render, self);
-                }
-            });
         },
         
         onAddMessageButtonClicked: function (e) {
             e.preventDefault();
             
-            this.model.set({
+            var id    = this.model.get('id');
+            var model = this.messages.get(id);
+            
+            model.set({
                 id     : null,
                 name   : "ok",
                 message: "Hello, world!"
@@ -171,16 +164,11 @@ define('messageEditView', function (require) {
         },
         
         render        : function () {
-            // Render main template
-            if (!this.model) {
-                this.model       = this.messages.get(this.id);
-            }
-            
             var modelJSON        = this.model.toJSON();
             var templateObject   = {
                 recipient : "PrgmrBill",
                 nick      : "Cayenne",
-                message   : "Biggie Smalls is da illest",
+                message   : "Hello, world!",
                 originNick: "Bruce Lee",
                 timeAgo   : "2 days ago",
                 line      : 1

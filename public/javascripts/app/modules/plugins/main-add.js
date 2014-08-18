@@ -21,6 +21,7 @@ require.config({
         pluginModel     : "app/modules/plugins/models/pluginModel",        
 
         pluginMessageModel : "app/modules/plugins/models/pluginMessageModel",        
+        pluginMessageInfoModel : "app/modules/plugins/models/pluginMessageInfoModel",
         
         // collections
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",
@@ -28,7 +29,10 @@ require.config({
         // views
         addView         : "app/modules/plugins/views/add",
         pluginHeaderView: "app/modules/plugins/views/pluginHeaderView",
-        messageEditView: "app/modules/plugins/views/messageEditView"
+        messageEditView : "app/modules/plugins/views/messageEditView",
+        messageView     : "app/modules/plugins/views/messageView",
+        pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView",
+        pluginSidebarView      : "app/modules/plugins/views/pluginSidebarView"
     },
     shim: {
         bootstrap: {
@@ -46,24 +50,45 @@ require.config({
         },
         addView: {
             deps: ['Backbone', 'bootstrap']
+        },
+        messageView: {
+            deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
 var deps = [
     "common", 
-    "messageEditView", 
-    "pluginHeaderView"
+    "messageView",
+    "pluginMessageCollection"
 ];
 
-require(deps, function (common, messageEditView, pluginHeaderView) {
+require(deps, function (common, messageView, pluginMessageCollection) {
     $(function () {
         
-        new messageEditView({
-            model: model
+        var view = Backbone.View.extend({
+            initialize: function () {
+                var self        = this;
+                self.collection = new pluginMessageCollection();
+                
+                self.listenTo(self.collection, 'add', self.renderNewMessage, self);
+                
+                self.collection.add({
+                    name   : "ok",
+                    message: "hello, world!"
+                });        
+            },
+            
+            renderNewMessage: function (model, collection, options) {
+                new messageView({
+                    isNew: true,
+                    model: model,
+                    collection: this.collection
+                });
+            }
         });
         
-        new pluginHeaderView();
+        new view();        
     });
 });
 

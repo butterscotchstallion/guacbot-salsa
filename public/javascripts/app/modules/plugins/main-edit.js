@@ -27,7 +27,6 @@ require.config({
         // views
         messageView            : "app/modules/plugins/views/messageView",
         messageEditView        : "app/modules/plugins/views/messageEditView",
-        relatedMessageItemView : "app/modules/plugins/views/relatedMessageItemView",
         pluginMessageHeaderView: "app/modules/plugins/views/pluginMessageHeaderView",
         pluginSidebarView      : "app/modules/plugins/views/pluginSidebarView",
     },
@@ -51,11 +50,16 @@ require.config({
     }
 });
 
-require(['common', 'messageView'], function (common, messageView) {
+require(['common', 'messageView', 'pluginMessageModel', 'pluginMessageCollection'], function (common, messageView, pluginMessageModel, pluginMessageCollection) {
     $(function () {
         console.log('edit main');
+        var messages = new pluginMessageCollection();
         
-        new messageView();
+        new messageView({
+            model     : new pluginMessageModel(),
+            isNew     : false,
+            collection: messages
+        });
     });
 });
 
