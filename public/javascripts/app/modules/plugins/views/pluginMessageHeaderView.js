@@ -14,19 +14,23 @@ define('pluginMessageHeaderView', function (require) {
         
         template  : pluginMessageHeaderTemplateCompiled,
         
-        initialize: function () {
-            var self        = this;
+        initialize: function (options) {
+            var self   = this;
             
-            self.model = new pluginMessageModel();
+            self.model = options ? options.model : new pluginMessageModel();
             
-            self.listenTo(self.model, 'change add', self.render, self);
+            self.listenTo(self.model, 'change', self.render, self);
             
-            self.model.fetch();
+            if (!options) {
+                self.model.fetch();
+            } else {
+                this.render();
+            }
         },
         
-        render    : function (model) {
-            var tpl       = this.template(model.toJSON());
-
+        render    : function () {
+            var tpl = this.template(this.model.toJSON());
+            
             this.$el.html(tpl);
         }
     });    

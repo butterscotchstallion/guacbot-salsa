@@ -19,12 +19,11 @@ define('messageView', function (require) {
             this.render();
         },
         
-        render: function () {
-            if (!this.isNew) {
-                new pluginMessageHeaderView();
-            }
-            
+        render: function () {            
             new pluginSidebarView();
+            new pluginMessageHeaderView({
+                model: this.model
+            });
             new messageEditView({
                 isNew     : this.isNew,
                 model     : this.model,

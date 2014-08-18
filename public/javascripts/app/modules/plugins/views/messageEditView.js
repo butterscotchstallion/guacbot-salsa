@@ -32,14 +32,14 @@ define('messageEditView', function (require) {
             'input .parse-me'        : 'onRecompileClicked',
             'focus .parse-me'        : 'onFocusParseMeField',
             'click .save-message'    : 'onSaveMessageButtonClicked',
-            'click .delete-button'   : 'onDeletePluginMessageButtonClicked',
-            'click .add-button'      : 'onAddMessageButtonClicked'
+            'click .delete-button'   : 'onDeletePluginMessageButtonClicked'
         },
         
         initialize: function (options) {
             var self      = this;
             self.model    = options.model;
             self.messages = options.collection;
+            self.isNew    = options.isNew;
             
             self.listenTo(self.model, 'invalid', self.setMessageErrorState, self);
             self.listenTo(self.model, 'change',  self.render,               self);
@@ -53,21 +53,6 @@ define('messageEditView', function (require) {
             } else {
                 this.render();
             }
-        },
-        
-        onAddMessageButtonClicked: function (e) {
-            e.preventDefault();
-            
-            var id    = this.model.get('id');
-            var model = this.messages.get(id);
-            
-            model.set({
-                id     : null,
-                name   : "ok",
-                message: "Hello, world!"
-            });
-            
-            console.log('cleared');
         },
         
         onDeletePluginMessageButtonClicked: function (e) {
@@ -181,7 +166,8 @@ define('messageEditView', function (require) {
             
             var tpl            = this.template(_.extend({
                 templateObject : stringified,
-                compiledMessage: processedMessage
+                compiledMessage: processedMessage,
+                isEdit         : !this.isNew
             }, modelJSON));
             
             this.$el.html(tpl);

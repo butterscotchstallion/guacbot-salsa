@@ -29,21 +29,23 @@
     
     <div class="col-md-5 plugin-message-controls">
         <div class="btn-toolbar pull-right" role="toolbar">
-            <div class="btn-group">
-                <a href="#" 
-                   data-target="#delete-modal"
-                   data-toggle="modal"
-                   class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</a>
-            </div>
+            {{#if isEdit}}
+                <div class="btn-group">
+                    <a href="#" 
+                       data-target="#delete-modal"
+                       data-toggle="modal"
+                       class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+                </div>
+                
+                <div class="btn-group">
+                    <a href="/plugins/{{plugin_id}}/messages/add"
+                       class="btn btn-info add-button"><span class="glyphicon glyphicon-plus"></span> Add</a>
+                </div>
+            {{/if}}           
             
-            <div class="btn-group">
-                <a href="/plugins/{{plugin_id}}/messages/add"
-                   class="btn btn-info add-button"><span class="glyphicon glyphicon-plus"></span> Add</a>
-            </div>
-
             <div class="btn-group">                    
                 <button type="button"
-                        class="btn btn-success save-message"><span class="glyphicon glyphicon-ok"></span> Save changes</button>
+                        class="btn btn-success save-message"><span class="glyphicon glyphicon-ok"></span> Save</button>
             </div>
         </div>
     </div>

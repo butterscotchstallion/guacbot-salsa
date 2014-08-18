@@ -74,15 +74,18 @@ require(deps, function (common, messageView, pluginMessageCollection) {
                 self.listenTo(self.collection, 'add', self.renderNewMessage, self);
                 
                 self.collection.add({
-                    name   : "ok",
-                    message: "hello, world!"
-                });        
+                    name    : "ok",
+                    message : "hello, world!",
+                    plugin  : {
+                        name: "New Message"
+                    }
+                });
             },
             
             renderNewMessage: function (model, collection, options) {
                 new messageView({
-                    isNew: true,
-                    model: model,
+                    isNew     : true,
+                    model     : model,
                     collection: this.collection
                 });
             }
