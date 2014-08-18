@@ -51,6 +51,44 @@ router.get('/:pluginID', function (req, res, next) {
           });
 });
 
+// Info about a specific plugin
+router.get('/:pluginID/info', function (req, res, next) {
+    var Plugin = new plugin();
+    
+    Plugin.query({
+        where: {
+            plugin_id: req.params.pluginID
+        }
+    })
+    .count('* AS messageCount')
+    .then(function (result) {
+        var plugin = result[0];
+        
+        console.log(plugin);
+        
+        /*Plugin.query({
+                where: {
+                    id: req.params.pluginID
+                }
+              })
+              .fetch()
+              .then(function (plugin) {*/
+                if (plugin) {
+                    res.status(200).json({
+                        status : "OK",
+                        message: null,
+                        plugin : plugin
+                    });
+                } else {
+                    res.status(404).json({
+                        status: "ERROR",
+                        message: "Plugin not found"
+                    });
+                }
+             // });
+    });
+});
+
 // Create plugin
 router.post('/', function (req, res, next) {
     var filename = req.param('filename');

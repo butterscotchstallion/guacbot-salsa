@@ -35,9 +35,10 @@ define('dashboardPluginMessagesView', function (require) {
         },
         
         renderMessages: function () {
-            var self = this;
+            var self     = this;
+            var msgCount = self.collection.length;
             
-            $('.message-count').text(self.collection.length);
+            $('.message-count').text(msgCount);
             
             self.collection.each(function (model) {
                 self.addMessage(model);
@@ -53,7 +54,10 @@ define('dashboardPluginMessagesView', function (require) {
         },
         
         render    : function () {
-            var tpl = this.template();
+            var tpl = this.template({
+                messages: this.collection.toJSON(),
+                id: window.app.pluginID
+            });
             
             $('.dashboard-messages').html(tpl);
             

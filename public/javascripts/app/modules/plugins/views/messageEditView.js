@@ -81,8 +81,6 @@ define('messageEditView', function (require) {
             
             var isNew = self.model.isNew();
             
-            console.log('isNew: ', isNew);
-            
             if (isNew) {
                 self.messages.create(self.model, {
                     success: function(newMessage) {
@@ -95,8 +93,11 @@ define('messageEditView', function (require) {
                     }
                 });
             } else {
-                self.model.save()
-                          .then(self.onMessageSavedSuccessfully);
+                var res = self.model.save();
+                
+                if (res) {
+                    res.then(self.onMessageSavedSuccessfully);
+                }
             }
         },
         
@@ -158,7 +159,7 @@ define('messageEditView', function (require) {
                 timeAgo   : "2 days ago",
                 line      : 1
             };
-            var stringified      = JSON.stringify(templateObject, null, 4);
+            var stringified      = JSON.stringify(templateObject, null, 2);
             var processedMessage = this.processMessage({
                 message       : modelJSON.message,
                 templateObject: stringified

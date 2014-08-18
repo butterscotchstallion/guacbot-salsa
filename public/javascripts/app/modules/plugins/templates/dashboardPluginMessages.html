@@ -4,16 +4,22 @@
            title="View all messages for this plugin">Messages</a> <span class="badge message-count"></span>
     </div>
     
-    <table class="dashboard-messages-table table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Message</th>
-            </tr>
-        </thead>
-        
-        <tbody class="dashboard-messages-table-body">
-        
-        </tbody>
-    </table>
+    {{#if messages}}
+        <table class="dashboard-messages-table table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            
+            <tbody class="dashboard-messages-table-body">
+            
+            </tbody>
+        </table>
+    {{else}}
+        <div class="panel-body">
+            There are no messages for this plugin.
+        </div>
+    {{/if}}
 </div>

@@ -38,17 +38,17 @@ define('pluginView', function (require) {
             self.model
                 .fetch()
                 .then(function () {
-                self.pluginMessageInfoModel.fetch({
-                    reset: true
+                    self.pluginMessageInfoModel.fetch({
+                        reset: true
+                    });
                 });
-            });
         },
         
         onSaveStatusButtonClicked: function (e) {
-            var enabled = $('input[type="radio"][name="enabled"]:checked').val();
+            var enabled = $('#plugin-status-enabled').is(':checked') ? 1 : 0;
             var button  = $(e.target);
             var self    = this;
-            
+
             button.button('loading');
             
             self.model.set({
@@ -78,13 +78,15 @@ define('pluginView', function (require) {
             var modelJSON = model.toJSON();    
             var disabled  = !model.get('enabled');
             var data      = _.extend({
-                isDisabled: disabled
+                isDisabled: disabled,
+                isEnabled : model.get('enabled')
             }, modelJSON);
             var tpl       = this.template(data);
             
             this.$el.html(tpl);
             
             // disgusting workaround until I figure out weird handlebars parse error
+            $('input[name="enabled"]').removeAttr('checked');
             $('input[name="enabled"][value="' + model.get('enabled') + '"]').attr('checked', true);
             
             new dashboardPluginMessagesView();  

@@ -22,65 +22,7 @@
           rel="stylesheet" 
           type="text/css" />
 </head>
-<body>    
-    <!--
-    <nav class="navbar navbar-default navbar-inverse" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Salsa</a>
-            </div>
-                
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li {{#if isHomepage}}class="active"{{/if}}><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-            
-                    <li class="dropdown{{#if isPluginsPage}} active{{/if}}">
-                        <a href="#" 
-                           class="dropdown-toggle" 
-                           data-toggle="dropdown"><span class="glyphicon glyphicon-align-justify"></span> Plugins <span class="badge plugin-count hidden">0</span> <span class="caret"></span></a>
-                        
-                        <ul class="dropdown-menu plugins-menu" role="menu"></ul>
-                    </li>
-                </ul>
-                
-                <form class="navbar-form" role="search" method="get">
-                    <input type="hidden" id="typeahead-map-plugin-id">
-                    
-                    <div class="form-group">
-                        <div class="ac-wrapper">
-                            <input type="text" 
-                                   autocomplete="off"
-                                   name="pluginID"
-                                   class="form-control menu-autocomplete" 
-                                   placeholder="Search">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" 
-                            class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
-                </form>
-                
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown{{#if isConfigPage}} active{{/if}}">
-                        <a href="#" 
-                           class="dropdown-toggle" 
-                           data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span> Config <span class="caret"></span></a>
-                        
-                        <ul class="dropdown-menu" role="menu"></ul>
-                    </li>
-                </ul>  
-            </div>
-        </div>
-    </nav>
-    -->
-    
-    <!-- Fixed navbar -->
+<body>
     <div class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
             <div class="navbar-header">
@@ -107,7 +49,7 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active">
-                        <a href="#"><span class="glyphicon glyphicon-th-large"></span> Connected to <strong>{{database}}</strong> (<span class="environment">{{env}}</span>)</a>
+                        <a href="#"><span class="glyphicon glyphicon-cog"></span> Connected to <strong>{{database}}</strong> (<span class="environment">{{env}}</span>)</a>
                     </li>
                 </ul>
             </div><!--/.nav-collapse -->

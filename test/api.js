@@ -493,6 +493,11 @@ describe('logger api', function() {
     });
 });
 
+/**
+ *
+ * Plugin 
+ *
+ */
 describe('plugins api', function() {
     var pluginID;
     
@@ -569,6 +574,28 @@ describe('plugins api', function() {
                       expect(body.plugin).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.plugin.id).to.eql(8);
+                      
+                      done();
+                  });
+    });
+    
+    it('gets info about specific plugin', function (done) {
+        superagent.get(BASE_URL + 'plugins/8')
+                  .end(function(e, res) {
+                      expect(res.status).to.eql(200);
+                      expect(e).to.eql(null);
+                      
+                      var body = res.body;
+
+                      console.log(body);
+                      
+                      expect(body.status).to.eql("OK");
+                      expect(body.plugin).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.plugin).to.be.an('object');
+                      expect(body.plugin.id).to.eql(8);
+                      expect(body.plugin.name).to.be.ok();
+                      expect(body.messageCount).to.be.a('Number');
                       
                       done();
                   });
