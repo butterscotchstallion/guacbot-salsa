@@ -23,8 +23,9 @@ define('pluginView', function (require) {
         el        : $('.plugins-container'),
         
         events    : {
-            'click .message-count-link': 'onMessageCountLinkClicked',
-            'click .save-status'       : 'onSaveStatusButtonClicked'
+            'click .message-count-link'  : 'onMessageCountLinkClicked',
+            'click .save-status'         : 'onSaveStatusButtonClicked',
+            'click .delete-plugin-button': 'onDeleteButtonClicked'
         },
         
         initialize: function () {
@@ -44,11 +45,22 @@ define('pluginView', function (require) {
                 });
         },
         
+        onDeleteButtonClicked: function (e) {
+            var button  = $(e.target);
+            
+            button.button('loading');
+            
+            this.model.destroy()
+                .then(function (model) {
+                    button.button('reset');
+                });
+        },
+        
         onSaveStatusButtonClicked: function (e) {
             var enabled = $('#plugin-status-enabled').is(':checked') ? 1 : 0;
             var button  = $(e.target);
             var self    = this;
-
+            
             button.button('loading');
             
             self.model.set({
@@ -77,17 +89,27 @@ define('pluginView', function (require) {
         renderAll: function (model) {
             var modelJSON = model.toJSON();    
             var disabled  = !model.get('enabled');
+            var enabled   = model.get('enabled');
             var data      = _.extend({
                 isDisabled: disabled,
-                isEnabled : model.get('enabled')
+                isEnabled : enabled
             }, modelJSON);
             var tpl       = this.template(data);
             
             this.$el.html(tpl);
             
-            // disgusting workaround until I figure out weird handlebars parse error
-            $('input[name="enabled"]').removeAttr('checked');
-            $('input[name="enabled"][value="' + model.get('enabled') + '"]').attr('checked', true);
+            /**
+             * Attempting to use the above variables "isDisabled" and
+             * "isDisabled" result in a Handlebars parse error. Cause
+             * of said parse error is undetermined at this point. The
+             * below code is a workaround.
+             *
+             */
+            if (enabled) {
+                $('#plugin-status-enabled').attr('checked', true);
+            } else {
+                $('#plugin-status-disabled').attr('checked', true);
+            }
             
             new dashboardPluginMessagesView();  
             new pluginSidebarView();
