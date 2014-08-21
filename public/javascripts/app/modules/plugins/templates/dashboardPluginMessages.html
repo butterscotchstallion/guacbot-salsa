@@ -1,7 +1,17 @@
 <div class="panel panel-default dashboard-messages-panel">
     <div class="panel-heading">
-        <a href="/plugins/{{id}}/messages"
-           title="View all messages for this plugin">Messages</a> <span class="badge message-count"></span>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="/plugins/{{id}}/messages"
+                   title="View all messages for this plugin">Messages</a> <span class="badge message-count"></span>
+            </div>
+            
+            <div class="col-md-6">
+                <a href="/plugins/{{id}}/messages/add"
+                   class="btn btn-default btn-sm pull-right"
+                   title="Add a plugin message"><span class="glyphicon glyphicon-plus"></span></a>
+            </div>
+        </div>
     </div>
     
     {{#if messages}}

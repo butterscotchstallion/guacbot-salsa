@@ -16,6 +16,7 @@ router.get('/', function (req, res, next) {
     var urlParts = url.parse(req.url, true).query;
     var order    = urlParts.order || "name";
     var cols     = [
+        "id",
         "name",
         "filename",
         "enabled"
