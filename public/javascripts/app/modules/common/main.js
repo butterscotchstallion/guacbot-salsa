@@ -19,7 +19,7 @@ require.config({
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         
         // collections
-        pluginsCollection: "app/modules/plugins/collections/pluginsCollection",
+        pluginCollection: "app/modules/plugins/collections/pluginCollection",
         
         // views
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",

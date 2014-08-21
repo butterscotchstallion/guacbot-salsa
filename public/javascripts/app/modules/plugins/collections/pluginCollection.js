@@ -17,6 +17,6 @@ define('pluginCollection', function (require) {
             return response.plugins;
         }
     });
-    
+
     return pluginCollection;    
 });

@@ -1,0 +1,27 @@
+<h1>Plugins</h1>
+
+<div class="plugin-list-container">
+    <div class="progress loading">
+        <div class="progress-bar progress-bar-info progress-bar-striped" 
+             role="progressbar" 
+             aria-valuenow="100" 
+             aria-valuemin="100" 
+             aria-valuemax="100" 
+             style="width: 100%"></div>
+    </div>
+    
+    <table class="table table-striped table-bordered table-hover hidden plugin-list-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Enabled</th>
+            </tr>
+        </thead>
+        
+        <tbody id="plugin-list-table-body">
+            
+        </tbody>
+    </table>
+</div>
+
+<script data-main="/javascripts/app/modules/plugins/main-plugin-list" src="/javascripts/lib/require.min.js"></script>

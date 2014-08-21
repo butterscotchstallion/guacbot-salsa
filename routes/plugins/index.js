@@ -7,6 +7,15 @@ var router  = express.Router();
 var fs      = require('fs');
 var config  = JSON.parse(fs.readFileSync("./config/db-dev.json", 'utf8'));
 
+router.get('/', function(req, res) {
+    
+    res.render('plugins/list', { 
+        title               : 'Plugins',
+        isPluginsPage       : true,
+        env                 : config.env
+    });
+});
+
 router.get('/:pluginID', function(req, res) {
     var isMetaAvailable = false;
     var pluginID        = req.params.pluginID;

@@ -6,7 +6,7 @@ define('pluginsMenuView', function (require) {
     var Handlebars          = require('Handlebars');
     var tplFile             = require('text!/javascripts/app/modules/common/templates/pluginsMenuItem.html');
     var tpl                 = Handlebars.compile(tplFile);
-    var pluginsCollection   = require('pluginsCollection');
+    var pluginCollection   = require('pluginCollection');
     var pluginsModel        = require('pluginsModel');
     var pluginsMenuItemView = require('pluginsMenuItemView');
     var menuSearchView      = require('menuSearchView');
@@ -14,7 +14,7 @@ define('pluginsMenuView', function (require) {
     var pluginsMenuView = Backbone.View.extend({
         initialize: function() {
             var self        = this;
-            this.collection = new pluginsCollection({
+            this.collection = new pluginCollection({
                 model: pluginsModel
             });
             
