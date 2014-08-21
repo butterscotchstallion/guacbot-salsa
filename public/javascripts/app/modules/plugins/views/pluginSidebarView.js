@@ -21,7 +21,7 @@ define('pluginSidebarView', function (require) {
             
             self.model = new pluginMessageInfoModel();
             
-            self.listenTo(self.model, 'change remove', self.render, self);
+            self.listenTo(self.model, 'change', self.render, self);
             
             console.log('sidebar init');
             

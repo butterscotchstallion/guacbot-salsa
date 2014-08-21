@@ -25,20 +25,15 @@ define('dashboardPluginMessagesView', function (require) {
                 limit: 5
             });
             
-            //self.listenTo(self.collection, 'reset', self.render, self);
+            self.listenTo(self.collection, 'reset', self.render, self);
             
             self.collection.fetch({
-                success: function () {
-                    self.render();
-                }
+                reset: true
             });
         },
         
         renderMessages: function () {
             var self     = this;
-            var msgCount = self.collection.length;
-            
-            $('.message-count').text(msgCount);
             
             self.collection.each(function (model) {
                 self.addMessage(model);
@@ -56,7 +51,7 @@ define('dashboardPluginMessagesView', function (require) {
         render    : function () {
             var tpl = this.template({
                 messages: this.collection.toJSON(),
-                id: window.app.pluginID
+                id      : window.app.pluginID
             });
             
             $('.dashboard-messages').html(tpl);
