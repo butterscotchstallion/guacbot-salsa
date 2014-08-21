@@ -2,7 +2,7 @@
  * main view
  *
  */
-define('listView', function (require) {
+define('pluginMessageListView', function (require) {
     "use strict";
     
     var Handlebars                  = require('Handlebars');
@@ -16,7 +16,7 @@ define('listView', function (require) {
     var pluginMessageInfoModel      = require('pluginMessageInfoModel');
     var pagination                  = require('pagination');
     
-    var listView                    = Backbone.View.extend({
+    var pluginMessageListView       = Backbone.View.extend({
         el: $('body'),
         
         initialize: function () {            
@@ -145,7 +145,7 @@ define('listView', function (require) {
         }
     });
     
-    return listView;
+    return pluginMessageListView;
 });
 
 

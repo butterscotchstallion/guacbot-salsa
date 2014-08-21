@@ -26,7 +26,7 @@ require.config({
         pluginMessageNameCollection: "app/modules/plugins/collections/pluginMessageNameCollection",
         
         // views
-        listView               : "app/modules/plugins/views/list",
+        pluginMessageListView  : "app/modules/plugins/views/pluginMessageListView",
         pluginMessageItemView  : "app/modules/plugins/views/pluginMessageItemView"
     },
     shim: {
@@ -43,15 +43,15 @@ require.config({
         underscore: {
             exports: '_'
         },
-        listView: {
+        pluginMessageListView: {
             deps: ['Backbone', 'bootstrap']
         }
     }
 });
 
-require(["listView", "common"], function (listView) {
+require(["pluginMessageListView", "common"], function (pluginMessageListView) {
     $(function () {
-        new listView();
+        new pluginMessageListView();
     });
 });
 
