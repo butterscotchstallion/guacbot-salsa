@@ -579,6 +579,7 @@ describe('plugins api', function() {
                   });
     });
     
+    /*
     it('gets info about specific plugin', function (done) {
         superagent.get(BASE_URL + 'plugins/8')
                   .end(function(e, res) {
@@ -600,6 +601,7 @@ describe('plugins api', function() {
                       done();
                   });
     });
+    */
     
     it('fails to get a non-existent plugin', function (done) {
         superagent.get(BASE_URL + 'plugins/lol')

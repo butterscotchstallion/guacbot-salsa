@@ -13,16 +13,36 @@ var _             = require('underscore');
 
 // All plugins
 router.get('/', function (req, res, next) {
-    var Plugin = new plugin();
+    var urlParts = url.parse(req.url, true).query;
+    var order    = urlParts.order || "name";
+    var cols     = [
+        "name",
+        "filename",
+        "enabled"
+    ];
+    var qb       = Bookshelf.knex
+                            .select(cols)
+                            .from('plugins');
     
-    Plugin.fetchAll()
-          .then(function (plugins) {
-                res.status(200).json({
-                    status  : "OK",
-                    message : null,
-                    plugins : plugins || []
-                });
-          });
+    if (cols.indexOf(order) !== -1) {
+        qb.orderBy(order, "DESC");
+    }
+    
+    qb.debug();
+    
+    qb.then(function (plugins) {
+        res.status(200).json({
+            status  : "OK",
+            message : null,
+            plugins : plugins || []
+        });
+    })
+    .catch(function (error) {
+        res.status(200).json({
+            status: "ERROR",
+            message: error
+        });
+    });
 });
 
 // A specific plugin

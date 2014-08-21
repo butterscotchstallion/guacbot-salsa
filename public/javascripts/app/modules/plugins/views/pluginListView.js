@@ -23,6 +23,7 @@ define('pluginListView', function (require) {
                 query : this.query,                
                 offset: this.offset,
                 limit : this.limit,
+                order : 'enabled'
             });
             
             this.listenTo(this.collection, 'reset',  this.addPlugins, this);
