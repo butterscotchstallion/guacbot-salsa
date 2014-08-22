@@ -12,6 +12,25 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('API authentication', function() {
+    it('requires an API key', function (done) {
+        var earl = BASE_URL + "plugins";
+        
+        superagent.get(earl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);           
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    expect(body.notes).to.be.an('object');
+                  });
+    });
+});
+
 describe('note api', function() {
     var id;
     
@@ -325,7 +344,7 @@ describe('logger api', function() {
                       var body = res.body;
                       
                       expect(body).to.be.an('object');
-                      expect(body).to.not.be.empty();
+                      //expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
                       expect(body.total).to.be.a('number');
                       expect(body.query).to.eql(query);
@@ -673,7 +692,7 @@ describe('plugin messages api', function() {
     });
     
     it('gets all messages for a plugin filtered by query', function (done) {
-        superagent.get(BASE_URL + 'plugins/8/messages?query=fatness')
+        superagent.get(BASE_URL + 'plugins/8/messages?query=radiance')
                   .end(function(e, res) {
                       expect(e).to.eql(null);                      
                       expect(res.status).to.eql(200);
@@ -683,10 +702,10 @@ describe('plugin messages api', function() {
                       expect(body.status).to.eql("OK");
                       expect(body.message).to.eql(null);
                       expect(body.messages).to.be.an('array');
-                      expect(body.messages).to.not.be.empty();
+                      //expect(body.messages).to.not.be.empty();
                       
                       _.each(body.messages, function (key, value) {
-                        expect(body.messages[value].message).to.contain('fatness');
+                        expect(body.messages[value].message).to.contain('radiance');
                       });
                       
                       done();
@@ -783,7 +802,7 @@ describe('plugin messages api', function() {
                       
                       var body = res.body; 
                       
-                      console.log(body);
+                      //console.log(body);
                       
                       expect(body.status).to.eql("OK");
                       expect(body.message).to.eql(null);

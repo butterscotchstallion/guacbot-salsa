@@ -42,8 +42,7 @@ define('pluginMessageListView', function (require) {
                 reset  : true,
                 success: function (data, options) {
                     $(".loading-row").hide();
-                    $('.message-count-msg').removeClass('hidden');
-                    $('.message-count').text(data.length);
+                    $('.message-count-msg').removeClass('hidden');                    
                 }
             });
             
@@ -114,7 +113,13 @@ define('pluginMessageListView', function (require) {
         },
         
         renderInfo: function () {
-            this.renderPagination();
+            var msgCount = this.info.get('messageCount');
+            
+            if (msgCount > this.limit) {
+                this.renderPagination();
+            }
+            
+            $('.message-count').text(msgCount);
         },
         
         renderPagination: function () {
