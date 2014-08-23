@@ -12,8 +12,84 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('access control', function() {
+    var account = {};
+    
+    it('fails to access a restricted resource without an access token', function (done) {
+        superagent.post(BASE_URL + "accounts")
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(401);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });
+    
+    });
+    
+    it('logs in and gets an access token', function (done) {
+        superagent.post(BASE_URL + "accounts/login")
+                  .send({
+                    name    : config.accountName,
+                    password: config.accountPassword
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    console.log(res.body);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.expires).to.be.ok();
+                    expect(body.token).to.be.ok();
+                    
+                    account.token = body.token;
+                    account.id = body.account.id;
+                    
+                    done();
+                  });    
+    });
+    
+    it('accesses a restricted resource with an access token', function (done) {
+        superagent.get(BASE_URL + "accounts/" + account.id)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    console.log(res.body);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    done();
+                  });
+    
+    });
+});
+
 describe('account', function() {
-    var id;
+    var account = {};
     
     it('fails to creates an account with bogus info', function (done) {
         var earl = BASE_URL + "accounts";
@@ -58,7 +134,7 @@ describe('account', function() {
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
                     
-                    id = body.account.id;
+                    account = body.account;
                     
                     done();
                   });
@@ -84,9 +160,87 @@ describe('account', function() {
     });
     
     it('fetches an account', function (done) {
-        var earl = BASE_URL + "accounts/" + id;
+        var earl = BASE_URL + "accounts/" + account.id;
         
         superagent.get(earl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    done();
+                  });
+    });
+    
+    it('fails to login with a non-existent account', function (done) {
+        var earl = BASE_URL + "accounts/login";
+        
+        superagent.post(earl)
+                  .send({
+                    name    : "lol",
+                    password: "lol"
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });
+    });
+    
+    it('logs in with a valid account', function (done) {
+        var earl = BASE_URL + "accounts/login";
+        var pw   = config.accountPassword;
+        
+        superagent.post(earl)
+                  .send({
+                    name    : account.name,
+                    password: pw
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    console.log(body);
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.expires).to.be.ok();
+                    expect(body.token).to.be.ok();
+                    
+                    account.token = body.token;
+                    
+                    done();
+                  });
+    });
+    
+    it('gets account info using a token', function (done) {
+        var earl = BASE_URL + "accounts/" + account.id;
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
@@ -126,7 +280,7 @@ describe('account', function() {
     });
     
     it('updates a specific account', function (done) {
-        superagent.put(BASE_URL + 'accounts/' + id)
+        superagent.put(BASE_URL + 'accounts/' + account.id)
                   .send({
                     active: 0
                   })
@@ -145,7 +299,7 @@ describe('account', function() {
     });
     
     it('deletes an account', function (done) {
-        superagent.del(BASE_URL + 'accounts/' + id)
+        superagent.del(BASE_URL + 'accounts/' + account.id)
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
                       expect(res.status).to.eql(200);
@@ -157,6 +311,25 @@ describe('account', function() {
                       expect(body.status).to.eql("OK");
                       
                       done();
+                  });
+    });
+    
+    it('fails to fetch a non-existent account', function (done) {
+        var earl = BASE_URL + "accounts/" + account.id;
+        
+        superagent.get(earl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(404);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
                   });
     });
 });

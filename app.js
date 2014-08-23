@@ -6,6 +6,7 @@ var cookieParser  = require('cookie-parser');
 var bodyParser    = require('body-parser');
 var expressHbs    = require('express3-handlebars');
 var fs            = require('fs');
+var tokenAuth     = require('./middleware/tokenAuth');
 
 var app           = express();
 
@@ -20,6 +21,10 @@ app.set('view engine', '.html');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 
+var config = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
+
+app.set('config', config);
+
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -29,6 +34,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/',                    require('./routes/index'));
 
 // API
+app.all('/api/*',               [bodyParser.json(), tokenAuth]);
+
 app.use('/api/v1/plugins',      require('./routes/api/plugins'));
 app.use('/api/v1/logs',         require('./routes/api/logger'));
 app.use('/api/v1/autocomplete', require('./routes/api/autocomplete'));
@@ -43,7 +50,7 @@ process.on('error', function (e) {
 
 // catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
-    var err = new Error('Not Found');
+    var err = new Error('Not Found!');
     err.status = 404;
     next(err);
 });
@@ -54,9 +61,20 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        if (err.status === 401) {
+            res.status(401).json({
+                status : "ERROR",
+                message: "Access token invalid."
+            });
+        }
+        
+        next();
+    });
+    
+    app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         
-        console.log(res.status + ': ', err);
+        console.log(res.statusCode + ': ', err);
         
         res.render('error', {
             message: err.message,
