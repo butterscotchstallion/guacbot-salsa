@@ -12,6 +12,155 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('account', function() {
+    var id;
+    
+    it('fails to creates an account with bogus info', function (done) {
+        var earl = BASE_URL + "accounts";
+        
+        superagent.post(earl)
+                  .send({
+                    "hello": "world"
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });
+    });
+    
+    it('creates an account', function (done) {
+        var earl = BASE_URL + "accounts";
+        
+        superagent.post(earl)
+                  .send({
+                    name    : config.accountName,
+                    password: config.accountPassword
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(201);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    id = body.account.id;
+                    
+                    done();
+                  });
+    });
+    
+    it('fails to fetch a non-existent account', function (done) {
+        var earl = BASE_URL + "accounts/lol";
+        
+        superagent.get(earl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(404);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });
+    });
+    
+    it('fetches an account', function (done) {
+        var earl = BASE_URL + "accounts/" + id;
+        
+        superagent.get(earl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    console.log(body);
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    done();
+                  });
+    });
+    
+    it('fails to update a non-existent account', function (done) {
+        superagent.put(BASE_URL + 'accounts/lol')
+                  .send({
+                    active: 0
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+    
+    it('updates a specific account', function (done) {
+        superagent.put(BASE_URL + 'accounts/' + id)
+                  .send({
+                    active: 0
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('deletes an account', function (done) {
+        superagent.del(BASE_URL + 'accounts/' + id)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+});
+
 describe('API authentication', function() {
     it('requires an API key', function (done) {
         var earl = BASE_URL + "plugins";
@@ -27,6 +176,8 @@ describe('API authentication', function() {
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("ERROR");
                     expect(body.notes).to.be.an('object');
+                    
+                    done();
                   });
     });
 });
