@@ -13,10 +13,11 @@ require.config({
         Backbone      : "lib/backbone.min",
         text          : "lib/text",
         underscore    : "lib/underscore.min",
-        typeahead     : "lib/typeahead",
         jStorage      : "lib/jstorage",
+        typeahead     : "lib/typeahead",
         
-        // models
+        common        : "app/modules/common/main",
+         
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         
         // collections
@@ -25,7 +26,8 @@ require.config({
         // views
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
         pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
-        menuSearchView     : "app/modules/common/views/menuSearchView"
+        menuSearchView     : "app/modules/common/views/menuSearchView",
+        loginView     : "app/modules/accounts/views/loginView"
     },
     shim: {
         bootstrap: {
@@ -41,45 +43,15 @@ require.config({
         underscore: {
             exports: '_'
         },
-        pluginsMenuView: {
-            deps: ['Backbone', 'bootstrap']
-        },
-        typeahead: {
-            deps: ['bootstrap']
-        },
         jStorage: {
             deps: ['jquery']
         }
     }
 });
 
-require(["jquery", "pluginsMenuView", "Backbone"], function ($, pluginsMenuView, Backbone) {
+require(["jquery", "common", "loginView"], function ($, common, loginView) {
     $(function () {
-        // Store "old" sync function
-        var backboneSync = Backbone.sync
-        
-        // Now override
-        Backbone.sync = function (method, model, options) {         
-            var token = $.jStorage.get('token');
-            
-            if (token) {
-                options.headers = {
-                    'x-access-token': token
-                }
-            }
-            
-            backboneSync(method, model, options);
-        };
-        
-        new pluginsMenuView();
-        
-        $(document).ajaxStart(function() {
-            $('.loading-spinner').removeClass('hidden');
-        });
-        
-        $(document).ajaxStop(function() {
-            $('.loading-spinner').addClass('hidden');
-        });
+        new loginView();
     });
 });
 

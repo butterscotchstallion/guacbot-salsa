@@ -114,7 +114,7 @@ router.post('/login', function (req, res, next) {
             } else {
                 res.status(200).json({
                     status : "ERROR",
-                    message: "Account does not exist." 
+                    message: 'Account does not exist: "' + name + '".' 
                 });
             }
          })

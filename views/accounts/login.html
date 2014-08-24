@@ -1,0 +1,19 @@
+<h1>Login Required</h1>
+
+<div class="alert alert-danger alert-dismissible login-failure-message hidden" role="alert">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>Warning!</strong> <span id="login-failure-message-text">Invalid account name or password.</span>
+</div>
+
+<div class="login-container">
+    <div class="progress loading">
+        <div class="progress-bar progress-bar-info progress-bar-striped" 
+             role="progressbar" 
+             aria-valuenow="100" 
+             aria-valuemin="100" 
+             aria-valuemax="100" 
+             style="width: 100%"></div>
+    </div>
+</div>
+
+<script data-main="/javascripts/app/modules/accounts/main" src="/javascripts/lib/require.min.js"></script>
