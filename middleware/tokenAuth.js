@@ -4,30 +4,26 @@
  */
 "use strict";
 
-var Account        = require('../models/account');
-var Bookshelf      = require('../models/index');
-var jwt            = require('jwt-simple');
+var Account     = require('../models/account');
+var Bookshelf   = require('../models/index');
+var jwt         = require('jwt-simple');
 
-module.exports     = function (req, res, next) {
-    var token   = (req.body && req.body.accessToken) || (req.query && req.query.accessToken) || req.headers['x-access-token'];
-    
+module.exports  = function (req, res, next) {
+    var token   = (req.body && req.body.accessToken) || (req.query && req.query.accessToken) || req.headers['x-access-token'];    
     var path    = req.originalUrl;
-    var isLogin = path.indexOf('/login') !== -1;
+    var isLogin = path.indexOf('accounts/login') !== -1;
     
     if (isLogin) {
-        next();
-        
+        next();        
         return;
     }
     
     if (token) {
-        console.log('processing token: ' + token);
-        
         try {
-            var config  = req.app.get('config');
-            var decoded = jwt.decode(token, config.tokenSecret);
-            var expired = decoded.exp <= Date.now();
-            
+            var config   = req.app.get('config');
+            var decoded  = jwt.decode(token, config.tokenSecret);
+            var expired  = decoded.exp <= Date.now();
+
             if (!expired) {
                 var model = new Account({
                     id: decoded.iss
@@ -44,38 +40,27 @@ module.exports     = function (req, res, next) {
                             
                         } else {
                             next({
-                                status : "ERROR",
-                                message: "Access token invalid.",
-                                handler: function (req, res, next) {
-                                    res.status(400).json({
-                                        status : "ERROR",
-                                        message: "Access token invalid."
-                                    });
-                                }
+                                status: 401,
+                                message: "Access token not found."
                             });
                         }
                     });
             } else {
                 next({
-                    status : "ERROR",
-                    message: "Access token expired.",
-                    handler: function (req, res, next) {
-                        res.status(400).json({
-                            status : "ERROR",
-                            message: "Access token expired."
-                        });
-                    }
+                    status: 401,
+                    message: "Access token expired."
                 });
             }
         } catch (err) {
-            console.log('error processing token: ', err);
-            
-            return next();
+            next({
+                status: 401,
+                message: "Invalid access token."
+            });
         }
     } else {
         next({
-            status : 401,
-            message: "Access token invalid."
+            status: 401,
+            message: "Access token required."
         });
     }
 };

@@ -61,10 +61,12 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        console.log('err: ', err);
+        
         if (err.status === 401) {
             res.status(401).json({
                 status : "ERROR",
-                message: "Access token invalid."
+                message: err.message
             });
         }
         

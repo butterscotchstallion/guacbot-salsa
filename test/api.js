@@ -20,6 +20,8 @@ describe('access control', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
+                    console.log(res.body);
+                    
                     expect(res.status).to.eql(401);
                     
                     var body = res.body;
@@ -29,8 +31,27 @@ describe('access control', function() {
                     expect(body.status).to.eql("ERROR");
                     
                     done();
-                  });
+                  });    
+    });
     
+    it('fails to access a restricted resource with an invalid access token', function (done) {
+        superagent.post(BASE_URL + "accounts")
+                  .set('x-access-token', 'lol')
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    console.log(res.body);
+                    
+                    expect(res.status).to.eql(401);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });    
     });
     
     it('logs in and gets an access token', function (done) {
