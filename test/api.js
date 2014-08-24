@@ -14,7 +14,7 @@ var _           = require('underscore');
 
 describe('access control', function() {
     var account = {};
-    
+
     it('fails to access a restricted resource without an access token', function (done) {
         superagent.post(BASE_URL + "accounts")
                   .end(function(e, res) {
@@ -111,11 +111,46 @@ describe('access control', function() {
 
 describe('account', function() {
     var account = {};
+    var accessToken;
+    
+    it('logs in with a valid account', function (done) {
+        var earl = BASE_URL + "accounts/login";
+        var pw   = config.accountPassword;
+        
+        superagent.post(earl)
+                  .send({
+                    name    : config.accountName,
+                    password: pw
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    console.log(body);
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.expires).to.be.ok();
+                    expect(body.token).to.be.ok();
+                    
+                    accessToken = body.token;
+                    
+                    done();
+                  });
+    });
     
     it('fails to creates an account with bogus info', function (done) {
         var earl = BASE_URL + "accounts";
         
         superagent.post(earl)
+                  .set('x-access-token', accessToken)
                   .send({
                     "hello": "world"
                   })
@@ -138,8 +173,9 @@ describe('account', function() {
         var earl = BASE_URL + "accounts";
         
         superagent.post(earl)
+                  .set('x-access-token', accessToken)
                   .send({
-                    name    : config.accountName,
+                    name    : ~~(Math.random() * 1337),
                     password: config.accountPassword
                   })
                   .end(function(e, res) {
@@ -165,6 +201,7 @@ describe('account', function() {
         var earl = BASE_URL + "accounts/lol";
         
         superagent.get(earl)
+                  .set('x-access-token', accessToken)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
@@ -184,6 +221,7 @@ describe('account', function() {
         var earl = BASE_URL + "accounts/" + account.id;
         
         superagent.get(earl)
+                  .set('x-access-token', accessToken)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
@@ -205,6 +243,7 @@ describe('account', function() {
         var earl = BASE_URL + "accounts/login";
         
         superagent.post(earl)
+                  .set('x-access-token', accessToken)
                   .send({
                     name    : "lol",
                     password: "lol"
@@ -224,65 +263,9 @@ describe('account', function() {
                   });
     });
     
-    it('logs in with a valid account', function (done) {
-        var earl = BASE_URL + "accounts/login";
-        var pw   = config.accountPassword;
-        
-        superagent.post(earl)
-                  .send({
-                    name    : account.name,
-                    password: pw
-                  })
-                  .end(function(e, res) {
-                    expect(e).to.eql(null);
-                    
-                    expect(res.status).to.eql(200);
-                    
-                    var body = res.body;
-                    
-                    console.log(body);
-                    
-                    expect(body).to.be.an('object');
-                    expect(body).to.not.be.empty();
-                    expect(body.status).to.eql("OK");
-                    expect(body.account).to.be.an('object');
-                    expect(body.account.password).to.eql(null);
-                    
-                    expect(body.expires).to.be.ok();
-                    expect(body.token).to.be.ok();
-                    
-                    account.token = body.token;
-                    
-                    done();
-                  });
-    });
-    
-    it('gets account info using a token', function (done) {
-        var earl = BASE_URL + "accounts/" + account.id;
-        
-        superagent.get(earl)
-                  .set('x-access-token', account.token)
-                  .end(function(e, res) {
-                    expect(e).to.eql(null);
-                    
-                    expect(res.status).to.eql(200);
-                    
-                    var body = res.body;
-                    
-                    console.log(body);
-                    
-                    expect(body).to.be.an('object');
-                    expect(body).to.not.be.empty();
-                    expect(body.status).to.eql("OK");
-                    expect(body.account).to.be.an('object');
-                    expect(body.account.password).to.eql(null);
-                    
-                    done();
-                  });
-    });
-    
     it('fails to update a non-existent account', function (done) {
         superagent.put(BASE_URL + 'accounts/lol')
+                  .set('x-access-token', accessToken)
                   .send({
                     active: 0
                   })
@@ -302,6 +285,7 @@ describe('account', function() {
     
     it('updates a specific account', function (done) {
         superagent.put(BASE_URL + 'accounts/' + account.id)
+                  .set('x-access-token', accessToken)
                   .send({
                     active: 0
                   })
@@ -321,6 +305,7 @@ describe('account', function() {
     
     it('deletes an account', function (done) {
         superagent.del(BASE_URL + 'accounts/' + account.id)
+                  .set('x-access-token', accessToken)
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
                       expect(res.status).to.eql(200);
@@ -339,6 +324,7 @@ describe('account', function() {
         var earl = BASE_URL + "accounts/" + account.id;
         
         superagent.get(earl)
+                  .set('x-access-token', accessToken)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
@@ -349,27 +335,6 @@ describe('account', function() {
                     expect(body).to.be.an('object');
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("ERROR");
-                    
-                    done();
-                  });
-    });
-});
-
-describe('API authentication', function() {
-    it('requires an API key', function (done) {
-        var earl = BASE_URL + "plugins";
-        
-        superagent.get(earl)
-                  .end(function(e, res) {
-                    expect(e).to.eql(null);           
-                    expect(res.status).to.eql(200);
-                    
-                    var body = res.body;
-                    
-                    expect(body).to.be.an('object');
-                    expect(body).to.not.be.empty();
-                    expect(body.status).to.eql("ERROR");
-                    expect(body.notes).to.be.an('object');
                     
                     done();
                   });
