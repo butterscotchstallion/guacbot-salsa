@@ -4,17 +4,20 @@
  */
 "use strict";
 
-var Checkit       = require('checkit');
-var bookshelf     = require('./index');
-var password      = require('password-hash-and-salt');
-var fs            = require('fs');
-var config        = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
-var checkit       = new Checkit({
-    name: ['required']
+var Checkit            = require('checkit');
+var bookshelf          = require('./index');
+
+var checkit            = new Checkit({
+    name    : ['required'],
+    password: ['required']
 });
 
 var account    = bookshelf.Model.extend({
     tableName    : "accounts",
+    
+    token        : function (token) {
+        return this.hasOne("account_access_tokens", "account_id");
+    },
     
     hasTimestamps: ['created_at', 'updated_at'],
     
@@ -27,18 +30,9 @@ var account    = bookshelf.Model.extend({
     },
     
     beforeSave : function (model) {
-        var pw   = model.get('password');
-        var self = this;
+        console.log(model.toJSON());
         
-        password(pw).hash(function (error, hash) {
-            if (error) {
-                return error;
-            }
-            
-            model.set('password', hash);
-            
-            return checkit.run(self.attributes);        
-        });
+        return checkit.run(this.attributes);
     }
 });
 

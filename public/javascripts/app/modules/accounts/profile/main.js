@@ -15,10 +15,11 @@ require.config({
         underscore    : "lib/underscore.min",
         jStorage      : "lib/jstorage",
         typeahead     : "lib/typeahead",
+        moment        : "lib/moment",
         
         common        : "app/modules/common/main",
-         
-        pluginsModel     : "app/modules/plugins/models/pluginsModel",
+        
+        accountsModel     : "app/modules/accounts/models/accountsModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
@@ -27,7 +28,7 @@ require.config({
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
         pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
         menuSearchView     : "app/modules/common/views/menuSearchView",
-        loginView          : "app/modules/accounts/login/views/loginView"
+        profileView        : "app/modules/accounts/profile/views/profileView"
     },
     shim: {
         bootstrap: {
@@ -45,13 +46,16 @@ require.config({
         },
         jStorage: {
             deps: ['jquery']
+        },
+        profileView: {
+            deps: ['Backbone']
         }
     }
 });
 
-require(["jquery", "common", "loginView"], function ($, common, loginView) {
+require(["jquery", "common", "profileView"], function ($, common, profileView) {
     $(function () {
-        new loginView();
+        new profileView();
     });
 });
 

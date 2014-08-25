@@ -12,6 +12,63 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('access token storage', function() {
+    var account;
+    
+    it('logs in and gets an access token', function (done) {
+        superagent.post(BASE_URL + "accounts/login")
+                  .send({
+                    name    : config.accountName,
+                    password: config.accountPassword
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.expires).to.be.ok();
+                    expect(body.token).to.be.ok();
+                    
+                    account         = body.account;
+                    account.token   = body.token;
+                    account.expires = body.expires;
+                    
+                    done();
+                  });    
+    });
+    
+    it('fetches an account', function (done) {
+        var earl = BASE_URL + "accounts/" + account.id;
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    expect(body.account.tokens).to.be.an('object');
+                    
+                    done();
+                  });
+    });
+});
+
 describe('access control', function() {
     var account = {};
 
@@ -20,9 +77,9 @@ describe('access control', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
-                    console.log(res.body);
+                    //console.log(res.body);
                     
-                    expect(res.status).to.eql(401);
+                    expect(res.status).to.eql(400);
                     
                     var body = res.body;
                     
@@ -40,9 +97,9 @@ describe('access control', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
-                    console.log(res.body);
+                    //console.log(res.body);
                     
-                    expect(res.status).to.eql(401);
+                    expect(res.status).to.eql(400);
                     
                     var body = res.body;
                     
@@ -63,7 +120,7 @@ describe('access control', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
-                    console.log(res.body);
+                    //console.log(res.body);
                     
                     expect(res.status).to.eql(200);
                     
@@ -91,7 +148,7 @@ describe('access control', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
-                    console.log(res.body);
+                    //console.log(res.body);
                     
                     expect(res.status).to.eql(200);
                     
@@ -104,12 +161,11 @@ describe('access control', function() {
                     expect(body.account.password).to.eql(null);
                     
                     done();
-                  });
-    
+                  });    
     });
 });
 
-describe('account', function() {
+describe('accountz', function() {
     var account = {};
     var accessToken;
     
@@ -128,8 +184,6 @@ describe('account', function() {
                     expect(res.status).to.eql(200);
                     
                     var body = res.body;
-                    
-                    console.log(body);
                     
                     expect(body).to.be.an('object');
                     expect(body).to.not.be.empty();
@@ -180,7 +234,6 @@ describe('account', function() {
                   })
                   .end(function(e, res) {
                     expect(e).to.eql(null);
-                    
                     expect(res.status).to.eql(201);
                     
                     var body = res.body;
@@ -204,7 +257,7 @@ describe('account', function() {
                   .set('x-access-token', accessToken)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
-                    
+
                     expect(res.status).to.eql(404);
                     
                     var body = res.body;

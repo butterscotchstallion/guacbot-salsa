@@ -15,6 +15,7 @@ require.config({
         underscore    : "lib/underscore.min",
         typeahead     : "lib/typeahead",
         jStorage      : "lib/jstorage",
+        moment        : "lib/moment",
         
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
@@ -23,9 +24,10 @@ require.config({
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
         
         // views
-        pluginsMenuView    : "app/modules/common/views/pluginsMenu",
-        pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
-        menuSearchView     : "app/modules/common/views/menuSearchView"
+        pluginsMenuView     : "app/modules/common/views/pluginsMenu",
+        pluginsMenuItemView : "app/modules/common/views/pluginsMenuItem",
+        menuSearchView      : "app/modules/common/views/menuSearchView",
+        accountInfoView     : "app/modules/accounts/login/views/accountInfoView"
     },
     shim: {
         bootstrap: {
@@ -44,6 +46,9 @@ require.config({
         pluginsMenuView: {
             deps: ['Backbone', 'bootstrap']
         },
+        accountInfoView: {
+            deps: ['Backbone']
+        },
         typeahead: {
             deps: ['bootstrap']
         },
@@ -53,7 +58,7 @@ require.config({
     }
 });
 
-require(["jquery", "pluginsMenuView", "Backbone"], function ($, pluginsMenuView, Backbone) {
+require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function ($, pluginsMenuView, accountInfoView, Backbone) {
     $(function () {
         // Store "old" sync function
         var backboneSync = Backbone.sync
@@ -62,16 +67,19 @@ require(["jquery", "pluginsMenuView", "Backbone"], function ($, pluginsMenuView,
         Backbone.sync = function (method, model, options) {         
             var token = $.jStorage.get('token');
             
-            if (token) {
-                options.headers = {
-                    'x-access-token': token
-                }
+            if (token) {         
+                console.log('sending token: ', token);
+                
+                options.beforeSend = function (xhr) {
+                    xhr.setRequestHeader('x-access-token', token);
+                };            
             }
             
             backboneSync(method, model, options);
         };
         
         new pluginsMenuView();
+        new accountInfoView();
         
         $(document).ajaxStart(function() {
             $('.loading-spinner').removeClass('hidden');
@@ -80,6 +88,7 @@ require(["jquery", "pluginsMenuView", "Backbone"], function ($, pluginsMenuView,
         $(document).ajaxStop(function() {
             $('.loading-spinner').addClass('hidden');
         });
+        
     });
 });
 

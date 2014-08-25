@@ -10,7 +10,8 @@
         window.app = {
             pluginMessageID: "{{pluginMessageID}}",
             pluginID       : "{{pluginID}}",
-            database       : "{{database}}"
+            env            : "{{env}}",
+            accountID      : "{{accountID}}"
         };
     </script>
     
@@ -47,12 +48,8 @@
                         <ul class="dropdown-menu plugins-menu" role="menu"></ul>
                     </li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="active">
-                        <a href="#"><span class="glyphicon glyphicon-cog"></span> Connected to <strong>{{database}}</strong> (<span class="environment">{{env}}</span>)</a>
-                    </li>
-                </ul>
-            </div><!--/.nav-collapse -->
+                <ul class="nav navbar-nav navbar-right account-info-container"></ul>
+            </div>
         </div>
     </div>
     

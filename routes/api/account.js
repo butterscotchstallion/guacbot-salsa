@@ -2,17 +2,18 @@
  * account API routes
  *
  */
-var express        = require('express');
-var moment         = require('moment');
-var router         = express.Router();
-var Account        = require('../../models/account');
-var Bookshelf      = require('../../models/index');
-var passwordHasher = require('password-hash-and-salt');
-var url            = require('url');
-var _              = require('underscore');
-var jwt            = require('jwt-simple');
-var fs             = require('fs');
-var config         = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
+var express            = require('express');
+var moment             = require('moment');
+var router             = express.Router();
+var Account            = require('../../models/account');
+var Bookshelf          = require('../../models/index');
+var AccountAccessToken = require('../../models/accountAccessToken');
+var passwordHasher     = require('password-hash-and-salt');
+var url                = require('url');
+var _                  = require('underscore');
+var jwt                = require('jwt-simple');
+var fs                 = require('fs');
+var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
 
 // Create account
 router.post('/', function (req, res, next) {
@@ -20,106 +21,185 @@ router.post('/', function (req, res, next) {
     var password = req.param('password');
     var model    = new Account();
     
-    model.set({
-        name    : name,
-        password: password
-    });
-    
-    model.save()
-         .then(function (result) {
-            var newAccount = result;
-            
-            // No sensitive details in the response!
-            newAccount.set('password', null);
-            
-            res.location(['/accounts', 
-                          newAccount.get('id')].join('/'));
-            
-            res.status(201).json({
-                status : "OK",
-                message: "Account created.",
-                account: newAccount
-            });
-         })
-         .catch(function (error) {
-            var errorMessage  = "Error creating account.";
-            
-            res.status(200).json({
-                status: "ERROR",
-                message: errorMessage
-            });
+        passwordHasher(password).hash(function (error, hash) {
+            if (error) {
+                res.status(200).json({
+                    status: "ERROR",
+                    message: error
+                });
+            } else {
+                model.set({
+                    name    : name,
+                    password: hash
+                });
+                
+                model.save()
+                     .then(function (result) {
+                        var newAccount = result;
+                        
+                        // No sensitive details in the response!
+                        newAccount.set('password', null);
+                        
+                        res.location(['/accounts', 
+                                      newAccount.get('id')].join('/'));
+                        
+                        res.status(201).json({
+                            status : "OK",
+                            message: "Account created.",
+                            account: newAccount
+                        });
+                     })
+                     .catch(function (error) {
+                        var errorMessage  = "Error creating account.";
+                        
+                        res.status(200).json({
+                            status: "ERROR",
+                            message: error
+                        });
+                    });
+            }
         });
 });
 
 // Account by ID
-router.get('/:accountID', function (req, res, next) {
-    var model = new Account();
-    
-    model.query({
-        where: {
-            id: req.params.accountID
-        }
-    })
-    .fetch({
-        required: true       
-    })
-    .then(function (result) {
-        result.set('password', null);
-        
-        res.status(200).json({
-            status : "OK",
-            message: null,
-            account: result
-        });    
-    })
-    .catch(function (error) {
-        res.status(404).json({
-            status: "ERROR",
-            message: "Account not found"
-        });
+router.get('/:accountID', function (req, res, next) {    
+    var accountID    = req.params.accountID;
+    var accountModel = new Account({
+        id: accountID
     });
+    var tokenModel   = new AccountAccessToken();
+    
+    /**
+     * Fetch an account, and any associated access tokens if the account exists
+     *
+     */
+    accountModel.fetch()
+                .then(function (result) {
+                    if (result) {
+                        result.set('password', null);
+                        
+                        tokenModel.fetchAll({
+                            where: {
+                                account_id: req.params.accountID
+                            }
+                        })
+                        .then(function (tokens) {
+                            var account = result;
+                            
+                            // Add tokens to account object
+                            account.set('tokens', tokens.toJSON());
+                            
+                            res.status(200).json({
+                                status : "OK",
+                                message: null,
+                                account: account
+                            });
+                        })
+                        .catch(function (error) {
+                            res.status(200).json({
+                                status : "ERROR",
+                                message: "Error fetching tokens."
+                            });
+                        });
+                    } else {
+                        res.status(404).json({
+                            status : "ERROR",
+                            message: "Account not found."
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    res.status(404).json({
+                        status: "ERROR",
+                        message: error
+                    });
+                });
 });
 
 // Log in
 router.post('/login', function (req, res, next) {
-    var name     = req.param('name');
-    var password = req.param('password');
-    var model    = new Account({
+    var name         = req.param('name');
+    var password     = req.param('password') || "";
+    var tokenModel   = new AccountAccessToken();
+    var model        = new Account({
         name: name
     });
+    var crypticError = "Invalid account name or password.";
+    var errorMessage = crypticError;
     
-    model.fetch({
-            required: true
-         })
+    model.fetch()
          .then(function (account) {
             if (account) {
-                // No sensitive details!
-                account.set('password', null);
+                var pw = account.get('password');
                 
-                var expires = moment().add(config.tokenDurationPeriod, 
-                                           config.tokenDurationUnit).valueOf();
+                console.log('verifying ' + password + ' against ' + pw);
                 
-                var token = jwt.encode({
-                    iss: account.get('id'),
-                    exp: expires
-                }, config.tokenSecret);
-                
-                res.status(200).json({
-                    status : "OK",
-                    message: "Session created.",
-                    account: account,
-                    token  : token,
-                    expires: expires
+                // Verify password
+                passwordHasher(password).verifyAgainst(pw, function(error, validated) {
+                    if (error || !validated) {
+                        res.status(200).json({
+                            status  : "ERROR",
+                            message : error || crypticError
+                        });
+                    } else {
+                        // No sensitive details!
+                        account.set('password', null);
+                        
+                        var eMoment = moment().add(config.tokenDurationPeriod, 
+                                                   config.tokenDurationUnit);
+                        var expires = eMoment.valueOf();
+                        
+                        var token   = jwt.encode({
+                            iss: account.get('id'),
+                            exp: expires
+                        }, config.tokenSecret);
+                        
+                        var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
+                        
+                        tokenModel.set({
+                            token     : token,
+                            expires_at: expiresFormatted,
+                            account_id: account.get('id')
+                        });
+                        
+                        tokenModel.save()
+                                  .then(function () {
+                                    res.status(200).json({
+                                        status : "OK",
+                                        message: "Session created.",
+                                        account: account,
+                                        token  : token,
+                                        expires: expires
+                                    });
+                                  })
+                                  .catch(function (error) {
+                                        if (config.env === "development") {
+                                            errorMessage = error;
+                                        }
+                                        
+                                        res.status(200).json({
+                                            status: "ERROR",
+                                            message: errorMessage
+                                        });
+                                  });
+                    }
                 });
+                
             } else {
+                if (config.env === "development") {
+                    errorMessage = 'Account does not exist: "' + name + '".';
+                }
+                
                 res.status(200).json({
                     status : "ERROR",
-                    message: 'Account does not exist: "' + name + '".' 
+                    message: errorMessage
                 });
             }
          })
          .catch(function (error) {
-            var errorMessage  = "Invalid account name or password.";
+            if (config.env === "development") {
+                errorMessage = error;
+            }
             
             res.status(200).json({
                 status: "ERROR",

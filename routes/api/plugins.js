@@ -29,8 +29,6 @@ router.get('/', function (req, res, next) {
         qb.orderBy(order, "DESC");
     }
     
-    qb.debug();
-    
     qb.then(function (plugins) {
         res.status(200).json({
             status  : "OK",

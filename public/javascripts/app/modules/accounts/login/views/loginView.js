@@ -6,7 +6,7 @@ define('loginView', function (require) {
     "use strict";
     
     var Backbone                 = require('Backbone');
-    var loginBoxTemplate         = require('text!/javascripts/app/modules/accounts/templates/login-box.html');
+    var loginBoxTemplate         = require('text!/javascripts/app/modules/accounts/login/templates/login-box.html');
     var Handlebars               = require('Handlebars');
     var jStorage                 = require('jStorage');
     
@@ -58,8 +58,10 @@ define('loginView', function (require) {
                 console.log('yAY');
                 
                 $.jStorage.set('token', data.token);
+                $.jStorage.set('tokenExpiration', data.expires);
                 $.jStorage.set('account', data.account);
                 
+                window.location = "/accounts/" + data.account.id;
             } else {
                 this.onLoginFailure(null, null, null, data.message);           
             }

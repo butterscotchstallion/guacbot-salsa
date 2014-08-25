@@ -15,6 +15,7 @@ require.config({
         underscore    : "lib/underscore.min",
         jStorage      : "lib/jstorage",
         typeahead     : "lib/typeahead",
+        moment        : "lib/moment",
         
         common        : "app/modules/common/main",
          

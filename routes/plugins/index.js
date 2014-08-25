@@ -72,8 +72,6 @@ router.get('/:pluginID/messages/add', function(req, res) {
 });
 
 router.get('/:pluginID/messages/:pluginMessageID', function(req, res) {
-    console.log(config);
-    
     res.render('plugins/messages/index', { 
         title               : 'Plugin Message - Edit',
         isPluginMessagesPage: true,

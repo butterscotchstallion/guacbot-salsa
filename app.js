@@ -43,6 +43,7 @@ app.use('/api/v1/notes',        require('./routes/api/note'));
 app.use('/api/v1/accounts',     require('./routes/api/account'));
 
 app.use('/plugins',             require('./routes/plugins'));
+app.use('/accounts',            require('./routes/accounts'));
 
 process.on('error', function (e) {
     console.log(e.stack);
@@ -63,16 +64,17 @@ if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         console.log('err: ', err);
         
-        if (err.status === 401) {
-            res.status(401).json({
+        if (err.status === 400) {
+            res.status(400).json({
                 status : "ERROR",
                 message: err.message
             });
+        } else {        
+            next();
         }
-        
-        next();
     });
     
+    /*
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         
@@ -83,16 +85,19 @@ if (app.get('env') === 'development') {
             error: err
         });
     });
+    */
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        message: err.message,
-        error: {}
-    });
+    if (err.status !== 400) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: {}
+        });
+    }
 });
 
 module.exports = app;
