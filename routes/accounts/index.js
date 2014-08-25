@@ -19,8 +19,7 @@ router.get('/login', function(req, res) {
 router.get('/:accountID', function(req, res) {
     res.render('accounts/profile', { 
         title     : "Salsa - Account Profile",
-        env       : config.env,
-        accountID : req.params.accountID
+        env       : config.env
     });
 });
 

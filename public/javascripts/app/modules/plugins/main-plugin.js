@@ -24,6 +24,7 @@ require.config({
         pluginMessageModel             : "app/modules/plugins/models/pluginMessageModel",
         pluginMessageInfoModel         : "app/modules/plugins/models/pluginMessageInfoModel",
         accountTokenModel              : "app/modules/accounts/models/accountTokenModel",
+        accountsModel                  : "app/modules/accounts/models/accountsModel",
         
         // collections
         pluginMessageCollection        : "app/modules/plugins/collections/pluginMessageCollection",

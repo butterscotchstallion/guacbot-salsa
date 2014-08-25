@@ -20,6 +20,7 @@ require.config({
         common        : "app/modules/common/main",
          
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
+        accountsModel     : "app/modules/accounts/models/accountsModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",

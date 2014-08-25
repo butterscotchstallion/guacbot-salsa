@@ -13,6 +13,7 @@ require.config({
         Backbone                       : "lib/backbone.min",
         text                           : "lib/text",
         underscore                     : "lib/underscore.min",
+        jStorage                       : "lib/jstorage",
         
         // app
         common                         : "app/modules/common/main",
@@ -20,6 +21,7 @@ require.config({
         // models
         pluginModel                    : "app/modules/plugins/models/pluginModel",
         accountTokenModel              : "app/modules/accounts/models/accountTokenModel",
+        accountsModel                  : "app/modules/accounts/models/accountsModel",
         
         // collections
         pluginCollection               : "app/modules/plugins/collections/pluginCollection",

@@ -26,7 +26,7 @@ define('profileView', function (require) {
             var self = this;
 
             this.model = new accountsModel({
-                accountID: window.app.accountID
+                accountID: $.jStorage.get('account').id
             });
             
             this.listenTo(this.model, 'change', this.render, this);

@@ -29,6 +29,8 @@ define('pluginsMenuView', function (require) {
                 success: function () {
                     $('.plugin-count').removeClass('hidden')
                                       .text(self.collection.length);
+                                     
+                    $('.plugins-dropdown').removeClass('hidden');
                 }
             });
         },

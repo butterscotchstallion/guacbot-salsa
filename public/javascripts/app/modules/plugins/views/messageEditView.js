@@ -12,6 +12,7 @@ define('messageEditView', function (require) {
     var IRCColorParser           = require('IRCColorParser');
     var editTemplate             = require('text!/javascripts/app/modules/plugins/templates/messages/edit.html');
     var editTemplateCompiled     = Handlebars.compile(editTemplate);
+    var accountTokenModel        = require('accountTokenModel');
     
     var pluginMessageModel       = require('pluginMessageModel');
     var pluginMessageCollection  = require('pluginMessageCollection');
@@ -46,6 +47,9 @@ define('messageEditView', function (require) {
             
             if (!options.isNew) {
                 self.model.fetch({
+                    headers: {
+                        "x-access-token": accountTokenModel
+                    },
                     success: function (data, options) {
                         $(".loading").hide();
                     }

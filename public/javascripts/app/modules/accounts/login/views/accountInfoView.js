@@ -11,10 +11,22 @@ define('accountInfoView', function (require) {
     var Handlebars                 = require('Handlebars');
     var jStorage                   = require('jStorage');
     var moment                     = require('moment');
+    var accountsModel              = require('accountsModel');
+    var accountTokenModel          = require('accountTokenModel');
     
     var view = Backbone.View.extend({
         initialize: function (options) {
-            this.render();
+            this.model = new accountsModel({
+                accountID: $.jStorage.get('account').id
+            });
+            
+            this.listenTo(this.model, 'change', this.render, this);
+            
+            this.model.fetch({
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
+            });
         },
         
         compile: function (template, data) {
@@ -27,8 +39,8 @@ define('accountInfoView', function (require) {
             this.renderAccountInfo();
         },
         
-        renderAccountInfo: function () {            
-            var account = $.jStorage.get('account');            
+        renderAccountInfo: function () {
+            var account = this.model.toJSON();
             var html    = this.compile(accountInfoTemplate, {
                 account: account
             });
