@@ -39,7 +39,9 @@ module.exports  = function (req, res, next) {
                 
                 model.fetchAll()
                      .then(function (result) {
-                        if (result) {
+                        console.log(result.toJSON());
+                        
+                        if (result && result.length > 0) {
                             req.account = result;
                             
                             next();

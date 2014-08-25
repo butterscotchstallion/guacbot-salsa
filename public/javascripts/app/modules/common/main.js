@@ -17,6 +17,8 @@ require.config({
         jStorage      : "lib/jstorage",
         moment        : "lib/moment",
         
+        accessController: "app/lib/accessController",
+        
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         accountTokenModel: "app/modules/accounts/models/accountTokenModel",
@@ -59,35 +61,26 @@ require.config({
     }
 });
 
-require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function ($, pluginsMenuView, accountInfoView, Backbone) {
+var deps = [
+    "jquery", 
+    "pluginsMenuView", 
+    "accountInfoView"
+];
+
+require(deps, function ($, pluginsMenuView, accountInfoView) {
     $(function () {
-        /*
-        // Store "old" sync function
-        var backboneSync = Backbone.sync
-        
-        // Now override
-        Backbone.sync = function (method, model, options) {         
-            var token = $.jStorage.get('token');
+        $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
+            var statusCode = jqxhr.status;
             
-            if (token) {         
-                console.log('sending token: ', token);
-                
-                // This does not work.
-                options.beforeSend = function (xhr) {
-                    xhr.setRequestHeader('x-access-token', token);
-                };
-                
-                // This also does not work.
-                $.ajaxSetup({
-                    headers: {
-                        'x-access-token': token
-                    }
-                });
+            console.log('global error handler here.');
+            console.log(statusCode);
+            
+            var isLoginPage = window.location.href.indexOf('accounts/login') !== -1;
+            
+            if (statusCode === 400 && !isLoginPage) {
+                window.location = "/accounts/login?error=expired";
             }
-            
-            backboneSync(method, model, options);
-        };
-        */
+        });
         
         new pluginsMenuView();
         new accountInfoView();
