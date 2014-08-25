@@ -37,12 +37,11 @@ define('pluginView', function (require) {
             self.listenTo(self.pluginMessageInfoModel, 'change', self.renderPluginMessageInfo, self);
             
             self.model
-                .fetch()
-                .then(function () {
-                    self.pluginMessageInfoModel.fetch({
-                        reset: true
-                    });
-                });
+                .fetch();
+             
+            self.pluginMessageInfoModel.fetch({
+                reset: true
+            });
         },
         
         onDeleteButtonClicked: function (e) {
