@@ -9,6 +9,7 @@ define('profileView', function (require) {
     
     var Backbone        = require('Backbone');
     var profileTemplate = require('text!/javascripts/app/modules/accounts/profile/templates/profile.html');
+    var profileNotFoundTemplate = require('text!/javascripts/app/modules/accounts/profile/templates/not-found.html');
     var Handlebars      = require('Handlebars');
     var jStorage        = require('jStorage');
     var moment          = require('moment');
@@ -30,7 +31,18 @@ define('profileView', function (require) {
             
             this.listenTo(this.model, 'change', this.render, this);
             
-            self.model.fetch();
+            var token = $.jStorage.get('token');
+            
+            self.model.fetch({
+                headers: {
+                    "x-access-token": token
+                },
+                
+                error: function (xhr, status, err) {
+                    $('.profile-container').html(profileNotFoundTemplate);
+                    $('.loading').addClass('hidden');
+                }
+            });
         },
         
         render: function () {

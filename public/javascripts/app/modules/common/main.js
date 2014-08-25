@@ -70,9 +70,18 @@ require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function (
             if (token) {         
                 console.log('sending token: ', token);
                 
+                // This does not work.
                 options.beforeSend = function (xhr) {
                     xhr.setRequestHeader('x-access-token', token);
-                };            
+                };
+                
+                
+                // This also does not work.
+                $.ajaxSetup({
+                    headers: {
+                        'x-access-token': token
+                    }
+                });
             }
             
             backboneSync(method, model, options);
