@@ -13,6 +13,7 @@ define('dashboardPluginMessagesView', function (require) {
     var pluginMessageModel              = require('pluginMessageModel');
     var pluginMessageCollection         = require('pluginMessageCollection');
     var dashboardPluginMessagesItemView = require('dashboardPluginMessagesItemView');
+    var accountTokenModel               = require('accountTokenModel');
     
     var view                            = Backbone.View.extend({
         template  : template,
@@ -28,7 +29,10 @@ define('dashboardPluginMessagesView', function (require) {
             self.listenTo(self.collection, 'reset', self.render, self);
             
             self.collection.fetch({
-                reset: true
+                reset: true,
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
             });
         },
         

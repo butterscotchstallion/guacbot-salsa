@@ -15,6 +15,7 @@ define('pluginMessageListView', function (require) {
     var pluginMessageItemView       = require('pluginMessageItemView');
     var pluginMessageInfoModel      = require('pluginMessageInfoModel');
     var pagination                  = require('pagination');
+    var accountTokenModel           = require('accountTokenModel');
     
     var pluginMessageListView       = Backbone.View.extend({
         el: $('body'),
@@ -39,6 +40,9 @@ define('pluginMessageListView', function (require) {
             this.listenTo(this.info,       'change', this.renderInfo, this);
             
             this.collection.fetch({
+                headers: {
+                    "x-access-token": accountTokenModel
+                },
                 reset  : true,
                 success: function (data, options) {
                     $(".loading-row").hide();
@@ -47,10 +51,17 @@ define('pluginMessageListView', function (require) {
             });
             
             this.names.fetch({
-                reset: true
+                reset: true,
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
             });
             
-            this.info.fetch();
+            this.info.fetch({
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
+            });
         },
         
         events: {

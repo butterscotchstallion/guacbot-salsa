@@ -13,6 +13,7 @@ define('pluginListView', function (require) {
     var pluginCollection     = require('pluginCollection');    
     var pluginListItemView     = require('pluginListItemView');    
     //var pagination                  = require('pagination');
+    var accountTokenModel       = require('accountTokenModel');
     
     var view       = Backbone.View.extend({
         initialize: function () {            
@@ -29,7 +30,10 @@ define('pluginListView', function (require) {
             this.listenTo(this.collection, 'reset',  this.addPlugins, this);
             
             this.collection.fetch({
-                reset  : true
+                reset  : true,
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
             });
         },
         

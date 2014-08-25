@@ -6,10 +6,11 @@ define('pluginsMenuView', function (require) {
     var Handlebars          = require('Handlebars');
     var tplFile             = require('text!/javascripts/app/modules/common/templates/pluginsMenuItem.html');
     var tpl                 = Handlebars.compile(tplFile);
-    var pluginCollection   = require('pluginCollection');
+    var pluginCollection    = require('pluginCollection');
     var pluginsModel        = require('pluginsModel');
     var pluginsMenuItemView = require('pluginsMenuItemView');
     var menuSearchView      = require('menuSearchView');
+    var accountTokenModel  = require('accountTokenModel');
     
     var pluginsMenuView = Backbone.View.extend({
         initialize: function() {
@@ -21,6 +22,9 @@ define('pluginsMenuView', function (require) {
             this.listenTo(this.collection, 'reset', this.addPlugins, this);
             
             this.collection.fetch({
+                headers: {
+                    "x-access-token": accountTokenModel
+                },
                 reset  : true,
                 success: function () {
                     $('.plugin-count').removeClass('hidden')

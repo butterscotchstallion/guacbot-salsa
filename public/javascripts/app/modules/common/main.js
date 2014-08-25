@@ -19,6 +19,7 @@ require.config({
         
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
+        accountTokenModel: "app/modules/accounts/models/accountTokenModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
@@ -60,6 +61,7 @@ require.config({
 
 require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function ($, pluginsMenuView, accountInfoView, Backbone) {
     $(function () {
+        /*
         // Store "old" sync function
         var backboneSync = Backbone.sync
         
@@ -75,7 +77,6 @@ require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function (
                     xhr.setRequestHeader('x-access-token', token);
                 };
                 
-                
                 // This also does not work.
                 $.ajaxSetup({
                     headers: {
@@ -86,6 +87,7 @@ require(["jquery", "pluginsMenuView", "accountInfoView", "Backbone"], function (
             
             backboneSync(method, model, options);
         };
+        */
         
         new pluginsMenuView();
         new accountInfoView();

@@ -12,6 +12,7 @@ define('pluginSidebarView', function (require) {
     var sidebarTemplate          = require('text!/javascripts/app/modules/plugins/templates/plugin-sidebar.html');
     var sidebarTemplateCompiled  = Handlebars.compile(sidebarTemplate);
     var pluginMessageInfoModel   = require('pluginMessageInfoModel');
+    var accountTokenModel        = require('accountTokenModel');
     
     var view = Backbone.View.extend({
         template  : sidebarTemplateCompiled,
@@ -25,7 +26,11 @@ define('pluginSidebarView', function (require) {
             
             console.log('sidebar init');
             
-            self.model.fetch();
+            self.model.fetch({
+                headers: {
+                    "x-access-token": accountTokenModel
+                }
+            });
         },
         
         render  : function () {

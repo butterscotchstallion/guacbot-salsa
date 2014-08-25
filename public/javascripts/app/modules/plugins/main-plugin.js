@@ -13,6 +13,7 @@ require.config({
         Backbone                       : "lib/backbone.min",
         text                           : "lib/text",
         underscore                     : "lib/underscore.min",
+        jStorage                       : "lib/jstorage",
         
         // app
         common                         : "app/modules/common/main",
@@ -22,6 +23,7 @@ require.config({
         pluginModel                    : "app/modules/plugins/models/pluginModel",
         pluginMessageModel             : "app/modules/plugins/models/pluginMessageModel",
         pluginMessageInfoModel         : "app/modules/plugins/models/pluginMessageInfoModel",
+        accountTokenModel              : "app/modules/accounts/models/accountTokenModel",
         
         // collections
         pluginMessageCollection        : "app/modules/plugins/collections/pluginMessageCollection",
@@ -54,18 +56,6 @@ require.config({
 
 require(["common", "jquery", "pluginView", "Handlebars"], function (common, $, pluginView, Handlebars) {
     $(function () {
-        Handlebars.registerHelper("debug", function(optionalValue) {
-            console.log("\nCurrent Context");
-            console.log("====================");
-            console.log(this);
-            
-            if (arguments.length > 1) {
-                console.log("Value");
-                console.log("====================");
-                console.log(optionalValue);
-            }
-        });
-
         new pluginView();
     });
 });
