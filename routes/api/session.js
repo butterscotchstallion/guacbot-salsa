@@ -106,26 +106,30 @@ router.post('/', function (req, res, next) {
 
 // Delete session
 router.delete('/', function (req, res, next) {
-    var model = new accessAccessToken({
-        token: req.headers["x-access-token"]
+    var token      = req.headers["x-access-token"];
+    
+    console.log(req.headers);
+    
+    var tokenModel = new AccountAccessToken({
+        token: token 
     });
     
-    Plugin.fetch()
+    tokenModel.fetch()
           .then(function (model) {                    
                 if (model) {                    
-                    Plugin.destroy()
-                         .then(function (message) {
-                            res.status(200).json({
-                                status       : "OK",
-                                message      : "Session destroyed."
+                    tokenModel.destroy()
+                             .then(function (message) {
+                                res.status(200).json({
+                                    status       : "OK",
+                                    message      : "Session destroyed."
+                                });
+                            })
+                            .catch(function (error) {
+                                res.status(200).json({
+                                    status: "ERROR",
+                                    message: error
+                                });
                             });
-                        })
-                        .catch(function (error) {
-                            res.status(200).json({
-                                status: "ERROR",
-                                message: error
-                            });
-                        });
                 } else {
                     res.status(404).json({
                         status: "ERROR",

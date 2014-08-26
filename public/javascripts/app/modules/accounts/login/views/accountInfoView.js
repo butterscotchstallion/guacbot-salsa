@@ -25,29 +25,24 @@ define('accountInfoView', function (require) {
         onLogoutButtonClicked: function (e) {
             e.preventDefault();
             
-            var model = new sessionModel({
-                token: $.jStorage.get('token')
+            var xhr = $.ajax({
+                method : "DELETE",
+                url    : "/api/v1/session",
+                headers: {
+                    "x-access-token": accountTokenModel
+                },
             });
             
-            $.jStorage.set('account', null);
-            $.jStorage.set('token', null);
+            xhr.fail(function () {
+                console.log('error logging out!');
+            });
             
-            window.location = '/session/new';
-            
-            /*
-            var res = model.destroy({
-                success: function () {
-                    console.log('baleeted');
-                    
-                    //$.jStorage.set('account', null);
-                    //$.jStorage.set('token', null);
-                    
-                    //window.location = '/session/new';
-                },
-                error: function () {
-                    console.log('error');
-                }
-            });*/
+            xhr.always(function () {
+                $.jStorage.set('account', null);
+                $.jStorage.set('token', null);
+                
+                window.location = '/session/new';
+            });
         },
         
         initialize: function (options) {
