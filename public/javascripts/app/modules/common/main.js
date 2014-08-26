@@ -22,6 +22,7 @@ require.config({
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         accountTokenModel: "app/modules/accounts/models/accountTokenModel",
+        sessionModel     : "app/modules/accounts/models/sessionModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
@@ -75,10 +76,10 @@ require(deps, function ($, pluginsMenuView, accountInfoView) {
             console.log('global error handler here.');
             console.log(statusCode);
             
-            var isLoginPage = window.location.href.indexOf('accounts/login') !== -1;
+            var isLoginPage = window.location.href.indexOf('session/new') !== -1;
             
             if (statusCode === 400 && !isLoginPage) {
-                window.location = "/accounts/login?error=expired";
+                window.location = "/session/new?error=expired";
             }
         });
         

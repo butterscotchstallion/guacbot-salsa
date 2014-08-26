@@ -41,9 +41,11 @@ app.use('/api/v1/logs',         require('./routes/api/logger'));
 app.use('/api/v1/autocomplete', require('./routes/api/autocomplete'));
 app.use('/api/v1/notes',        require('./routes/api/note'));
 app.use('/api/v1/accounts',     require('./routes/api/account'));
+app.use('/api/v1/session',      require('./routes/api/session'));
 
 app.use('/plugins',             require('./routes/plugins'));
 app.use('/accounts',            require('./routes/accounts'));
+app.use('/session',             require('./routes/session'));
 
 process.on('error', function (e) {
     console.log(e.stack);
@@ -69,23 +71,10 @@ if (app.get('env') === 'development') {
                 status : "ERROR",
                 message: err.message
             });
-        } else {        
+        } else {
             next();
         }
     });
-    
-    /*
-    app.use(function(err, req, res, next) {
-        res.status(err.status || 500);
-        
-        console.log(res.statusCode + ': ', err);
-        
-        res.render('error', {
-            message: err.message,
-            error: err
-        });
-    });
-    */
 }
 
 // production error handler

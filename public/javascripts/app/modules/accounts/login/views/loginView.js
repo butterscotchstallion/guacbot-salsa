@@ -9,6 +9,7 @@ define('loginView', function (require) {
     var loginBoxTemplate         = require('text!/javascripts/app/modules/accounts/login/templates/login-box.html');
     var Handlebars               = require('Handlebars');
     var jStorage                 = require('jStorage');
+    var accountTokenModel        = require('accountTokenModel');
     
     var view = Backbone.View.extend({
         el        : $('body'),
@@ -32,7 +33,7 @@ define('loginView', function (require) {
         
         login: function (options) {
             var xhr = $.ajax({
-                url        :  "/api/v1/accounts/login",
+                url        :  "/api/v1/session",
                 type       : "POST",
                 data       : JSON.stringify(options.data),
                 context    : this,

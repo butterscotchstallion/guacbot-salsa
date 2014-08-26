@@ -21,6 +21,7 @@ require.config({
          
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         accountsModel     : "app/modules/accounts/models/accountsModel",
+        accountTokenModel: "app/modules/accounts/models/accountTokenModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",

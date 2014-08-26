@@ -63,11 +63,20 @@ router.post('/', function (req, res, next) {
 
 // Account by ID
 router.get('/:accountID', function (req, res, next) {    
-    var accountID    = req.params.accountID;
+    var accountID    = parseInt(req.params.accountID, 10);
     var accountModel = new Account({
         id: accountID
     });
     var tokenModel   = new AccountAccessToken();
+    
+    if (!accountID || accountID < 1) {
+        res.status(404).json({
+            status : "ERROR",
+            message: "Account not found."
+        });
+        
+        return;
+    }
     
     /**
      * Fetch an account, and any associated access tokens if the account exists
@@ -114,98 +123,6 @@ router.get('/:accountID', function (req, res, next) {
                         message: error
                     });
                 });
-});
-
-// Log in
-router.post('/login', function (req, res, next) {
-    var name         = req.param('name');
-    var password     = req.param('password') || "";
-    var tokenModel   = new AccountAccessToken();
-    var model        = new Account({
-        name: name
-    });
-    var crypticError = "Invalid account name or password.";
-    var errorMessage = crypticError;
-    
-    model.fetch()
-         .then(function (account) {
-            if (account) {
-                var pw = account.get('password');
-                
-                console.log('verifying ' + password + ' against ' + pw);
-                
-                // Verify password
-                passwordHasher(password).verifyAgainst(pw, function(error, validated) {
-                    if (error || !validated) {
-                        res.status(200).json({
-                            status  : "ERROR",
-                            message : error || crypticError
-                        });
-                    } else {
-                        // No sensitive details!
-                        account.set('password', null);
-                        
-                        var eMoment = moment().add(config.tokenDurationPeriod, 
-                                                   config.tokenDurationUnit);
-                        var expires = eMoment.valueOf();
-                        
-                        var token   = jwt.encode({
-                            iss: account.get('id'),
-                            exp: expires
-                        }, config.tokenSecret);
-                        
-                        var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
-                        
-                        tokenModel.set({
-                            token     : token,
-                            expires_at: expiresFormatted,
-                            account_id: account.get('id')
-                        });
-                        
-                        tokenModel.save()
-                                  .then(function () {
-                                    res.status(200).json({
-                                        status : "OK",
-                                        message: "Session created.",
-                                        account: account,
-                                        token  : token,
-                                        expires: expires
-                                    });
-                                  })
-                                  .catch(function (error) {
-                                        if (config.env === "development") {
-                                            errorMessage = error;
-                                        }
-                                        
-                                        res.status(200).json({
-                                            status: "ERROR",
-                                            message: errorMessage
-                                        });
-                                  });
-                    }
-                });
-                
-            } else {
-                if (config.env === "development") {
-                    errorMessage = 'Account does not exist: "' + name + '".';
-                }
-                
-                res.status(200).json({
-                    status : "ERROR",
-                    message: errorMessage
-                });
-            }
-         })
-         .catch(function (error) {
-            if (config.env === "development") {
-                errorMessage = error;
-            }
-            
-            res.status(200).json({
-                status: "ERROR",
-                message: errorMessage
-            });
-        });
 });
 
 // Update account
