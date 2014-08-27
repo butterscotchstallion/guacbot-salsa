@@ -16,13 +16,6 @@ router.get('/', function(req, res) {
     });
 });
 
-router.get('/accounts/login', function(req, res) {
-    res.render('accounts/login', { 
-        title     : "Salsa - Login",
-        env       : config.env
-    });
-});
-
 module.exports = router;
 
 

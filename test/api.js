@@ -12,11 +12,163 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('session', function() {
+    var account;
+
+    it('create', function (done) {
+        superagent.post(BASE_URL + "session")
+                  .send({
+                    name    : config.accountName,
+                    password: config.accountPassword
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(201);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
+                    
+                    account         = body.account;
+                    account.token   = body.session.token;
+                    account.expires = body.session.expires_at;
+                    
+                    done();
+                  });    
+    });
+    
+    it('serves a 404 for non-existent sessions', function (done) {
+        superagent.del(BASE_URL + 'session')
+                  .set('x-access-token', "lol")
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);  
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+    
+    it('reads a valid session', function (done) {
+        var earl = BASE_URL + "session";
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.session).to.be.an('object');
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.created_at).to.be.ok();
+                    expect(body.session.updated_at).to.be.ok();
+                    expect(body.session.account_id).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
+                    expect(body.session.id).to.be.ok();
+                    
+                    done();
+                  });
+    });
+    
+    it('updates a session', function (done) {
+        superagent.put(BASE_URL + 'session')
+                  .set('x-access-token', account.token)
+                  .send({
+                    active: 0
+                  })
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);           
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('serves a 404 when a session is marked inactive', function (done) {
+        superagent.get(BASE_URL + 'session')
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);  
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+    
+    it('deletes', function (done) {
+        superagent.del(BASE_URL + 'session/')
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);  
+                      expect(res.status).to.eql(200);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("OK");
+                      
+                      done();
+                  });
+    });
+    
+    it('ensures the session is really deleted', function (done) {
+        superagent.del(BASE_URL + 'session')
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                      expect(e).to.eql(null);  
+                      expect(res.status).to.eql(404);
+                      
+                      var body = res.body;
+                      
+                      expect(body).to.be.an('object');
+                      expect(body).to.not.be.empty();
+                      expect(body.status).to.eql("ERROR");
+                      
+                      done();
+                  });
+    });
+});
+
 describe('access token storage', function() {
     var account;
     
     it('logs in and gets an access token', function (done) {
-        superagent.post(BASE_URL + "accounts/login")
+        superagent.post(BASE_URL + "session")
                   .send({
                     name    : config.accountName,
                     password: config.accountPassword
@@ -112,7 +264,7 @@ describe('access control', function() {
     });
     
     it('logs in and gets an access token', function (done) {
-        superagent.post(BASE_URL + "accounts/login")
+        superagent.post(BASE_URL + "session")
                   .send({
                     name    : config.accountName,
                     password: config.accountPassword
@@ -170,7 +322,7 @@ describe('accountz', function() {
     var accessToken;
     
     it('logs in with a valid account', function (done) {
-        var earl = BASE_URL + "accounts/login";
+        var earl = BASE_URL + "session";
         var pw   = config.accountPassword;
         
         superagent.post(earl)
@@ -293,7 +445,7 @@ describe('accountz', function() {
     });
     
     it('fails to login with a non-existent account', function (done) {
-        var earl = BASE_URL + "accounts/login";
+        var earl = BASE_URL + "session";
         
         superagent.post(earl)
                   .set('x-access-token', accessToken)

@@ -4,17 +4,58 @@
  */
 "use strict";
 
-var express        = require('express');
-var router         = express.Router();
-var jwt            = require('jwt-simple');
-var passwordHasher = require('password-hash-and-salt');
-var moment         = require('moment');
-var fs             = require('fs');
-var config         = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
+var express            = require('express');
+var router             = express.Router();
+var jwt                = require('jwt-simple');
+var passwordHasher     = require('password-hash-and-salt');
+var moment             = require('moment');
+var fs                 = require('fs');
+var Bookshelf          = require('../../models/index');
+var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
 var AccountAccessToken = require('../../models/accountAccessToken');
 var Account            = require('../../models/account');
 
-// New session
+// Read
+router.get('/', function(req, res) {
+    var token        = req.headers["x-access-token"];
+    var errorMessage = "Session expired";
+    
+    if (token) {
+        var qb = Bookshelf.knex("account_access_tokens");
+        
+        qb.where({
+            token : token,
+            active: 1
+        });
+        
+        qb.then(function (result) {
+            if (result && result.length > 0) {
+                res.status(200).json({
+                    status : "OK",
+                    session: result[0]
+                });
+            } else {
+                res.status(404).json({
+                    status : "ERROR",
+                    message: "Session not found."
+                });
+            }
+          })
+          .catch(function (error) {
+            res.status(404).json({
+                status : "ERROR",
+                message: "Session not found."
+            });
+        });          
+    } else {
+        res.status(200).json({
+            status : "OK",
+            message: errorMessage
+        });
+    }
+});
+
+// Create
 router.post('/', function (req, res, next) {
     var name         = req.param('name');
     var password     = req.param('password') || "";
@@ -39,6 +80,8 @@ router.post('/', function (req, res, next) {
                         });
                     } else {
                         // No sensitive details!
+                        // TODO: use select to specify the column
+                        // rather than just setting the property to null
                         account.set('password', null);
                         
                         var eMoment = moment().add(config.tokenDurationPeriod, 
@@ -51,21 +94,26 @@ router.post('/', function (req, res, next) {
                         }, config.tokenSecret);
                         
                         var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
+                        var ip               = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
                         
                         tokenModel.set({
-                            token     : token,
-                            expires_at: expiresFormatted,
-                            account_id: account.get('id')
+                            token            : token,
+                            expires_at       : expiresFormatted,
+                            account_id       : account.get('id'),
+                            origin_ip_address: ip
                         });
                         
                         tokenModel.save()
                                   .then(function () {
-                                    res.status(200).json({
+                                    res.status(201).json({
                                         status : "OK",
                                         message: "Session created.",
                                         account: account,
-                                        token  : token,
-                                        expires: expires
+                                        session: {
+                                            token            : token,
+                                            expires_at       : expires,
+                                            origin_ip_address: ip
+                                        }
                                     });
                                   })
                                   .catch(function (error) {
@@ -104,7 +152,51 @@ router.post('/', function (req, res, next) {
         });
 });
 
-// Delete session
+// Update
+router.put('/', function (req, res, next) {
+    var token     = req.headers["x-access-token"];
+    var active    = req.param('active');    
+    var model     = new AccountAccessToken({ 
+        token: token
+    });
+    
+    var options = { 
+        patch: true, 
+        debug: true 
+    };
+    
+    model.fetch({
+            require: true
+         })
+         .then(function (result) {
+            if (result) {
+                model.save({
+                    active: active
+                }, options)
+                .then(function () {                        
+                    res.location("/session");
+                    
+                    res.status(200).json({
+                        status : "OK",
+                        message: "Session updated"
+                    });
+                })
+                .catch(function (error) {
+                    res.status(200).json({
+                        status: "ERROR",
+                        message: error
+                    });
+                });
+            } else {
+                res.status(404).json({
+                    status: "ERROR",
+                    message: "Session not found."
+                });
+            }
+        });
+});
+
+// Delete
 router.delete('/', function (req, res, next) {
     var token      = req.headers["x-access-token"];
 
@@ -113,7 +205,7 @@ router.delete('/', function (req, res, next) {
     });
     
     tokenModel.fetch()
-          .then(function (model) {                    
+              .then(function (model) {                    
                 if (model) {                    
                     tokenModel.destroy()
                              .then(function (message) {
