@@ -26,9 +26,6 @@ module.exports  = function (req, res, next) {
     
     if (token) {
         try {
-            
-            console.log('decoding token: ' + token);
-            
             var config   = req.app.get('config');
             var decoded  = jwt.decode(token, config.tokenSecret);
             var expired  = decoded.exp <= Date.now();
@@ -38,15 +35,12 @@ module.exports  = function (req, res, next) {
                     account_id: decoded.iss
                 });
                 
-                console.log('fetching account with id: ', decoded.iss);
-                
                 model.fetchAll()
                      .then(function (result) {
                         if (result && result.length > 0) {
                             req.account = result;
                             
-                            next();
-                            
+                            next();                            
                         } else {
                             sendErrorResponse({
                                 status: 400,

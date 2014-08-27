@@ -57,9 +57,15 @@ define('pluginView', function (require) {
             
             button.button('loading');
             
-            this.model.destroy()
+            this.model.destroy({
+                    headers: {
+                        "x-access-token": accountTokenModel
+                    }
+                })
                 .then(function (model) {
                     button.button('reset');
+                    
+                    window.location = "/plugins";
                 });
         },
         
