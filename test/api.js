@@ -176,22 +176,23 @@ describe('access token storage', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
 
-                    expect(res.status).to.eql(200);
+                    expect(res.status).to.eql(201);
                     
                     var body = res.body;
                     
                     expect(body).to.be.an('object');
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("OK");
+                    
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
                     
-                    expect(body.expires).to.be.ok();
-                    expect(body.token).to.be.ok();
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
                     
                     account         = body.account;
-                    account.token   = body.token;
-                    account.expires = body.expires;
+                    account.token   = body.session.token;
                     
                     done();
                   });    
@@ -271,24 +272,24 @@ describe('access control', function() {
                   })
                   .end(function(e, res) {
                     expect(e).to.eql(null);
-                    
-                    //console.log(res.body);
-                    
-                    expect(res.status).to.eql(200);
+
+                    expect(res.status).to.eql(201);
                     
                     var body = res.body;
                     
                     expect(body).to.be.an('object');
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("OK");
+                    
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
                     
-                    expect(body.expires).to.be.ok();
-                    expect(body.token).to.be.ok();
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
                     
-                    account.token = body.token;
-                    account.id = body.account.id;
+                    account         = body.account;
+                    account.token   = body.session.token;
                     
                     done();
                   });    

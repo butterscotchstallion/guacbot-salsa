@@ -161,8 +161,7 @@ router.put('/', function (req, res, next) {
     });
     
     var options = { 
-        patch: true, 
-        debug: true 
+        patch: true 
     };
     
     model.fetch({

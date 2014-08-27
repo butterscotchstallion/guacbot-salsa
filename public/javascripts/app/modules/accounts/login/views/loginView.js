@@ -53,13 +53,9 @@ define('loginView', function (require) {
         },
         
         onSuccessfulLogin: function (data) {
-            console.log(data);
-            
             if (data.status === "OK") {
-                console.log('yAY');
-                
-                $.jStorage.set('token', data.token);
-                $.jStorage.set('tokenExpiration', data.expires);
+                $.jStorage.set('token', data.session.token);
+                $.jStorage.set('tokenExpiration', data.session.expires_at);
                 $.jStorage.set('account', data.account);
                 
                 window.location = "/accounts/" + data.account.id;

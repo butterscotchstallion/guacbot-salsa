@@ -10,7 +10,7 @@ var Bookshelf          = require('../models/index');
 var jwt                = require('jwt-simple');
 
 module.exports  = function (req, res, next) {
-    var token   = (req.body && req.body.accessToken) || (req.query && req.query.accessToken) || req.headers['x-access-token'];    
+    var token   = req.headers['x-access-token'];    
     var path    = req.originalUrl;
     var isLogin = path.indexOf('session') !== -1;
     
@@ -26,6 +26,9 @@ module.exports  = function (req, res, next) {
     
     if (token) {
         try {
+            
+            console.log('decoding token: ' + token);
+            
             var config   = req.app.get('config');
             var decoded  = jwt.decode(token, config.tokenSecret);
             var expired  = decoded.exp <= Date.now();
@@ -60,7 +63,7 @@ module.exports  = function (req, res, next) {
         } catch (err) {
             sendErrorResponse({
                 status: 400,
-                message: "Invalid access token."
+                message: config.env === "development" ? err : "Invalid access token."
             });
         }
     } else {
