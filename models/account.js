@@ -30,8 +30,6 @@ var account    = bookshelf.Model.extend({
     },
     
     beforeSave : function (model) {
-        console.log(model.toJSON());
-        
         return checkit.run(this.attributes);
     }
 });

@@ -18,6 +18,7 @@ require.config({
         moment        : "lib/moment",
         
         accessController: "app/lib/accessController",
+        globalErrorHandler: "app/modules/common/views/globalErrorHandler",
         
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
@@ -64,25 +65,13 @@ require.config({
 
 var deps = [
     "jquery", 
+    "globalErrorHandler",
     "pluginsMenuView", 
     "accountInfoView"
 ];
 
-require(deps, function ($, pluginsMenuView, accountInfoView) {
+require(deps, function ($, globalErrorHandler, pluginsMenuView, accountInfoView) {
     $(function () {
-        $(document).ajaxError(function(event, jqxhr, settings, thrownError) {
-            var statusCode = jqxhr.status;
-            
-            console.log('global error handler here.');
-            console.log(statusCode);
-            
-            var isLoginPage = window.location.href.indexOf('session/new') !== -1;
-            
-            if (statusCode === 400 && !isLoginPage) {
-                window.location = "/session/new?error=expired";
-            }
-        });
-        
         new pluginsMenuView();
         new accountInfoView();
         

@@ -107,9 +107,7 @@ router.post('/', function (req, res, next) {
 // Delete session
 router.delete('/', function (req, res, next) {
     var token      = req.headers["x-access-token"];
-    
-    console.log(req.headers);
-    
+
     var tokenModel = new AccountAccessToken({
         token: token 
     });
