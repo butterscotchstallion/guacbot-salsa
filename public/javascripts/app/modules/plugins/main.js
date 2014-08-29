@@ -20,6 +20,7 @@ require.config({
         // models
         pluginMessageModel     : "app/modules/plugins/models/pluginMessageModel",
         pluginMessageInfoModel     : "app/modules/plugins/models/pluginMessageInfoModel",
+        accountsModel                  : "app/modules/accounts/models/accountsModel",
         
         // collections
         pluginMessageCollection: "app/modules/plugins/collections/pluginMessageCollection",

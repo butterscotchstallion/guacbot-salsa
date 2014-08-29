@@ -23,16 +23,16 @@ require.config({
         // models
         pluginsModel     : "app/modules/plugins/models/pluginsModel",
         accountTokenModel: "app/modules/accounts/models/accountTokenModel",
-        sessionModel     : "app/modules/accounts/models/sessionModel",
+        sessionModel     : "app/modules/session/models/sessionModel",
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
         
         // views
-        pluginsMenuView     : "app/modules/common/views/pluginsMenu",
-        pluginsMenuItemView : "app/modules/common/views/pluginsMenuItem",
-        menuSearchView      : "app/modules/common/views/menuSearchView",
-        accountInfoView     : "app/modules/accounts/login/views/accountInfoView"
+        pluginsMenuView      : "app/modules/common/views/pluginsMenu",
+        pluginsMenuItemView  : "app/modules/common/views/pluginsMenuItem",
+        menuSearchView       : "app/modules/common/views/menuSearchView",
+        sessionInfoHeaderItemView: "app/modules/session/views/sessionInfoHeaderItemView"
     },
     shim: {
         bootstrap: {
@@ -51,7 +51,7 @@ require.config({
         pluginsMenuView: {
             deps: ['Backbone', 'bootstrap']
         },
-        accountInfoView: {
+        sessionInfoHeaderView: {
             deps: ['Backbone']
         },
         typeahead: {
@@ -67,13 +67,15 @@ var deps = [
     "jquery", 
     "globalErrorHandler",
     "pluginsMenuView", 
-    "accountInfoView"
+    "sessionInfoHeaderItemView"
 ];
 
-require(deps, function ($, globalErrorHandler, pluginsMenuView, accountInfoView) {
+require(deps, function ($, globalErrorHandler, pluginsMenuView, sessionInfoHeaderItemView) {
     $(function () {
+        window.app = window.app || {};
+        
         new pluginsMenuView();
-        new accountInfoView();
+        new sessionInfoHeaderItemView();
         
         $(document).ajaxStart(function() {
             $('.loading-spinner').removeClass('hidden');

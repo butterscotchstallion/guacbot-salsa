@@ -38,8 +38,13 @@
             
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    <!-- home -->
                     <li {{#if isHomepage}}class="active"{{/if}}><a href="/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
             
+                    <!-- accounts -->
+                    <li {{#if isAccountsList}}class="active"{{/if}}><a href="/accounts"><span class="glyphicon glyphicon-user"></span> Accounts</a></li>
+                    
+                    <!-- plugins -->
                     <li class="dropdown{{#if isPluginsPage}} active{{/if}} hidden plugins-dropdown">
                         <a href="/plugins" 
                            class="dropdown-toggle" 
@@ -48,6 +53,7 @@
                         <ul class="dropdown-menu plugins-menu" role="menu"></ul>
                     </li>
                 </ul>
+                
                 <ul class="nav navbar-nav navbar-right account-info-container"></ul>                
             </div>
         </div>

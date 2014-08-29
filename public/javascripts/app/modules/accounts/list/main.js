@@ -23,13 +23,13 @@ require.config({
         
         // collections
         pluginCollection: "app/modules/plugins/collections/pluginCollection",
+        accountCollection: "app/modules/accounts/collections/accountCollection",
         
         // views
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
         pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
         menuSearchView     : "app/modules/common/views/menuSearchView",
-        profileView        : "app/modules/accounts/profile/views/profileView",
-        sessionInfoHeaderItemView: "app/modules/session/views/sessionInfoHeaderItemView"
+        listView           : "app/modules/accounts/list/views/listView"
     },
     shim: {
         bootstrap: {
@@ -48,15 +48,15 @@ require.config({
         jStorage: {
             deps: ['jquery']
         },
-        profileView: {
+        listView: {
             deps: ['Backbone']
         }
     }
 });
 
-require(["jquery", "common", "profileView"], function ($, common, profileView) {
+require(["jquery", "common", "listView"], function ($, common, listView) {
     $(function () {
-        new profileView();
+        new listView();
     });
 });
 

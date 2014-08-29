@@ -11,7 +11,11 @@ define('sessionModel', function (require) {
     var model         = Backbone.Model.extend({
         idAttribute: 'id',
         
-        url        : "/api/v1/session"
+        url        : "/api/v1/session",
+        
+        parse      : function (response) {
+            return response.session;
+        }
     });
     
     return model;

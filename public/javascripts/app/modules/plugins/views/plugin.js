@@ -55,16 +55,12 @@ define('pluginView', function (require) {
         onDeleteButtonClicked: function (e) {
             var button  = $(e.target);
             
-            button.button('loading');
-            
             this.model.destroy({
                     headers: {
                         "x-access-token": accountTokenModel
                     }
                 })
                 .then(function (model) {
-                    button.button('reset');
-                    
                     window.location = "/plugins";
                 });
         },

@@ -30,7 +30,8 @@ require.config({
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
         pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
         menuSearchView     : "app/modules/common/views/menuSearchView",
-        loginView          : "app/modules/accounts/login/views/loginView"
+        loginView          : "app/modules/accounts/login/views/loginView",
+        sessionInfoHeaderItemView: "app/modules/session/views/sessionInfoHeaderItemView"
     },
     shim: {
         bootstrap: {
