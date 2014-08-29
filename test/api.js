@@ -320,44 +320,42 @@ describe('access control', function() {
 
 describe('accountz', function() {
     var account = {};
-    var accessToken;
-    
-    it('logs in with a valid account', function (done) {
-        var earl = BASE_URL + "session";
-        var pw   = config.accountPassword;
-        
-        superagent.post(earl)
+
+    it('logs in and gets an access token', function (done) {
+        superagent.post(BASE_URL + "session")
                   .send({
                     name    : config.accountName,
-                    password: pw
+                    password: config.accountPassword
                   })
                   .end(function(e, res) {
                     expect(e).to.eql(null);
-                    
-                    expect(res.status).to.eql(200);
+
+                    expect(res.status).to.eql(201);
                     
                     var body = res.body;
                     
                     expect(body).to.be.an('object');
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("OK");
+                    
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
                     
-                    expect(body.expires).to.be.ok();
-                    expect(body.token).to.be.ok();
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
                     
-                    accessToken = body.token;
+                    account.token   = body.session.token;
                     
                     done();
-                  });
+                  });    
     });
     
     it('fails to creates an account with bogus info', function (done) {
         var earl = BASE_URL + "accounts";
         
         superagent.post(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .send({
                     "hello": "world"
                   })
@@ -380,7 +378,7 @@ describe('accountz', function() {
         var earl = BASE_URL + "accounts";
         
         superagent.post(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .send({
                     name    : ~~(Math.random() * 1337),
                     password: config.accountPassword
@@ -397,7 +395,7 @@ describe('accountz', function() {
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
                     
-                    account = body.account;
+                    account = _.extend(account, body.account);
                     
                     done();
                   });
@@ -407,7 +405,7 @@ describe('accountz', function() {
         var earl = BASE_URL + "accounts/lol";
         
         superagent.get(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
 
@@ -427,7 +425,7 @@ describe('accountz', function() {
         var earl = BASE_URL + "accounts/" + account.id;
         
         superagent.get(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     
@@ -445,11 +443,32 @@ describe('accountz', function() {
                   });
     });
     
+    it('fetches a list of accounts', function (done) {
+        var earl = BASE_URL + "accounts";
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.accounts).to.be.an('object');
+                    
+                    done();
+                  });
+    });
+    
     it('fails to login with a non-existent account', function (done) {
         var earl = BASE_URL + "session";
         
         superagent.post(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .send({
                     name    : "lol",
                     password: "lol"
@@ -471,7 +490,7 @@ describe('accountz', function() {
     
     it('fails to update a non-existent account', function (done) {
         superagent.put(BASE_URL + 'accounts/lol')
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .send({
                     active: 0
                   })
@@ -491,7 +510,7 @@ describe('accountz', function() {
     
     it('updates a specific account', function (done) {
         superagent.put(BASE_URL + 'accounts/' + account.id)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .send({
                     active: 0
                   })
@@ -509,14 +528,36 @@ describe('accountz', function() {
                   });
     });
     
+    it('fails to fetch an inactive account', function (done) {
+        var earl = BASE_URL + "accounts/" + account.id;
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(404);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("ERROR");
+                    
+                    done();
+                  });
+    });
+    
     it('deletes an account', function (done) {
         superagent.del(BASE_URL + 'accounts/' + account.id)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
                       expect(res.status).to.eql(200);
                       
                       var body = res.body;
+                      
+                      console.log(body);
                       
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
@@ -530,7 +571,7 @@ describe('accountz', function() {
         var earl = BASE_URL + "accounts/" + account.id;
         
         superagent.get(earl)
-                  .set('x-access-token', accessToken)
+                  .set('x-access-token', account.token)
                   .end(function(e, res) {
                     expect(e).to.eql(null);
                     

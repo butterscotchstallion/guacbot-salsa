@@ -14,6 +14,7 @@ var _                  = require('underscore');
 var jwt                = require('jwt-simple');
 var fs                 = require('fs');
 var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
+var IS_DEV             = config.env === "development";
 
 // Create account
 router.post('/', function (req, res, next) {
@@ -125,6 +126,35 @@ router.get('/:accountID', function (req, res, next) {
                 });
 });
 
+// List of accounts
+router.get('/', function (req, res, next) {
+    var cols = [
+        "id",
+        "name",
+        "active",
+        "created_at",
+        "updated_at"
+    ];
+    
+    var qb       = Bookshelf.knex
+                            .select(cols)
+                            .from('accounts');
+    
+    qb.then(function (result) {
+        res.status(200).json({
+            status : "OK",
+            message: null,
+            accounts: result
+        });
+    })
+    .catch(function (error) {
+        res.status(200).json({
+            status: "ERROR",
+            message: IS_DEV ? error : "Error fetching accounts."
+        });
+    });
+});
+
 // Update account
 router.put('/:accountID', function (req, res, next) {
     var accountID = req.params.accountID;
@@ -166,33 +196,35 @@ router.put('/:accountID', function (req, res, next) {
 
 // Delete account
 router.delete('/:accountID', function (req, res, next) {
+    var accountID = req.params.accountID;
     var model = new Account({
-        id: req.params.accountID
+        id: accountID
     });
     
-    model.fetch()
-           .then(function (result) {
-                if (result) {                    
-                    result.destroy()
-                           .then(function (message) {
-                                res.status(200).json({
-                                    status       : "OK",
-                                    message      : "Account deleted."
-                                });
-                            })
-                            .catch(function (error) {
-                                res.status(200).json({
-                                    status: "ERROR",
-                                    message: "Error deleting account."
-                                });
-                            });            
-                } else {
-                    res.status(404).json({
-                        status: "ERROR",
-                        message: "Account not found."
+    model.fetch({
+        require: true
+    })
+    .then(function (result) {         
+        model.destroy()
+               .then(function () {
+                    res.status(200).json({
+                        status       : "OK",
+                        message      : "Account deleted."
                     });
-                }
-            });
+                })
+                .catch(function (error) {
+                    res.status(200).json({
+                        status: "ERROR",
+                        message: IS_DEV ? error : "Error deleting account."
+                    });
+                });
+    })
+    .catch(function (error) {
+        res.status(200).json({
+            status: "ERROR",
+            message: IS_DEV ? error : "Error deleting account."
+        });
+    });
 });
 
 
