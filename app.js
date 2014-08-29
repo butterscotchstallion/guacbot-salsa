@@ -60,6 +60,11 @@ app.use(function(req, res, next) {
 
 // error handlers
 
+/*
+process.stderr.on('data', function(data) {
+    console.log(data);
+});*/
+
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {

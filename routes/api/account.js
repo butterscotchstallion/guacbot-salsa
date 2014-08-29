@@ -66,7 +66,8 @@ router.post('/', function (req, res, next) {
 router.get('/:accountID', function (req, res, next) {    
     var accountID    = parseInt(req.params.accountID, 10);
     var accountModel = new Account({
-        id: accountID
+        id    : accountID,
+        active: 1
     });
     var tokenModel   = new AccountAccessToken();
     
@@ -83,40 +84,35 @@ router.get('/:accountID', function (req, res, next) {
      * Fetch an account, and any associated access tokens if the account exists
      *
      */
-    accountModel.fetch()
+    accountModel.fetch({
+                    require: true
+                })
                 .then(function (result) {
-                    if (result) {
-                        result.set('password', null);
+                    result.set('password', null);
+                    
+                    tokenModel.fetchAll({
+                        where: {
+                            account_id: req.params.accountID
+                        }
+                    })
+                    .then(function (tokens) {
+                        var account = result;
                         
-                        tokenModel.fetchAll({
-                            where: {
-                                account_id: req.params.accountID
-                            }
-                        })
-                        .then(function (tokens) {
-                            var account = result;
-                            
-                            // Add tokens to account object
-                            account.set('tokens', tokens.toJSON());
-                            
-                            res.status(200).json({
-                                status : "OK",
-                                message: null,
-                                account: account
-                            });
-                        })
-                        .catch(function (error) {
-                            res.status(200).json({
-                                status : "ERROR",
-                                message: "Error fetching tokens."
-                            });
+                        // Add tokens to account object
+                        account.set('tokens', tokens.toJSON());
+                        
+                        res.status(200).json({
+                            status : "OK",
+                            message: null,
+                            account: account
                         });
-                    } else {
-                        res.status(404).json({
+                    })
+                    .catch(function (error) {
+                        res.status(200).json({
                             status : "ERROR",
-                            message: "Account not found."
+                            message: "Error fetching tokens."
                         });
-                    }
+                    });
                 })
                 .catch(function (error) {
                     res.status(404).json({

@@ -557,8 +557,6 @@ describe('accountz', function() {
                       
                       var body = res.body;
                       
-                      console.log(body);
-                      
                       expect(body).to.be.an('object');
                       expect(body).to.not.be.empty();
                       expect(body.status).to.eql("OK");
