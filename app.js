@@ -7,6 +7,7 @@ var bodyParser    = require('body-parser');
 var expressHbs    = require('express3-handlebars');
 var fs            = require('fs');
 var tokenAuth     = require('./middleware/tokenAuth');
+var ssd           = require('./app/staleSessionDestroyer');
 
 var app           = express();
 
