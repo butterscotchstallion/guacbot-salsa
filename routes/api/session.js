@@ -14,6 +14,8 @@ var Bookshelf          = require('../../models/index');
 var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
 var AccountAccessToken = require('../../models/accountAccessToken');
 var Account            = require('../../models/account');
+var IS_DEV             = config.env === "development";
+var _                  = require('underscore');
 
 // Read
 router.get('/', function(req, res) {
@@ -23,16 +25,53 @@ router.get('/', function(req, res) {
     if (token) {
         var qb = Bookshelf.knex("account_access_tokens");
         
+        //qb.debug();
+        
+        qb.select([
+            "account_access_tokens.token",
+            "account_access_tokens.created_at",
+            "account_access_tokens.updated_at",
+            "account_access_tokens.expires_at",
+            "account_access_tokens.origin_ip_address",
+            
+            "accounts.active",
+            "accounts.id AS accountID",
+            "accounts.name AS accountName",
+            "accounts.created_at AS accountCreatedAt",
+            "accounts.updated_at AS accountUpdatedAt"
+        ]);
+        
+        // Match token and ensure both token
+        // and account are active
         qb.where({
-            token : token,
-            active: 1
+            "account_access_tokens.token" : token,
+            "account_access_tokens.active": 1,
+            "accounts.active"             : 1
         });
+        
+        // Ensure we're only fetching tokens which have not yet expired
+        var now = moment().format('YYYY-MM-DD HH:mm:ss');
+        
+        qb.where('account_access_tokens.expires_at', '>', now);
+        
+        // Include account info
+        qb.innerJoin('accounts', 'accounts.id', 'account_access_tokens.account_id');
         
         qb.then(function (result) {
             if (result && result.length > 0) {
+                var token = result[0];
+                
                 res.status(200).json({
                     status : "OK",
-                    session: result[0]
+                    session: _.extend({
+                        account: {
+                            id        : token.accountID,
+                            name      : token.accountName,
+                            created_at: token.accountCreatedAt,
+                            updated_at: token.accountUpdatedAt,
+                            active    : token.active
+                        }
+                    }, token)
                 });
             } else {
                 res.status(404).json({
@@ -44,7 +83,7 @@ router.get('/', function(req, res) {
           .catch(function (error) {
             res.status(404).json({
                 status : "ERROR",
-                message: "Session not found."
+                message: IS_DEV ? error : "Session not found."
             });
         });          
     } else {

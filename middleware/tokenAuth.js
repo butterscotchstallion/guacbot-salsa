@@ -20,7 +20,6 @@ module.exports  = function (req, res, next) {
     }
     
     var sendErrorResponse = function (resp) {
-        //res.status(400).json(resp);
         next(resp);
     };
     

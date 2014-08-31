@@ -84,9 +84,15 @@ describe('session', function() {
                     expect(body.session.expires_at).to.be.ok();
                     expect(body.session.created_at).to.be.ok();
                     expect(body.session.updated_at).to.be.ok();
-                    expect(body.session.account_id).to.be.ok();
                     expect(body.session.origin_ip_address).to.be.ok();
-                    expect(body.session.id).to.be.ok();
+                    
+                    expect(body.session.account).to.be.ok();
+                    expect(body.session.account.id).to.be.ok();
+                    expect(body.session.account).to.have.property('active');
+                    expect(body.session.account.name).to.be.ok();
+                    expect(body.session.account.created_at).to.be.ok();
+                    expect(body.session.account.updated_at).to.be.ok();
+                    expect(body.session.account).to.not.have.property('password');
                     
                     done();
                   });
