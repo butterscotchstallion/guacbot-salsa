@@ -49,14 +49,10 @@ define('sessionInfoHeaderItemView', function (require) {
         },
         
         initialize: function (options) {
-            var self      = this;
-            var acct      = $.jStorage.get('account');
-            var accountID = acct ? acct.id : false;
+            var self = this;
             
-            if (accountID) {
-                this.model = new accountsModel({
-                    accountID: accountID
-                });
+            if (accountTokenModel) {
+                this.model = new sessionModel();
                 
                 this.listenTo(this.model, 'change', this.render, this);
                 
@@ -68,10 +64,14 @@ define('sessionInfoHeaderItemView', function (require) {
                         // Overwrite account info each time so that any
                         // tampering with the local storage will be far
                         // more difficult
-                        $.jStorage.set('account', self.model.toJSON());
+                        $.jStorage.set('account', self.getSessionAccount());
                     }
                 });
             }
+        },
+        
+        getSessionAccount: function () {
+            return this.model.get('account');
         },
         
         compile: function (template, data) {
@@ -85,7 +85,7 @@ define('sessionInfoHeaderItemView', function (require) {
         },
         
         renderAccountInfo: function () {
-            var account = this.model.toJSON();
+            var account = this.getSessionAccount();
             var html    = this.compile(accountInfoTemplate, {
                 account: account
             });

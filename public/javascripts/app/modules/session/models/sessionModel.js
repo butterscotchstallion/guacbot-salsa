@@ -13,6 +13,10 @@ define('sessionModel', function (require) {
         
         url        : "/api/v1/session",
         
+        initialize : function (options) {
+            
+        },
+        
         parse      : function (response) {
             return response.session;
         }
