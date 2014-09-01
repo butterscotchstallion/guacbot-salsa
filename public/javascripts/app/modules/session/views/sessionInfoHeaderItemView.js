@@ -16,7 +16,7 @@ define('sessionInfoHeaderItemView', function (require) {
     var sessionModel               = require('sessionModel');
     
     var view = Backbone.View.extend({
-        el        : $('body'),
+        //el        : $('body'),
         
         events    : {
             'click .logout-link': 'onLogoutButtonClicked'
@@ -24,6 +24,21 @@ define('sessionInfoHeaderItemView', function (require) {
         
         onLogoutButtonClicked: function (e) {
             e.preventDefault();
+            
+            console.log('clicky clicky');
+            
+            this.model.destroy({
+                headers: {
+                    "x-access-token": accountTokenModel
+                },
+                
+                success: function () {
+                    $.jStorage.set('account', null);
+                    $.jStorage.set('token', null);
+                    
+                    window.location = '/session/new';
+                }
+            });
             
             /*
             var xhr = $.ajax({
@@ -44,8 +59,7 @@ define('sessionInfoHeaderItemView', function (require) {
                 
                 window.location = '/session/new';
             });
-            */
-            
+            */            
         },
         
         initialize: function (options) {

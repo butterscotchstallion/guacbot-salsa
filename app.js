@@ -35,15 +35,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/',                    require('./routes/index'));
 
 // API
-app.all('/api/*',               [bodyParser.json(), tokenAuth]);
+app.all('/api/*',                   [bodyParser.json(), tokenAuth]);
 
-app.use('/api/v1/plugins',      require('./routes/api/plugins'));
-app.use('/api/v1/logs',         require('./routes/api/logger'));
-app.use('/api/v1/autocomplete', require('./routes/api/autocomplete'));
-app.use('/api/v1/notes',        require('./routes/api/note'));
-app.use('/api/v1/accounts',     require('./routes/api/account'));
-app.use('/api/v1/session',      require('./routes/api/session'));
+app.use('/api/v1/plugins',          require('./routes/api/plugins'));
+app.use('/api/v1/logs',             require('./routes/api/logger'));
+app.use('/api/v1/autocomplete',     require('./routes/api/autocomplete'));
+app.use('/api/v1/notes',            require('./routes/api/note'));
+app.use('/api/v1/accounts',         require('./routes/api/account'));
+app.use('/api/v1/accounts/avatar',  require('./routes/api/avatar'));
+app.use('/api/v1/session',          require('./routes/api/session'));
 
+
+// Not API
 app.use('/plugins',             require('./routes/plugins'));
 app.use('/accounts',            require('./routes/accounts'));
 app.use('/session',             require('./routes/session'));

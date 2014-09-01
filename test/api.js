@@ -12,6 +12,94 @@ var BASE_URL    = config.baseURL;
 var qs          = require('querystring');
 var _           = require('underscore');
 
+describe('account avatars', function() {
+    var account;
+    var avatar;
+    
+    it('get session', function (done) {
+        superagent.post(BASE_URL + "session")
+                  .send({
+                    name    : config.accountName,
+                    password: config.accountPassword
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(201);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    
+                    expect(body.account).to.be.an('object');
+                    expect(body.account.password).to.eql(null);
+                    
+                    expect(body.session.expires_at).to.be.ok();
+                    expect(body.session.token).to.be.ok();
+                    expect(body.session.origin_ip_address).to.be.ok();
+                    
+                    account         = body.account;
+                    account.token   = body.session.token;
+                    account.expires = body.session.expires_at;
+                    
+                    done();
+                  });    
+    });
+    
+    it('create', function (done) {
+        var filename = "pizza.jpg";
+        var path     = "./fixture/" + filename;
+        
+        superagent.post(BASE_URL + "accounts/avatar")                  
+                  .set('x-access-token', account.token)
+                  .attach('avatar', path, filename)
+                  .field('avatar', filename)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    console.log(res.body);
+                    
+                    expect(res.status).to.eql(201);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    
+                    expect(body.avatar).to.be.an('object');
+                    
+                    avatar = body.avatar;
+                    
+                    done();
+                  });    
+    });
+    
+    it('ensures the image was uploaded', function (done) {
+        superagent.get(avatar.url)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    done();
+                  });
+    });
+    
+    it('ensures the thumbnail was uploaded', function (done) {
+        superagent.get(avatar.thumbnailUrl)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    done();
+                  });
+    });
+});
+
 describe('session', function() {
     var account;
 

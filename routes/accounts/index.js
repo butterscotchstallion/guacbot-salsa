@@ -14,15 +14,16 @@ router.get('/', function(req, res) {
     res.render('accounts/list', { 
         title         : "Accounts",
         env           : config.env,
-        isAccountsList: true
+        isAccountsArea: true
     });
 });
 
 // Profile
 router.get('/:accountID', function(req, res) {
     res.render('accounts/profile', { 
-        title: "Account Profile",
-        env  : config.env
+        title         : "Account Profile",
+        env           : config.env,
+        isAccountsArea: true
     });
 });
 

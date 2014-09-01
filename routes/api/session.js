@@ -112,7 +112,9 @@ router.post('/', function (req, res, next) {
                 
                 // Verify password
                 passwordHasher(password).verifyAgainst(pw, function(error, validated) {
-                    if (error || !validated) {
+                    var invalidPassword = error || !validated;
+                    
+                    if (invalidPassword) {
                         res.status(200).json({
                             status  : "ERROR",
                             message : error || crypticError
