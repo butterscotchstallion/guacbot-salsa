@@ -4,3 +4,7 @@ config/
 bower_components/
 .sass-cache/
 plugin-messages.sql
+
+
+public/images/*
+public/images/avatars/*

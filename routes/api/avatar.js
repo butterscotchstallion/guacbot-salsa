@@ -25,28 +25,15 @@ router.post('/', function(req, res) {
     var avatar             = req.files ? req.files.avatar : false;
     var oneMegabyteInBytes = 1000000;
     var uploadPath         = path.resolve(config.uploadPath);
-
     var options            = {
-        uploadDir: uploadPath, // actual location of the file
-        uploadUrl: '/images/avatars/', // end point for delete route 
-        maxPostSize: oneMegabyteInBytes,
-        minFileSize: 1,
-        maxFileSize: oneMegabyteInBytes, 
-        //copyImgAsThumb: true,
+        uploadDir      : uploadPath,
+        uploadUrl      : '/images/avatars/',
+        maxPostSize    : oneMegabyteInBytes,
+        minFileSize    : 1,
+        maxFileSize    : oneMegabyteInBytes,
         acceptFileTypes: /.+/i,
         inlineFileTypes: /\.(gif|jpe?g|png)/i,
-        imageTypes:  /\.(gif|jpe?g|png)/i,
-        imageVersions: {
-            'thumbnail': {
-                width: 80,
-                height: 80
-            }
-        },
-        accessControl: {
-            allowOrigin: '*',
-            allowMethods: 'GET, POST, PUT, DELETE',
-            allowHeaders: 'Content-Type, Content-Range, Content-Disposition'
-        }
+        imageTypes     :  /\.(gif|jpe?g|png)/i
     };
     var uploader = require('blueimp-file-upload-expressjs')(options);
     
@@ -72,8 +59,8 @@ router.post('/', function(req, res) {
         var filename = [uuid.v4(), ext].join(".");
         var src      = uploadPath + "/" + filename;
         var dst      = uploadPath + "/thumbnail/" + filename;
-        var width    = 150;
-        var height   = 150;
+        var width    = 400;
+        var height   = 400;
         
         // But wait, uploader plugin named the files according to 
         // what the user sent. Let's rename that.
@@ -91,6 +78,7 @@ router.post('/', function(req, res) {
                 console.log("error renaming: ", err);
             }
             
+            // Create thumbnail
             easyimage.resize({
                 src    : src,
                 dst    : dst,
@@ -98,15 +86,35 @@ router.post('/', function(req, res) {
                 height : height,
                 quality: 100
             }).then(function () {
-                res.status(201).json({
-                    status : "OK",
-                    message: null,
-                    avatar : avatar
+                /**
+                 * req.account is provided by the tokenAuth middleware. This is then
+                 * used to update the account avatar based on the account ID available
+                 * from req.account
+                 *
+                 */
+                var acctsJSON = req.account.toJSON();
+                var accountID = acctsJSON[0].account_id;
+                var qb        = Bookshelf.knex('accounts');
+                var now       = moment().format('YYYY-MM-DD HH:mm:ss');
+                
+                qb.where({
+                    id: accountID
+                })
+                .update({
+                    avatar_filename: filename,
+                    updated_at     : now
+                })
+                .then(function () {
+                    res.status(201).json({
+                        status : "OK",
+                        message: null,
+                        avatar : avatar
+                    });
                 });
-            }, 
+            },
             function (err) {
                 if (IS_DEV) {
-                    console.log(err);
+                    console.log("Error creating thumbnail: ", err);
                 }
                 
                 res.status(200).json({

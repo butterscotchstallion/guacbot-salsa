@@ -1,21 +1,29 @@
-<h1>Profile for {{account.name}}</h1>
-
-<ul class="list-unstyled profile-details-list">
-    <li>
-        {{#if account.active}}
-            <label class="label label-success">Active</label>
-        {{else}}
-            <label class="label label-default">Inactive</label>
-        {{/if}}
-    </li>
+<div class="row">
+    <div class="col-md-3">
+        <img src="/images/avatars/thumbnail/{{account.avatar_filename}}" alt="Account avatar">
+    </div>
     
-    <li>
-        <span class="glyphicon glyphicon-time"></span> 
-        Account created <abbr title="{{account.created_at}}">{{createdAtFormatted}}</abbr>
-    </li>
-    
-    <li>
-        <span class="glyphicon glyphicon-time"></span> 
-        Account updated <abbr title="{{account.updated_at}}">{{updatedAtFormatted}}</abbr>
-    </li>
-</ul> 
+    <div class="col-md-9">
+        <h1 class="profile-header">Profile for {{account.name}}</h1>
+        
+        <ul class="list-unstyled profile-details-list">
+            <li>
+                {{#if account.active}}
+                    <label class="label label-success">Active</label>
+                {{else}}
+                    <label class="label label-default">Inactive</label>
+                {{/if}}
+            </li>
+            
+            <li>
+                <span class="glyphicon glyphicon-time"></span> 
+                Account created <abbr title="{{account.created_at}}">{{createdAtFormatted}}</abbr>
+            </li>
+            
+            <li>
+                <span class="glyphicon glyphicon-time"></span> 
+                Account updated <abbr title="{{account.updated_at}}">{{updatedAtFormatted}}</abbr>
+            </li>
+        </ul> 
+    </div>
+</div>

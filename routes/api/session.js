@@ -33,6 +33,7 @@ router.get('/', function(req, res) {
             "account_access_tokens.updated_at",
             "account_access_tokens.expires_at",
             "account_access_tokens.origin_ip_address",
+            "account_access_tokens.user_agent",
             
             "accounts.active",
             "accounts.id AS accountID",
@@ -136,26 +137,33 @@ router.post('/', function (req, res, next) {
                         
                         var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
                         var ip               = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+                        var userAgent        = req.headers["user-agent"];
                         
                         tokenModel.set({
                             token            : token,
                             expires_at       : expiresFormatted,
                             account_id       : account.get('id'),
-                            origin_ip_address: ip
+                            origin_ip_address: ip,
+                            user_agent       : userAgent
                         });
                         
                         tokenModel.save()
                                   .then(function () {
-                                    res.status(201).json({
+                                    var response = {
                                         status : "OK",
                                         message: "Session created.",
-                                        account: account,
+                                        account: account.toJSON(),
                                         session: {
                                             token            : token,
                                             expires_at       : expires,
-                                            origin_ip_address: ip
+                                            origin_ip_address: ip,
+                                            user_agent       : userAgent
                                         }
-                                    });
+                                    };
+                                    
+                                    console.log(response);
+                                    
+                                    res.status(201).json(response);
                                   })
                                   .catch(function (error) {
                                         if (config.env === "development") {

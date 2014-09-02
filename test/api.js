@@ -49,7 +49,7 @@ describe('account avatars', function() {
     });
     
     it('create', function (done) {
-        var filename = "pizza.jpg";
+        var filename = "kawaii-armor.jpg";
         var path     = "./fixture/" + filename;
         
         superagent.post(BASE_URL + "accounts/avatar")                  
@@ -109,6 +109,7 @@ describe('session', function() {
                     name    : config.accountName,
                     password: config.accountPassword
                   })
+                  .set('user-agent', 'young sharktank')
                   .end(function(e, res) {
                     expect(e).to.eql(null);
 
@@ -126,6 +127,7 @@ describe('session', function() {
                     expect(body.session.expires_at).to.be.ok();
                     expect(body.session.token).to.be.ok();
                     expect(body.session.origin_ip_address).to.be.ok();
+                    expect(body.session).to.have.property('user_agent');
                     
                     account         = body.account;
                     account.token   = body.session.token;
