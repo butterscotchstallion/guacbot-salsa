@@ -25,19 +25,27 @@ module.exports  = function (req, res, next) {
     
     if (token) {
         try {
-            var config   = req.app.get('config');
-            var decoded  = jwt.decode(token, config.tokenSecret);
-            var expired  = decoded.exp <= Date.now();
+            var config    = req.app.get('config');
+            var decoded   = jwt.decode(token, config.tokenSecret);
+            var expired   = decoded.exp <= Date.now();
+            var accountID = decoded.iss;
             
             if (!expired) {
+                /*
                 var model = new AccountAccessToken({
                     account_id: decoded.iss
                 });
+                */
                 
-                model.fetchAll()
+                // Get account based on decoded token account ID
+                var model = new Account({
+                    id: accountID
+                });
+                
+                model.fetch()
                      .then(function (result) {
-                        if (result && result.length > 0) {
-                            req.account = result;
+                        if (result) {
+                            req.account = result.toJSON();
                             
                             next();                            
                         } else {

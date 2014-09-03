@@ -137,7 +137,7 @@ router.post('/', function (req, res, next) {
                         
                         var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
                         var ip               = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                        var userAgent        = req.headers["user-agent"];
+                        var userAgent        = req.headers["user-agent"] || ""; 
                         
                         tokenModel.set({
                             token            : token,

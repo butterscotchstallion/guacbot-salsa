@@ -38,7 +38,7 @@ router.post('/', function(req, res) {
     var uploader = require('blueimp-file-upload-expressjs')(options);
     
     uploader.post(req, res, function (response) {
-        var avatar   = response.files[0];
+        var avatar = response.files[0];
         var ext;
         
         switch (avatar.type) {
@@ -92,8 +92,8 @@ router.post('/', function(req, res) {
                  * from req.account
                  *
                  */
-                var acctsJSON = req.account.toJSON();
-                var accountID = acctsJSON[0].account_id;
+                var account   = req.account;
+                var accountID = account.id;
                 var qb        = Bookshelf.knex('accounts');
                 var now       = moment().format('YYYY-MM-DD HH:mm:ss');
                 
@@ -105,6 +105,27 @@ router.post('/', function(req, res) {
                     updated_at     : now
                 })
                 .then(function () {
+                    var oldAvatarPath          = uploadPath + "/"           + account.avatar_filename;
+                    var oldAvatarThumbnailPath = uploadPath + "/thumbnail/" + account.avatar_filename;
+                    
+                    // Delete old avatar
+                    fs.unlink(oldAvatarPath, function (err) {
+                        if (err) {
+                            console.log("error deleting " + oldAvatarThumbnailPath);
+                        } else {
+                            console.log("deleted " + oldAvatarThumbnailPath);
+                        }
+                    });
+                    
+                    // Delete old avatar thumbnail
+                    fs.unlink(oldAvatarThumbnailPath, function (err) {
+                        if (err) {
+                            console.log("error deleting " + oldAvatarThumbnailPath);
+                        } else {
+                            console.log("deleted " + oldAvatarThumbnailPath);
+                        }
+                    });
+                    
                     res.status(201).json({
                         status : "OK",
                         message: null,
