@@ -8,3 +8,30 @@
         padding: .5em 0 .5em 0;
     }
 }
+
+.avatar-options-overlay {
+    background-color: #000;
+    opacity: 1;
+    position: relative;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding: 1em;
+    text-align: center;
+    color: #fff;
+    font-weight: 400;
+    font-size: 1.2em;
+}
+
+.avatar-container {
+    position: relative;
+    
+    img {
+        display: block;
+    }
+}
+
+.avatar-container:hover .avatar-options-overlay {
+    opacity: .5;
+}

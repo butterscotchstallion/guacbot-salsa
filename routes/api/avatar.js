@@ -147,13 +147,6 @@ router.post('/', function(req, res) {
     });
 });
 
-// Delete
-router.delete('/uploaded/files/:name', function(req, res) {
-    uploader.delete(req, res, function (obj) {
-        res.send(JSON.stringify(obj)); 
-    });
-});
-
 
 
 

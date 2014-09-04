@@ -16,6 +16,9 @@ require.config({
         jStorage      : "lib/jstorage",
         typeahead     : "lib/typeahead",
         moment        : "lib/moment",
+        jqueryFileUpload: "lib/jquery.fileupload",
+        jqueryUIWidget: "lib/jquery.ui.widget",
+        jqueryTransport: "lib/jquery.iframe-transport",
         
         common        : "app/modules/common/main",
         
@@ -50,6 +53,9 @@ require.config({
         },
         profileView: {
             deps: ['Backbone']
+        },
+        jqueryFileUpload: {
+            deps: ['jqueryTransport', 'jqueryUIWidget', 'jquery']
         }
     }
 });

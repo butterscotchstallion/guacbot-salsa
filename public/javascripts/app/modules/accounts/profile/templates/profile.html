@@ -1,7 +1,16 @@
 <div class="row">
-    <div class="col-md-3">
-        <img src="/images/avatars/thumbnail/{{account.avatar_filename}}" alt="Account avatar">
-    </div>
+    <figure class="col-md-3">
+        <div class="avatar-container">
+            <img src="/images/avatars/thumbnail/{{account.avatar_filename}}" alt="Account avatar">
+            
+            <figcaption class="avatar-options-overlay">swag</figcaption>
+        </div>
+        
+        <form id="account-profile-avatar-form" class="hidden">
+            <input type="hidden"
+                   class="account-avatar-filename">
+        </form>
+    </figure>
     
     <div class="col-md-9">
         <h1 class="profile-header">Profile for {{account.name}}</h1>
