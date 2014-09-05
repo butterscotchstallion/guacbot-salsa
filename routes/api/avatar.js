@@ -59,8 +59,8 @@ router.post('/', function(req, res) {
         var filename = [uuid.v4(), ext].join(".");
         var src      = uploadPath + "/" + filename;
         var dst      = uploadPath + "/thumbnail/" + filename;
-        var width    = 400;
-        var height   = 400;
+        var width    = 290;
+        var height   = 290;
         
         // But wait, uploader plugin named the files according to 
         // what the user sent. Let's rename that.
@@ -89,7 +89,8 @@ router.post('/', function(req, res) {
                 /**
                  * req.account is provided by the tokenAuth middleware. This is then
                  * used to update the account avatar based on the account ID available
-                 * from req.account
+                 * from req.account. Also, since the account is looked up by the access
+                 * token, it is not possible to update someone else's avatar!
                  *
                  */
                 var account   = req.account;

@@ -45,7 +45,8 @@ module.exports  = function (req, res, next) {
                 model.fetch()
                      .then(function (result) {
                         if (result) {
-                            req.account = result.toJSON();
+                            req.account       = result.toJSON();
+                            req.account.token = token;
                             
                             next();                            
                         } else {

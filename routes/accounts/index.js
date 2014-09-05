@@ -23,7 +23,8 @@ router.get('/:accountID', function(req, res) {
     res.render('accounts/profile', { 
         title         : "Account Profile",
         env           : config.env,
-        isAccountsArea: true
+        isAccountsArea: true,
+        accountID     : req.params.accountID
     });
 });
 
