@@ -16,6 +16,7 @@ require.config({
         jStorage      : "lib/jstorage",
         typeahead     : "lib/typeahead",
         moment        : "lib/moment",
+        timeago       : "lib/timeago",
         
         common        : "app/modules/common/main",
         
@@ -29,7 +30,8 @@ require.config({
         pluginsMenuView    : "app/modules/common/views/pluginsMenu",
         pluginsMenuItemView: "app/modules/common/views/pluginsMenuItem",
         menuSearchView     : "app/modules/common/views/menuSearchView",
-        listView           : "app/modules/accounts/list/views/listView"
+        listView           : "app/modules/accounts/list/views/listView",
+        accountsTableItemView: "app/modules/accounts/list/views/accountsTableItemView"
     },
     shim: {
         bootstrap: {
@@ -50,6 +52,9 @@ require.config({
         },
         listView: {
             deps: ['Backbone']
+        },
+        timeago: {
+            deps: ['jquery']
         }
     }
 });

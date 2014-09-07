@@ -45,6 +45,12 @@ define('profileView', function (require) {
         render: function () {
             var account = this.model.toJSON();
             var tpl     = Handlebars.compile(profileTemplate);
+            /**
+             * window.salsa.profile.accountID is provided by the route
+             * via template variable. This strategy saves us from having to parse
+             * the accountID out of the URL on the client side.
+             *
+             */
             var canEdit = account.id === window.salsa.profile.accountID;
             var html    = tpl({
                 account           : account,                
@@ -61,7 +67,8 @@ define('profileView', function (require) {
             }
         },
         
-        renderEditControls: function () {            
+        renderEditControls: function () {
+            var onProgress = 
             $('.account-avatar-filename').fileupload({
                 dataType   : 'json',
                 url        : "/api/v1/accounts/avatar",
@@ -70,17 +77,16 @@ define('profileView', function (require) {
                     "x-access-token": this.token
                 },
                 done       : function (e, data) {
-                    window.location.reload();
+                    //window.location.reload();
                 },
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);
                     
                     $('.progress').removeClass('hidden');
                     
-                    $('.progress-bar').css(
-                        'width',
-                        progress + '%'
-                    );
+                    $('.file-upload-progress-bar').css({
+                        width: progress + '%'
+                    });
                 }
             });
         }

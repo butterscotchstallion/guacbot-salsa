@@ -1,0 +1,15 @@
+<td>
+    {{name}}
+</td>
+
+<td>    
+    <abbr class="timeago" title="{{updated_at}}">{{updated_at}}</abbr>
+</td>
+
+<td>
+    {{#if active}}
+        <label class="label label-success">Active</label>
+    {{else}}
+        <label class="label label-default">Inactive</label>
+    {{/if}}
+</td>

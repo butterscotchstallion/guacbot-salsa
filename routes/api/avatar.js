@@ -56,16 +56,16 @@ router.post('/', function(req, res) {
             break;
         }
         
-        var filename = [uuid.v4(), ext].join(".");
-        var src      = uploadPath + "/" + filename;
-        var dst      = uploadPath + "/thumbnail/" + filename;
-        var width    = 290;
-        var height   = 290;
+        var filename        = uuid.v4()  + ext;
+        var src             = uploadPath + "/"           + filename;
+        var dst             = uploadPath + "/thumbnail/" + filename;
+        var width           = 290;
+        var height          = 290;
         
         // But wait, uploader plugin named the files according to 
         // what the user sent. Let's rename that.
-        var oldPath  = uploadPath + "/" + avatar.name;
-        var newPath  = src;
+        var oldPath         = uploadPath + "/" + avatar.name;
+        var newPath         = src;
         
         // Overwrite the old filename. The URLs that the plugin generates
         // will be wrong, so we also have to overwrite those.
@@ -87,8 +87,8 @@ router.post('/', function(req, res) {
                 quality: 100
             }).then(function () {
                 /**
-                 * req.account is provided by the tokenAuth middleware. This is then
-                 * used to update the account avatar based on the account ID available
+                 * req.account is provided by the tokenAuth middleware. This is used
+                 * to update the account avatar based on the account ID available
                  * from req.account. Also, since the account is looked up by the access
                  * token, it is not possible to update someone else's avatar!
                  *

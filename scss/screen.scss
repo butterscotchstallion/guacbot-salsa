@@ -5,6 +5,8 @@
 
 // https://github.com/twbs/bootstrap-sass for configuration 
 @import "lib/bootstrap/bootstrap";
+@import "lib/jquery-file-upload/jquery.fileupload";
+@import "lib/jquery-file-upload/jquery.fileupload-ui";
 
 @import "typography";
 @import "layout";
