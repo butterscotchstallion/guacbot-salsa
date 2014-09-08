@@ -22,7 +22,7 @@ define('profileView', function (require) {
         
         initialize: function (options) {
             var self       = this;
-            self.accountID = window.salsa.profile.accountID;
+            self.accountID = parseInt(window.salsa.profile.accountID, 10);
             self.token     = tokenModel;
             self.model     = new accountsModel({
                 accountID: self.accountID
@@ -51,13 +51,16 @@ define('profileView', function (require) {
              * the accountID out of the URL on the client side.
              *
              */
-            var canEdit = account.id === window.salsa.profile.accountID;
+            var session = $.jStorage.get('account');
+            var canEdit = session.id === this.accountID;
             var html    = tpl({
                 account           : account,                
                 createdAtFormatted: moment(account.created_at).fromNow(),
                 updatedAtFormatted: moment(account.updated_at).fromNow(),
                 canEdit           : canEdit
             });
+            
+            console.log('can edit: ', canEdit);
             
             $('.profile-container').html(html);
             $('.loading').addClass('hidden');
