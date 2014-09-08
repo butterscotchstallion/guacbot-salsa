@@ -476,7 +476,7 @@ describe('accountz', function() {
         superagent.post(earl)
                   .set('x-access-token', account.token)
                   .send({
-                    name    : ~~(Math.random() * 1337),
+                    name    : ~~(Math.random() * 31337),
                     password: config.accountPassword
                   })
                   .end(function(e, res) {
@@ -492,6 +492,8 @@ describe('accountz', function() {
                     expect(body.account.password).to.eql(null);
                     
                     account = _.extend(account, body.account);
+                    
+                    console.log(account);
                     
                     done();
                   });
@@ -518,7 +520,7 @@ describe('accountz', function() {
     });
     
     it('fetches an account', function (done) {
-        var earl = BASE_URL + "accounts/" + account.id;
+        var earl = BASE_URL + "accounts/" + account.guid;
         
         superagent.get(earl)
                   .set('x-access-token', account.token)
@@ -605,7 +607,7 @@ describe('accountz', function() {
     });
     
     it('updates a specific account', function (done) {
-        superagent.put(BASE_URL + 'accounts/' + account.id)
+        superagent.put(BASE_URL + 'accounts/' + account.guid)
                   .set('x-access-token', account.token)
                   .send({
                     active: 0
@@ -625,7 +627,7 @@ describe('accountz', function() {
     });
     
     it('fails to fetch an inactive account', function (done) {
-        var earl = BASE_URL + "accounts/" + account.id;
+        var earl = BASE_URL + "accounts/" + account.guid;
         
         superagent.get(earl)
                   .set('x-access-token', account.token)
@@ -645,7 +647,7 @@ describe('accountz', function() {
     });
     
     it('deletes an account', function (done) {
-        superagent.del(BASE_URL + 'accounts/' + account.id)
+        superagent.del(BASE_URL + 'accounts/' + account.guid)
                   .set('x-access-token', account.token)
                   .end(function(e, res) {
                       expect(e).to.eql(null);           
@@ -662,7 +664,7 @@ describe('accountz', function() {
     });
     
     it('fails to fetch a non-existent account', function (done) {
-        var earl = BASE_URL + "accounts/" + account.id;
+        var earl = BASE_URL + "accounts/" + account.guid;
         
         superagent.get(earl)
                   .set('x-access-token', account.token)

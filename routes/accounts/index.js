@@ -19,12 +19,12 @@ router.get('/', function(req, res) {
 });
 
 // Profile
-router.get('/:accountID', function(req, res) {
+router.get('/:guid', function(req, res) {
     res.render('accounts/profile', { 
         title         : "Account Profile",
         env           : config.env,
         isAccountsArea: true,
-        accountID     : req.params.accountID
+        guid          : req.params.guid
     });
 });
 

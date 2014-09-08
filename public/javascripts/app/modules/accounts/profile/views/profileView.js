@@ -22,10 +22,10 @@ define('profileView', function (require) {
         
         initialize: function (options) {
             var self       = this;
-            self.accountID = parseInt(window.salsa.profile.accountID, 10);
+            self.guid      = window.salsa.profile.guid;
             self.token     = tokenModel;
             self.model     = new accountsModel({
-                accountID: self.accountID
+                guid: self.guid
             });
             
             self.listenTo(self.model, 'change', self.render, self);
@@ -52,7 +52,7 @@ define('profileView', function (require) {
              *
              */
             var session = $.jStorage.get('account');
-            var canEdit = session.id === this.accountID;
+            var canEdit = session.guid === this.guid;
             var html    = tpl({
                 account           : account,                
                 createdAtFormatted: moment(account.created_at).fromNow(),

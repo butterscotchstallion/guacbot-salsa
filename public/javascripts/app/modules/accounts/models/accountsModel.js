@@ -9,16 +9,16 @@ define('accountsModel', function (require) {
     var Backbone      = require('Backbone');
 
     var model         = Backbone.Model.extend({
-        idAttribute: 'id',
+        idAttribute: 'guid',
         
         urlRoot    : "/api/v1/accounts/",
         
         initialize : function (options) {
-            this.accountID = options.accountID;
+            this.guid = options.guid;
         },
         
         url        : function () {
-            var url = this.urlRoot + this.accountID;
+            var url = this.urlRoot + this.guid;
             
             return url;
         },

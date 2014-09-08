@@ -15,6 +15,7 @@ var jwt                = require('jwt-simple');
 var fs                 = require('fs');
 var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
 var IS_DEV             = config.env === "development";
+var uuid               = require('node-uuid');
 
 // Create account
 router.post('/', function (req, res, next) {
@@ -22,63 +23,54 @@ router.post('/', function (req, res, next) {
     var password = req.param('password');
     var model    = new Account();
     
-        passwordHasher(password).hash(function (error, hash) {
-            if (error) {
-                res.status(200).json({
-                    status: "ERROR",
-                    message: error
-                });
-            } else {
-                model.set({
-                    name    : name,
-                    password: hash
-                });
-                
-                model.save()
-                     .then(function (result) {
-                        var newAccount = result;
-                        
-                        // No sensitive details in the response!
-                        newAccount.set('password', null);
-                        
-                        res.location(['/accounts', 
-                                      newAccount.get('id')].join('/'));
-                        
-                        res.status(201).json({
-                            status : "OK",
-                            message: "Account created.",
-                            account: newAccount
-                        });
-                     })
-                     .catch(function (error) {
-                        var errorMessage  = "Error creating account.";
-                        
-                        res.status(200).json({
-                            status: "ERROR",
-                            message: error
-                        });
+    passwordHasher(password).hash(function (error, hash) {
+        if (error) {
+            res.status(200).json({
+                status: "ERROR",
+                message: error
+            });
+        } else {
+            model.set({
+                name    : name,
+                password: hash,
+                guid    : uuid.v4()
+            });
+            
+            model.save()
+                 .then(function (result) {
+                    var newAccount = result;
+                    
+                    // No sensitive details in the response!
+                    newAccount.set('password', null);
+                    
+                    res.location(['/accounts', 
+                                  newAccount.get('guid')].join('/'));
+                    
+                    res.status(201).json({
+                        status : "OK",
+                        message: "Account created.",
+                        account: newAccount
                     });
-            }
-        });
+                 })
+                 .catch(function (error) {
+                    var errorMessage  = "Error creating account.";
+                    
+                    res.status(200).json({
+                        status: "ERROR",
+                        message: error
+                    });
+                });
+        }
+    });
 });
 
-// Account by ID
-router.get('/:accountID', function (req, res, next) {    
-    var accountID    = parseInt(req.params.accountID, 10);
+// Account by GUID
+router.get('/:guid', function (req, res, next) {    
+    var guid         = req.params.guid
     var accountModel = new Account({
-        id    : accountID,
+        guid  : guid,
         active: 1
     });
-    var tokenModel   = new AccountAccessToken();
-    
-    if (!accountID || accountID < 1) {
-        res.status(404).json({
-            status : "ERROR",
-            message: "Account not found."
-        });
-        
-        return;
-    }
     
     /**
      * Fetch an account, and any associated access tokens if the account exists
@@ -90,28 +82,12 @@ router.get('/:accountID', function (req, res, next) {
                 .then(function (result) {
                     result.set('password', null);
                     
-                    tokenModel.fetchAll({
-                        where: {
-                            account_id: req.params.accountID
-                        }
-                    })
-                    .then(function (tokens) {
-                        var account = result;
-                        
-                        // Add tokens to account object
-                        account.set('tokens', tokens.toJSON());
-                        
-                        res.status(200).json({
-                            status : "OK",
-                            message: null,
-                            account: account
-                        });
-                    })
-                    .catch(function (error) {
-                        res.status(200).json({
-                            status : "ERROR",
-                            message: "Error fetching tokens."
-                        });
+                    var account = result;
+                    
+                    res.status(200).json({
+                        status : "OK",
+                        message: null,
+                        account: account
                     });
                 })
                 .catch(function (error) {
@@ -125,7 +101,7 @@ router.get('/:accountID', function (req, res, next) {
 // List of accounts
 router.get('/', function (req, res, next) {
     var cols = [
-        "id",
+        "guid",
         "name",
         "active",
         "created_at",
@@ -152,11 +128,11 @@ router.get('/', function (req, res, next) {
 });
 
 // Update account
-router.put('/:accountID', function (req, res, next) {
-    var accountID = req.params.accountID;
-    var active    = req.param('active');    
-    var model     = new Account({ 
-        id: accountID
+router.put('/:guid', function (req, res, next) {
+    var guid   = req.params.guid;
+    var active = req.param('active');    
+    var model  = new Account({ 
+        guid: guid
     });
     
     var options = { patch: true };
@@ -168,7 +144,7 @@ router.put('/:accountID', function (req, res, next) {
                     active: active
                 }, options)
                 .then(function (model) {                        
-                    res.location(['/accounts', model.get('id')].join('/'));
+                    res.location(['/accounts', model.get('guid')].join('/'));
                     
                     res.status(200).json({
                         status : "OK",
@@ -191,10 +167,10 @@ router.put('/:accountID', function (req, res, next) {
 });
 
 // Delete account
-router.delete('/:accountID', function (req, res, next) {
-    var accountID = req.params.accountID;
+router.delete('/:guid', function (req, res, next) {
+    var guid = req.params.guid;
     var model = new Account({
-        id: accountID
+        guid: guid
     });
     
     model.fetch({
