@@ -45,8 +45,10 @@ define('loginView', function (require) {
         },
         
         onLoginFailure: function (xhr, status, err, message) {
+            console.log(message);
+            
             if (message) {
-                $('#login-failure-message-text').text(message);
+                $('#login-failure-message-text').text(err || message);
             }
             
             $('.login-failure-message').removeClass('hidden');
@@ -58,7 +60,7 @@ define('loginView', function (require) {
                 $.jStorage.set('tokenExpiration', data.session.expires_at);
                 $.jStorage.set('account', data.account);
                 
-                window.location = "/accounts/" + data.account.id;
+                window.location = "/accounts/" + data.account.guid;
             } else {
                 this.onLoginFailure(null, null, null, data.message);           
             }

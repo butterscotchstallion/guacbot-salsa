@@ -4,7 +4,7 @@
     title="Details">
     
     {{#if account}}
-        <a href="/accounts/{{account.id}}"><span class="glyphicon glyphicon-user"></span> Logged in as <strong>{{account.name}}</strong></a>
+        <a href="/accounts/{{account.guid}}"><span class="glyphicon glyphicon-user"></span> Logged in as <strong>{{account.name}}</strong></a>
     {{else}}
         <a href="/accounts/login">Login</a>
     {{/if}}

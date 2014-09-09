@@ -46,12 +46,12 @@ define('accountInfoView', function (require) {
         },
         
         initialize: function (options) {
-            var self      = this;
-            var acct      = $.jStorage.get('account');
-            var accountID = acct ? acct.id : -1;
+            var self   = this;
+            var acct   = $.jStorage.get('account');
+            var guid   = acct ? acct.guid : -1;
             
             this.model = new accountsModel({
-                accountID: accountID
+                guid: guid
             });
             
             this.listenTo(this.model, 'change', this.render, this);

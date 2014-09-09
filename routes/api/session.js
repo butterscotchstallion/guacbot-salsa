@@ -121,7 +121,6 @@ router.post('/', function (req, res, next) {
                             message : error || crypticError
                         });
                     } else {
-                        // No sensitive details!
                         // TODO: use select to specify the column
                         // rather than just setting the property to null
                         account.set('password', null);
@@ -137,14 +136,14 @@ router.post('/', function (req, res, next) {
                         
                         var expiresFormatted = eMoment.format("YYYY-MM-DD HH:mm:s");
                         var ip               = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-                        var userAgent        = req.headers["user-agent"] || ""; 
+                        var userAgent        = req.headers["user-agent"] || "";
                         
                         tokenModel.set({
                             token            : token,
                             expires_at       : expiresFormatted,
-                            account_id       : account.get('id'),
                             origin_ip_address: ip,
-                            user_agent       : userAgent
+                            user_agent       : userAgent,
+                            account_id       : account.get('id')
                         });
                         
                         tokenModel.save()
@@ -157,7 +156,8 @@ router.post('/', function (req, res, next) {
                                             token            : token,
                                             expires_at       : expires,
                                             origin_ip_address: ip,
-                                            user_agent       : userAgent
+                                            user_agent       : userAgent,
+                                            guid             : account.get('guid')
                                         }
                                     };
                                     

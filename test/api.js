@@ -100,7 +100,7 @@ describe('account avatars', function() {
     });
 });
 
-describe('session', function() {
+describe('sessionz', function() {
     var account;
 
     it('create', function (done) {
@@ -113,6 +113,8 @@ describe('session', function() {
                   .end(function(e, res) {
                     expect(e).to.eql(null);
 
+                    console.log(res.body);
+                    
                     expect(res.status).to.eql(201);
                     
                     var body = res.body;

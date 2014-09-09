@@ -16,7 +16,7 @@ define('sessionInfoHeaderItemView', function (require) {
     var sessionModel               = require('sessionModel');
     
     var view = Backbone.View.extend({
-        //el        : $('body'),
+        el        : $('body'),
         
         events    : {
             'click .logout-link': 'onLogoutButtonClicked'
