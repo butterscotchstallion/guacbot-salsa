@@ -39,7 +39,8 @@ router.get('/', function(req, res) {
             "accounts.id AS accountID",
             "accounts.name AS accountName",
             "accounts.created_at AS accountCreatedAt",
-            "accounts.updated_at AS accountUpdatedAt"
+            "accounts.updated_at AS accountUpdatedAt",
+            "accounts.guid"
         ]);
         
         // Match token and ensure both token
@@ -70,7 +71,8 @@ router.get('/', function(req, res) {
                             name      : token.accountName,
                             created_at: token.accountCreatedAt,
                             updated_at: token.accountUpdatedAt,
-                            active    : token.active
+                            active    : token.active,
+                            guid      : token.guid
                         }
                     }, token)
                 });
@@ -109,7 +111,9 @@ router.post('/', function (req, res, next) {
     model.fetch()
          .then(function (account) {
             if (account) {
-                var pw = account.get('password');
+                var pw        = account.get('password');
+                var accountID = account.get('id');
+                var guid      = account.get('guid');
                 
                 // Verify password
                 passwordHasher(password).verifyAgainst(pw, function(error, validated) {
@@ -130,7 +134,7 @@ router.post('/', function (req, res, next) {
                         var expires = eMoment.valueOf();
                         
                         var token   = jwt.encode({
-                            iss: account.get('id'),
+                            iss: accountID,
                             exp: expires
                         }, config.tokenSecret);
                         
@@ -143,7 +147,7 @@ router.post('/', function (req, res, next) {
                             expires_at       : expiresFormatted,
                             origin_ip_address: ip,
                             user_agent       : userAgent,
-                            account_id       : account.get('id')
+                            account_id       : accountID
                         });
                         
                         tokenModel.save()
@@ -157,7 +161,7 @@ router.post('/', function (req, res, next) {
                                             expires_at       : expires,
                                             origin_ip_address: ip,
                                             user_agent       : userAgent,
-                                            guid             : account.get('guid')
+                                            guid             : guid
                                         }
                                     };
                                     

@@ -25,8 +25,6 @@ define('sessionInfoHeaderItemView', function (require) {
         onLogoutButtonClicked: function (e) {
             e.preventDefault();
             
-            console.log('clicky clicky');
-            
             this.model.destroy({
                 headers: {
                     "x-access-token": accountTokenModel
@@ -38,28 +36,7 @@ define('sessionInfoHeaderItemView', function (require) {
                     
                     window.location = '/session/new';
                 }
-            });
-            
-            /*
-            var xhr = $.ajax({
-                method : "DELETE",
-                url    : "/api/v1/session",
-                headers: {
-                    "x-access-token": accountTokenModel
-                },
-            });
-            
-            xhr.fail(function () {
-                console.log('error logging out!');
-            });
-            
-            xhr.always(function () {
-                $.jStorage.set('account', null);
-                $.jStorage.set('token', null);
-                
-                window.location = '/session/new';
-            });
-            */            
+            });         
         },
         
         initialize: function (options) {
@@ -74,11 +51,11 @@ define('sessionInfoHeaderItemView', function (require) {
                     headers: {
                         "x-access-token": accountTokenModel
                     },
-                    success: function () {
+                    success: function (account) {
                         // Overwrite account info each time so that any
                         // tampering with the local storage will be far
                         // more difficult
-                        $.jStorage.set('account', self.getSessionAccount());
+                        $.jStorage.set('account', account);
                     }
                 });
             }
@@ -103,6 +80,8 @@ define('sessionInfoHeaderItemView', function (require) {
             var html    = this.compile(accountInfoTemplate, {
                 account: account
             });
+            
+            console.log(account);
             
             $('.account-info-container').html(html);
             

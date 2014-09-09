@@ -1,7 +1,11 @@
 <div class="row">
-    <div class="col-md-3 profile-avatar-container">
+    <div class="col-xs-3 profile-avatar-container">
         {{#if account.avatar_filename}}
-            <img src="/images/avatars/thumbnail/{{account.avatar_filename}}" alt="Account avatar">
+            <a href="#" class="thumbnail">
+                <img src="/images/avatars/thumbnail/{{account.avatar_filename}}" 
+                     class="img-responsive"
+                     alt="Account avatar">
+            </a>
         {{else}}
             No avatar.
         {{/if}}
