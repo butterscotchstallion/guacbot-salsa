@@ -56,7 +56,7 @@ router.post('/', function(req, res) {
             break;
         }
         
-        var filename        = uuid.v4()  + ext;
+        var filename        = uuid.v4()  + "."           + ext;
         var src             = uploadPath + "/"           + filename;
         var dst             = uploadPath + "/thumbnail/" + filename;
         var width           = 290;
