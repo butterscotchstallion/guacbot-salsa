@@ -23,9 +23,13 @@ define('newAccountView', function (require) {
             "blur .check-if-exists": "checkIfExists"
         },
         
-        checkIfExists: function (e) {
+        checkIfExists: _.throttle(function (e) {
+            return this.requestAPI(e);            
+        }, 1000),
+        
+        requestAPI: function (e) {
             var $target = $(e.target);
-            var query   = $target.val();
+            var query   = encodeURIComponent($target.val().trim());
             var field   = $target.attr('name');
             var xhr     = $.ajax({
                 url: "/api/v1/accounts?" + field + "=" + query,
@@ -38,10 +42,16 @@ define('newAccountView', function (require) {
                 var accountsFound      = data.accounts || [];
                 var accountUnavailable = accountsFound.length > 0;
                 
-                var container       = $($target.data('container'));
-                var errorFeedback   = container.find('.error-feedback');
-                var successFeedback = container.find('.success-feedback');
-                var unavailableMsg  = container.find('.unavailable-message');
+                var container          = $($target.data('container'));
+                var feedback           = container.find('.form-control-feedback');
+                var errorFeedback      = container.find('.error-feedback');
+                var successFeedback    = container.find('.success-feedback');
+                var unavailableMsg     = container.find('.unavailable-message');
+                var createButton       = $('.create-account-button');
+                var form               = $('#account-form');
+                
+                // Hide all feedback first
+                feedback.addClass('hidden');
                 
                 /**
                  * If account search comes up with anything, the account name is in use. Show
@@ -52,12 +62,18 @@ define('newAccountView', function (require) {
                     container.addClass('has-error has-feedback');
                     errorFeedback.removeClass('hidden');
                     unavailableMsg.removeClass('hidden');
+                    
+                    createButton.addClass('disabled').prop('disabled', true);
                 } else {
                     container.removeClass('has-error has-feedback');
                     unavailableMsg.addClass('hidden');
                     
                     container.addClass('has-feedback has-success');
                     successFeedback.removeClass('hidden');
+                    
+                    if (form.find('.has-error').length === 0) {
+                        createButton.removeClass('disabled').prop('disabled', false);
+                    }
                 }
             });
             
