@@ -564,6 +564,28 @@ describe('accountz', function() {
                   });
     });
     
+    it('fetches a list of accounts searching by account name', function (done) {
+        var earl = BASE_URL + "accounts?name=" + account.name;
+        
+        superagent.get(earl)
+                  .set('x-access-token', account.token)
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    expect(body.accounts).to.be.an('object');
+                    expect(body.accounts.length).to.eql(1);
+                    
+                    done();
+                  });
+    });
+    
     it('fails to login with a non-existent account', function (done) {
         var earl = BASE_URL + "session";
         

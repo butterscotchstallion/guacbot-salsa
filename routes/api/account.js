@@ -111,6 +111,21 @@ router.get('/', function (req, res, next) {
     var qb       = Bookshelf.knex
                             .select(cols)
                             .from('accounts');
+    var urlParts = url.parse(req.url, true).query;
+    var name     = urlParts.name;
+    var email    = urlParts.email;
+    
+    if (name && name.length > 0) {
+        qb.where({
+            name: name
+        });
+    }
+    
+    if (email && email.length > 0) {
+        qb.where({
+            email_address: email
+        });
+    }
     
     qb.then(function (result) {
         res.status(200).json({

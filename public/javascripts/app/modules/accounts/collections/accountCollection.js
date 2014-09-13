@@ -8,10 +8,18 @@ define('accountCollection', function (require) {
 
     var accountCollection = Backbone.Collection.extend({
         url        : function () {
-            var earl = '/api/v1/accounts';
+            var earl = '/api/v1/accounts?a=1';
             
             if (this.order) {
-                earl += '?order=' + this.order;
+                earl += '&order=' + this.order;
+            }
+            
+            if (this.name) {
+                earl += "&name=" + this.name;
+            }
+            
+            if (this.email) {
+                earl += "&email=" + this.email;
             }
             
             return earl;

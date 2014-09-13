@@ -81,8 +81,6 @@ define('sessionInfoHeaderItemView', function (require) {
                 account: account
             });
             
-            console.log(account);
-            
             $('.account-info-container').html(html);
             
             // Popover account info

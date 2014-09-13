@@ -59,8 +59,6 @@ define('profileView', function (require) {
                 canEdit           : canEdit
             });
             
-            console.log('can edit: ', canEdit);
-            
             $('.profile-container').html(html);
             $('.loading').addClass('hidden');
             
@@ -79,7 +77,7 @@ define('profileView', function (require) {
                     "x-access-token": this.token
                 },
                 done       : function (e, data) {
-                    //window.location.reload();
+                    window.location.reload();
                 },
                 progressall: function (e, data) {
                     var progress = parseInt(data.loaded / data.total * 100, 10);

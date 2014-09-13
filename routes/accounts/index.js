@@ -18,6 +18,15 @@ router.get('/', function(req, res) {
     });
 });
 
+// New
+router.get('/new', function(req, res) {
+    res.render('accounts/new', { 
+        title         : "New Account",
+        env           : config.env,
+        isAccountsArea: true
+    });
+});
+
 // Profile
 router.get('/:guid', function(req, res) {
     res.render('accounts/profile', { 
@@ -27,6 +36,7 @@ router.get('/:guid', function(req, res) {
         guid          : req.params.guid
     });
 });
+
 
 module.exports = router;
 
