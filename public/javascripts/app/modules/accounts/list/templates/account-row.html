@@ -1,5 +1,9 @@
 <td class="col-name">
-    <a href="/accounts/{{guid}}" title="View account profile">{{name}}</a>
+    {{#if active}}
+        <a href="/accounts/{{guid}}" title="View account profile">{{name}}</a>
+    {{else}}
+        {{name}}
+    {{/if}}
 </td>
 
 <td class="col-updated-at">    

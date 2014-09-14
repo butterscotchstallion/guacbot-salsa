@@ -31,8 +31,8 @@ define('accountCollection', function (require) {
             }
         },
         
-        comparator : function (model) {
-            return this.order || model.get('name')
+        comparator : function (a, b) {
+            return this.order || a.created_at > b.created_at;
         },
         
         parse      : function (response, options) {

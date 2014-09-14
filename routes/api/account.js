@@ -20,7 +20,12 @@ var uuid               = require('node-uuid');
 // Create account
 router.post('/', function (req, res, next) {
     var name     = req.param('name');
-    var password = req.param('password');
+    var email    = req.param('email');
+    // This will be overwritten when the user follows the activation process
+    // Also, the account will be inactive by default so it will not be possible
+    // to log in, even if this password was known. It is set for the sole purpose
+    // of passing validation.
+    var password = "" + ~~(Math.random() * 9999);
     var model    = new Account();
     
     passwordHasher(password).hash(function (error, hash) {
@@ -31,17 +36,18 @@ router.post('/', function (req, res, next) {
             });
         } else {
             model.set({
-                name    : name,
-                password: hash,
-                guid    : uuid.v4()
+                name                    : name,
+                email_address           : email,
+                password                : hash,
+                guid                    : uuid.v4(),
+                activation_code         : uuid.v4(),
+                active                  : 0,
+                password_change_required: 1
             });
             
             model.save()
                  .then(function (result) {
                     var newAccount = result;
-                    
-                    // No sensitive details in the response!
-                    newAccount.set('password', null);
                     
                     res.location(['/accounts', 
                                   newAccount.get('guid')].join('/'));
@@ -49,7 +55,16 @@ router.post('/', function (req, res, next) {
                     res.status(201).json({
                         status : "OK",
                         message: "Account created.",
-                        account: newAccount
+                        account: {
+                            name                    : newAccount.get('name'),
+                            email                   : newAccount.get('email'),
+                            guid                    : newAccount.get('guid'),
+                            created_at              : newAccount.get('created_at'),
+                            updated_at              : newAccount.get('updated_at'),
+                            active                  : newAccount.get('active'),
+                            password_change_required: newAccount.get('password_change_required'),
+                            activation_code         : newAccount.get('activation_code')
+                        }
                     });
                  })
                  .catch(function (error) {
@@ -128,6 +143,8 @@ router.get('/', function (req, res, next) {
         });
     }
     
+    qb.orderBy('created_at', 'DESC');
+    
     qb.then(function (result) {
         var payload = {
             status : "OK",
@@ -136,7 +153,7 @@ router.get('/', function (req, res, next) {
         };
         
         // Used for validation
-        if (facets.indexOf('valid') !== -1) {
+        if (facets && facets.indexOf('valid') !== -1) {
             payload.valid = result.length === 0;
         }
         

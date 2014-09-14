@@ -492,6 +492,8 @@ describe('accountz', function() {
                     expect(body.status).to.eql("OK");
                     expect(body.account).to.be.an('object');
                     expect(body.account.password).to.eql(null);
+                    expect(body.account.guid).to.be.ok();
+                    expect(body.account.activation_code).to.be.ok();
                     
                     account = _.extend(account, body.account);
                     

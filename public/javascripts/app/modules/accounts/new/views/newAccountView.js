@@ -12,10 +12,10 @@ define('newAccountView', function (require) {
     var jStorage           = require('jStorage');
     var moment             = require('moment');
     var accountCollection  = require('accountCollection');
+    var accountsModel      = require('accountsModel');
     var fileupload         = require("jquery.fileupload");
     var tokenModel         = require('accountTokenModel');
     var _                  = require('underscore');
-    var validator          = require('validator');
     var bootstrapValidator = require('bootstrapValidator');
     
     var view = Backbone.View.extend({
@@ -97,62 +97,12 @@ define('newAccountView', function (require) {
         },
         
         initialize: function (options) {
-            var self       = this;
-            
+            var self        = this;            
             self.collection = new accountCollection();
             
-            self.listenTo(self.collection, 'reset', self.render, self);
+            self.listenTo(self.collection, 'add', self.onAccountCreated, self);
             
-            /*
-            self.collection.fetch({
-                headers: {
-                    "x-access-token": self.token
-                },
-                
-                error: function (xhr, status, err) {
-                    $('.loading').addClass('hidden');
-                }
-            });
-            */
             $('.loading').addClass('hidden');
-            
-            /*
-            $('#account-form').validate({
-                rules: {
-                    field: {
-                      required: true,
-                      email: true
-                    }
-                },
-                
-                highlight: function (element, errorClass, validClass) { 
-                    $(element).parents("div.form-group").addClass(errorClass).removeClass(validClass);
-                    
-                    var container = $($(element).data("container"));
-                    
-                    container.find("span.form-control-feedback").remove();
-                    container.append('<span class="glyphicon glyphicon-remove form-control-feedback error-feedback"></span>');
-                },
-                
-                unhighlight: function (element, errorClass, validClass) { 
-                    $(element).parents(".error").removeClass(errorClass).addClass(validClass);
-                    
-                    var container = $($(element).data("container"));
-                    
-                    container.append('<span class="glyphicon glyphicon-check form-control-feedback success-feedback"></span>');
-                },
-                
-                errorClass: "error has-error",
-                
-                validClass: "has-feedback has-success",
-                
-                errorPlacement: function(error, element) {
-                    //error.insertAfter($(element).closest('.form-group'));
-                    //error.addClass('help-block');
-                    
-                    $(element).closest('.form-group').append(error);
-                }
-            });*/
             
             $.ajaxSetup({
                 headers: {
@@ -200,6 +150,38 @@ define('newAccountView', function (require) {
                             }
                         }
                     }
+                }
+            }) 
+            .on('success.form.bv', function (e) {
+                self.onNewAccountFormSubmitted(e, self);
+            });
+        },
+        
+        onAccountCreated: function (model, collection, options) {
+            $('.account-created-message').removeClass('hidden');
+        },
+        
+        onNewAccountFormSubmitted: function(e, context) {
+            // Prevent form submission
+            e.preventDefault();
+
+            // Get the form instance
+            var $form      = $(e.target);
+
+            // Get the BootstrapValidator instance
+            var bv         = $form.data('bootstrapValidator');
+            
+            // Get form data and turn it into an object 
+            var serialized = $form.serializeArray();
+            var payload    = {};
+            
+            serialized.map(function (item) {
+                payload[item.name] = item.value;
+            });
+            
+            context.collection.create(payload, {
+                success: function (result) {
+                    window.location = "/accounts/new/account-created";
                 }
             });
         },

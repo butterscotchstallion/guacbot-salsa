@@ -14,7 +14,7 @@ define('accountsModel', function (require) {
         urlRoot    : "/api/v1/accounts/",
         
         initialize : function (options) {
-            this.guid = options.guid;
+            this.guid = options && options.guid || "";
         },
         
         url        : function () {
