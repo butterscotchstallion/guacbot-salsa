@@ -27,6 +27,15 @@ router.get('/new', function(req, res) {
     });
 });
 
+// New
+router.get('/new/account-created', function(req, res) {
+    res.render('accounts/created', { 
+        title         : "Account Created!",
+        env           : config.env,
+        isAccountsArea: true
+    });
+});
+
 // Profile
 router.get('/:guid', function(req, res) {
     res.render('accounts/profile', { 
