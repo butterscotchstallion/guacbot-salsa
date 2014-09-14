@@ -21,6 +21,8 @@ require.config({
         "jquery.iframe-transport" : "lib/jquery-file-upload/jquery.iframe-transport",
         "jquery.fileupload-ui": "lib/jquery-file-upload/jquery.fileupload-ui",
         "jquery.fileupload-image": "lib/jquery-file-upload/jquery.fileupload-image",
+        validator       : "lib/jquery.validate.min",
+        bootstrapValidator: "lib/bootstrapValidator.min",
         
         common             : "app/modules/common/main",
         

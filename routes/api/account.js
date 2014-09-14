@@ -114,6 +114,7 @@ router.get('/', function (req, res, next) {
     var urlParts = url.parse(req.url, true).query;
     var name     = urlParts.name;
     var email    = urlParts.email;
+    var facets   = urlParts.facets;
     
     if (name && name.length > 0) {
         qb.where({
@@ -128,11 +129,18 @@ router.get('/', function (req, res, next) {
     }
     
     qb.then(function (result) {
-        res.status(200).json({
+        var payload = {
             status : "OK",
             message: null,
             accounts: result
-        });
+        };
+        
+        // Used for validation
+        if (facets.indexOf('valid') !== -1) {
+            payload.valid = result.length === 0;
+        }
+        
+        res.status(200).json(payload);
     })
     .catch(function (error) {
         res.status(200).json({

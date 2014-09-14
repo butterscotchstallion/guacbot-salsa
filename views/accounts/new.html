@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <form id="account-form">
+        <form id="account-form" method="post" action="">
             <div class="form-group account-name-container">
                 <label for="account-name" class="control-label">Name</label>
                 
@@ -10,7 +10,7 @@
                     <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
                     <input type="text"
                            name="name"
-                           class="form-control check-if-exists"
+                           class="form-control check-if-exists required account-name"
                            data-container=".account-name-container"
                            maxlength="45"
                            id="account-name"
@@ -18,34 +18,27 @@
                 </div>
                 <span class="glyphicon glyphicon-remove form-control-feedback error-feedback hidden"></span>
                 <span class="glyphicon glyphicon-ok form-control-feedback success-feedback hidden"></span>
-                
-                <p class="help-block hidden unavailable-message">This account name is unavailable.</p>
             </div>
             
             <div class="form-group account-email-container">
-                <label for="account-email">Email Address</label>
+                <label for="account-email" class="control-label">Email Address</label>
                 
                 <div class="input-group">
                     <span class="input-group-addon">@</span>
                     <input type="text"
                            name="email"
-                           class="form-control check-if-exists"
+                           class="form-control check-if-exists email"
                            data-container=".account-email-container"
                            maxlength="255"
                            id="account-email"
                            placeholder="Your account activation link will be sent here">
                 </div>
-                <span class="glyphicon glyphicon-remove form-control-feedback error-feedback hidden"></span>
-                <span class="glyphicon glyphicon-ok form-control-feedback success-feedback hidden"></span>
-                
-                <p class="help-block hidden unavailable-message">This email address is unavailable.</p>
             </div>
             
             <div class="form-group clearfix">
                 <button type="submit"
-                        class="btn btn-success pull-right disabled create-account-button"
-                        disabled
-                        id="account-save-button"><span class="glyphicon glyphicon-user"></span> Create New Account</button>
+                        class="btn btn-success pull-right create-account-button"                        
+                        id="account-save-button"><span class="glyphicon glyphicon-lock"></span> Create New Account</button>
             </div>
         </form>
     </div>
