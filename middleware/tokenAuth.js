@@ -12,9 +12,13 @@ var jwt                = require('jwt-simple');
 module.exports  = function (req, res, next) {
     var token   = req.headers['x-access-token'];    
     var path    = req.originalUrl;
-    var isLogin = path.indexOf('session') !== -1;
+    var exempt  = [
+        "/api/v1/accounts/login",
+        "/api/v1/accounts/activate"
+    ];    
+    var isExempt = exempt.indexOf(path);
     
-    if (isLogin) {
+    if (isExempt) {
         next();        
         return;
     }

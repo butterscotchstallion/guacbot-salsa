@@ -16,11 +16,33 @@ var fs                 = require('fs');
 var config             = JSON.parse(fs.readFileSync("./config/api.json", 'utf8'));
 var IS_DEV             = config.env === "development";
 var uuid               = require('node-uuid');
+var mailer             = require('../../app/accountActivationEmailer');
+var Handlebars         = require('handlebars');
+var emailTemplate      = fs.readFileSync('./views/accounts/activation-email.html', 'utf8');
+
+function sendSuccessResponse (res, model) {
+    res.status(201).json({
+        status : "OK",
+        message: "Account created.",
+        account: {
+            name                    : model.get('name'),
+            email                   : model.get('email'),
+            guid                    : model.get('guid'),
+            created_at              : model.get('created_at'),
+            updated_at              : model.get('updated_at'),
+            active                  : model.get('active'),
+            password_change_required: model.get('password_change_required'),
+            activation_code         : model.get('activation_code')
+        }
+    });
+}
 
 // Create account
 router.post('/', function (req, res, next) {
     var name     = req.param('name');
     var email    = req.param('email');
+    var testing  = req.param('testing');
+    
     // This will be overwritten when the user follows the activation process
     // Also, the account will be inactive by default so it will not be possible
     // to log in, even if this password was known. It is set for the sole purpose
@@ -35,12 +57,15 @@ router.post('/', function (req, res, next) {
                 message: error
             });
         } else {
+            var activationCode = uuid.v4();
+            var activationLink = config.baseActivationURL + "/accounts/activate/" + activationCode;
+            
             model.set({
                 name                    : name,
                 email_address           : email,
                 password                : hash,
                 guid                    : uuid.v4(),
-                activation_code         : uuid.v4(),
+                activation_code         : activationCode,
                 active                  : 0,
                 password_change_required: 1
             });
@@ -52,27 +77,52 @@ router.post('/', function (req, res, next) {
                     res.location(['/accounts', 
                                   newAccount.get('guid')].join('/'));
                     
-                    res.status(201).json({
-                        status : "OK",
-                        message: "Account created.",
-                        account: {
-                            name                    : newAccount.get('name'),
-                            email                   : newAccount.get('email'),
-                            guid                    : newAccount.get('guid'),
-                            created_at              : newAccount.get('created_at'),
-                            updated_at              : newAccount.get('updated_at'),
-                            active                  : newAccount.get('active'),
-                            password_change_required: newAccount.get('password_change_required'),
-                            activation_code         : newAccount.get('activation_code')
-                        }
-                    });
+                    // Don't send activation email when testing
+                    if (!testing) {
+                        // Send activation email
+                        var tmp       = Handlebars.compile(emailTemplate);
+                        var emailBody = tmp(_.extend({
+                            activationLink: activationLink
+                        }, newAccount.toJSON()));
+                        
+                        mailer.send({
+                            mailUsername: config.mailUsername,
+                            mailPassword: config.mailPassword,
+                            from        : config.mailFrom,
+                            to          : email,
+                            subject     : config.activationEmailSubject,
+                            text        : emailBody,
+                            html        : emailBody,
+                            callback    : function (mailError, info) {
+                                if (mailError) {
+                                    console.log(mailError);
+                                    
+                                    res.status(500).json({
+                                        status: "ERROR",
+                                        message: IS_DEV ? mailError : "Error sending activation email."
+                                    });
+                                    
+                                } else {
+                                    if (IS_DEV) {
+                                        console.log('Message sent: ' + info.response);
+                                    }
+                                    
+                                    sendSuccessResponse(res, newAccount);
+                                }
+                            }
+                        });
+                    } else {
+                        sendSuccessResponse(res, newAccount);
+                    }
                  })
                  .catch(function (error) {
                     var errorMessage  = "Error creating account.";
                     
+                    console.log(error);
+                    
                     res.status(200).json({
                         status: "ERROR",
-                        message: error
+                        message: IS_DEV ? error : errorMessage
                     });
                 });
         }
@@ -166,6 +216,72 @@ router.get('/', function (req, res, next) {
         });
     });
 });
+
+// Activate account
+router.put('/activate', function (req, res, next) {
+    var code     = req.param('activationCode');
+    var password = req.param('password');
+    
+    console.log(req.body);
+    
+    /**
+     * Make sure we are only affecting accounts with this activation 
+     * code, and accounts that are currently inactive
+     *
+     */
+    var model    = new Account({ 
+        activation_code: code,
+        active         : 0
+    });
+    
+    model.fetch({
+        require: true,
+        debug  : true
+    })
+    .then(function (result) {        
+        passwordHasher(password).hash(function (error, hash) {
+            if (error) {
+                res.status(200).json({
+                    status: "ERROR",
+                    message: IS_DEV ? error : "Error activating account."
+                });
+            } else {   
+                /** 
+                 * Make user active and set their new password
+                 *
+                 */
+                model.set({
+                    active                  : 1,
+                    password                : hash,
+                    password_change_required: 0
+                });
+                
+                model.save()
+                     .then(function () {
+                        res.status(200).json({
+                            status: "OK",
+                            message: "Account activated."
+                        });
+                     })
+                     .catch(function (error) {
+                        res.status(200).json({
+                            status: "ERROR",
+                            message: IS_DEV ? error : "Error activating account."
+                        });
+                    });
+            }
+        });
+    })
+    .catch(function (error) {
+        console.log(error);
+        
+        res.status(200).json({
+            status: "ERROR",
+            message: IS_DEV ? error : "Error activating account."
+        });
+    });
+});
+
 
 // Update account
 router.put('/:guid', function (req, res, next) {

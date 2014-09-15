@@ -27,12 +27,22 @@ router.get('/new', function(req, res) {
     });
 });
 
-// New
+// Account created thanks page
 router.get('/new/account-created', function(req, res) {
     res.render('accounts/created', { 
         title         : "Account Created!",
         env           : config.env,
         isAccountsArea: true
+    });
+});
+
+// Activate
+router.get('/activate/:code', function(req, res) {
+    res.render('accounts/activate', { 
+        title         : "Activate Account",
+        env           : config.env,
+        isAccountsArea: true,
+        code          : req.params.code
     });
 });
 

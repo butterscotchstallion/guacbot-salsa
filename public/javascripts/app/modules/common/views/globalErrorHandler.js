@@ -10,8 +10,9 @@ define('globalErrorHandler', function (require) {
         var statusCode = jqxhr.status;
         
         var isLoginPage = window.location.href.indexOf('session/new') !== -1;
+        var errorCodes  = [404, 400];
         
-        if (statusCode === 400 && !isLoginPage) {
+        if (errorCodes.indexOf(statusCode) !== -1 && !isLoginPage) {
             window.location = "/session/new?error=expired&return=" + window.location.pathname;
         }
     });

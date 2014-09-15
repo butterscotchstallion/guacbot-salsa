@@ -11,16 +11,4 @@
         color: #f00;
         padding: .5em 0 .25em 0;
     }
-    
-    .has-feedback .form-control-feedback {
-        /** I really hate to do this, but the bootstrap validation plugin uses inline styles 
-            that I cannot find a way to override, except this way **/
-        top: 25px !important;
-        right: 0;
-    }
-    
-    .form-horizontal .has-feedback .form-control-feedback {
-        top: 0;
-        right: 15px;
-    }
 }

@@ -478,8 +478,9 @@ describe('accountz', function() {
         superagent.post(earl)
                   .set('x-access-token', account.token)
                   .send({
-                    name    : ~~(Math.random() * 31337),
-                    password: config.accountPassword
+                    name   : ~~(Math.random() * 31337),
+                    email  : config.testingEmail,
+                    testing: true
                   })
                   .end(function(e, res) {
                     expect(e).to.eql(null);
@@ -491,7 +492,6 @@ describe('accountz', function() {
                     expect(body).to.not.be.empty();
                     expect(body.status).to.eql("OK");
                     expect(body.account).to.be.an('object');
-                    expect(body.account.password).to.eql(null);
                     expect(body.account.guid).to.be.ok();
                     expect(body.account.activation_code).to.be.ok();
                     
@@ -503,6 +503,27 @@ describe('accountz', function() {
                   });
     });
     
+    it('activates an account', function (done) {
+        var earl = BASE_URL + "accounts/activate";
+        
+        superagent.put(earl)
+                  //.set('x-access-token', account.token)
+                  .send({
+                    activationCode: account.activation_code
+                  })
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    
+                    done();
+                  });
+    });
     it('fails to fetch a non-existent account', function (done) {
         var earl = BASE_URL + "accounts/lol";
         

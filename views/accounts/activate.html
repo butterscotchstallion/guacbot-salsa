@@ -1,0 +1,78 @@
+
+<h1>Activate Account</h1>
+<p>Submit the form below to activate your account.</p>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="row activation-error-message hidden">
+            <div class="col-md-12">
+                <div class="alert alert-danger fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    Error activating account :(
+                </div>
+            </div>
+        </div>
+        
+        <form id="activate-account-form" method="post" action="">
+            <div class="form-group">
+                <label for="activationCode" class="control-label">
+                    Activation Code
+                </label>
+                
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-cog"></span></span>
+                    
+                    <input type="text"
+                           name="activationCode"
+                           id="activationCode"
+                           maxlength="36"
+                           class="form-control"
+                           value="{{code}}">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password" class="control-label">
+                    Password
+                </label>
+                
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                    
+                    <input type="password"
+                           name="password"
+                           id="password"
+                           maxlength="36"
+                           class="form-control"
+                           placeholder="Minimum 10 characters">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword" class="control-label">
+                    Confirm Password
+                </label>
+                
+                <div class="input-group">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                    
+                    <input type="password"
+                           name="confirmPassword"
+                           id="confirmPassword"
+                           maxlength="36"
+                           class="form-control"
+                           placeholder="Minimum 10 characters">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit"
+                        class="btn btn-success pull-right"><span class="glyphicon glyphicon-lock"></span> Activate</button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+
+<script data-main="/javascripts/app/modules/accounts/activate/main" src="/javascripts/lib/require.min.js"></script>
