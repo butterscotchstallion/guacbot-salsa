@@ -51,7 +51,9 @@ define('profileView', function (require) {
              * the accountID out of the URL on the client side.
              *
              */
-            var canEdit = account.guid === this.guid;
+            var currentUser           = $.jStorage.get('account');
+            var currentlyLoggedInGUID = currentUser.guid;
+            var canEdit = account.guid === currentlyLoggedInGUID;
             var html    = tpl({
                 account           : account,                
                 createdAtFormatted: moment(account.created_at).fromNow(),
