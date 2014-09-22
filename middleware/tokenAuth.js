@@ -35,12 +35,6 @@ module.exports  = function (req, res, next) {
             var accountID = decoded.iss;
             
             if (!expired) {
-                /*
-                var model = new AccountAccessToken({
-                    account_id: decoded.iss
-                });
-                */
-                
                 // Get account based on decoded token account ID
                 var model = new Account({
                     id: accountID

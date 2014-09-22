@@ -52,9 +52,9 @@ define('profileView', function (require) {
              *
              */
             var currentUser           = $.jStorage.get('account');
-            var currentlyLoggedInGUID = currentUser.guid;
-            var canEdit = account.guid === currentlyLoggedInGUID;
-            var html    = tpl({
+            var currentlyLoggedInGUID = currentUser ? currentUser.guid : false;
+            var canEdit               = account.guid === currentlyLoggedInGUID;
+            var html                  = tpl({
                 account           : account,                
                 createdAtFormatted: moment(account.created_at).fromNow(),
                 updatedAtFormatted: moment(account.updated_at).fromNow(),

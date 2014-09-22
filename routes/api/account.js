@@ -163,6 +163,43 @@ router.get('/:guid', function (req, res, next) {
                 });
 });
 
+// Suggest account name
+router.get('/suggest-name', function (req, res, next) {
+    var qb       = Bookshelf.knex
+                            .select(['word', 'type'])
+                            .from('english_words');
+    
+    qb.debug();
+    
+    qb.then(function (words) {
+        var adjectives = _.find(words, function (w) {
+            return w.type === "adjective";
+        });
+        
+        var nouns = _.find(words, function (w) {
+            return w.type === "noun";
+        });
+        
+        var rndAdj  = adjectives[~~(Math.random()) * adjectives.length].word;
+        var rndNoun = nouns[~~(Math.random()) * nouns.length].word;
+        var word    = rndAdj + rndNoun;
+        
+        res.status(200).json({
+            status : "OK",
+            message: null,
+            name   : word
+        });
+    })
+    .catch(function (error) {
+        console.log(error);
+        
+        res.status(404).json({
+            status: "ERROR",
+            message: error
+        });
+    });
+});
+
 // List of accounts
 router.get('/', function (req, res, next) {
     var cols = [

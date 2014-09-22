@@ -1,5 +1,11 @@
 <ul class="list-unstyled">    
-    <li><span class="glyphicon glyphicon-cog"></span> Environment <strong>{{env}}</strong></li>
+    <li>
+        <span class="glyphicon glyphicon-cog"></span> Environment <strong>{{env}}</strong>
+    </li>
     
-    <li><span class="glyphicon glyphicon-time"></span> Token expires <strong>{{expirationReadable}}</strong></li>
+    <li>
+        <span class="glyphicon glyphicon-time"></span> 
+        
+        Token expires <strong class="token-expiration" title="{{expires}}">{{expires}}</strong>
+    </li>
 </li>

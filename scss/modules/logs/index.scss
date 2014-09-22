@@ -1,0 +1,30 @@
+ 
+.logs-search-area {
+    padding-top: 24px;
+    
+    .search-query {
+        width: 238px;
+    }
+}
+ 
+.logs-table {
+    .col-ts {
+        width: 11%;
+    }
+    
+    .col-channel {
+        width: 8%;
+    }
+    
+    .col-nick {
+        width: 12%;
+    }
+    
+    .col-message {
+        width: 80%;
+    }
+    
+    .overflow {
+        overflow: hidden;
+    }
+}

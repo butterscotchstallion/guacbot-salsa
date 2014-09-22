@@ -50,6 +50,7 @@ app.use('/api/v1/session',          require('./routes/api/session'));
 app.use('/plugins',             require('./routes/plugins'));
 app.use('/accounts',            require('./routes/accounts'));
 app.use('/session',             require('./routes/session'));
+app.use('/logs',                require('./routes/logs'));
 
 process.on('error', function (e) {
     console.log(e.stack);

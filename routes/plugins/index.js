@@ -44,8 +44,8 @@ router.get('/:pluginID/meta', function(req, res) {
         title     : 'Plugin :: Meta',
         isMetaPage: true,
         pluginID  : req.params.pluginID,
-        database            : config.database,
-        env                 : config.env
+        database  : config.database,
+        env       : config.env
     });
 });
 

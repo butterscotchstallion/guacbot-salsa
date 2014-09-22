@@ -14,6 +14,7 @@ define('sessionInfoHeaderItemView', function (require) {
     var accountsModel              = require('accountsModel');
     var accountTokenModel          = require('accountTokenModel');
     var sessionModel               = require('sessionModel');
+    var timeago                    = require('timeago');
     
     var view = Backbone.View.extend({
         el        : $('body'),
@@ -84,16 +85,16 @@ define('sessionInfoHeaderItemView', function (require) {
             $('.account-info-container').html(html);
             
             // Popover account info
-            var expires            = $.jStorage.get('tokenExpiration');
-            var expirationReadable = moment(expires).fromNow();
+            var expires          = $.jStorage.get('tokenExpiration');            
+            var expiresFormatted = moment(expires).fromNow();
             
             $('.account-info-label').popover({
                 trigger  : 'hover',
                 html     : true,
                 content  : this.compile(accountInfoPopoverTemplate, {
-                    account           : account,
-                    expirationReadable: expirationReadable,
-                    env               : window.app.env
+                    account : account,
+                    expires : expiresFormatted,
+                    env     : window.app.env
                 }),
                 placement: 'bottom'
             });

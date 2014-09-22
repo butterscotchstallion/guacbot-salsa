@@ -449,6 +449,27 @@ describe('accountz', function() {
                   });    
     });
     
+    it('gets a name suggestion', function (done) {
+        superagent.get(BASE_URL + "accounts/suggest-name")
+                  .end(function(e, res) {
+                    expect(e).to.eql(null);
+
+                    expect(res.status).to.eql(200);
+                    
+                    var body = res.body;
+                    
+                    console.log(body);
+                    
+                    expect(body).to.be.an('object');
+                    expect(body).to.not.be.empty();
+                    expect(body.status).to.eql("OK");
+                    
+                    expect(body.name).to.eql("OK");
+                    
+                    done();
+                  });    
+    });
+    
     it('fails to creates an account with bogus info', function (done) {
         var earl = BASE_URL + "accounts";
         
@@ -1032,7 +1053,7 @@ describe('autocomplete api', function() {
 
 describe('logger api', function() {
     var startDate = "2014-07-01 00:00:00";
-    var endDate   = "2014-08-02 00:00:00";
+    var endDate   = "2014-07-02 00:00:00";
     var query     = "chipotle";
     
     it('counts messages filtered by search query', function (done) {

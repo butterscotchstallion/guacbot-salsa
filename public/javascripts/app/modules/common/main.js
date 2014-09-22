@@ -17,7 +17,7 @@ require.config({
         jStorage      : "lib/jstorage",
         moment        : "lib/moment",
         timeago       : "lib/timeago",
-        
+
         accessController: "app/lib/accessController",
         globalErrorHandler: "app/modules/common/views/globalErrorHandler",
         

@@ -84,6 +84,7 @@ router.get('/messages', function (req, res, next) {
     var nick     = urlParts.nick;
     var limit    = parseInt(urlParts.limit, 10) || 1;
     var query    = urlParts.query;
+    var order    = urlParts.order;
     
     if (nick && nick.length > 0) {
         qb.where({ nick: nick });
@@ -101,7 +102,7 @@ router.get('/messages', function (req, res, next) {
         qb.where('message', 'like', '%' + query + '%');
     }
     
-    qb.orderBy('ts', 'desc')
+    qb.orderBy('ts', 'DESC')
         .then(function (messages) {
             res.status(200).json({
                 status  : "OK",
