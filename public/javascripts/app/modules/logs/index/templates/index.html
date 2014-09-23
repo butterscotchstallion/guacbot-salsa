@@ -1,21 +1,26 @@
 
 <div class="row">
-    <div class="col-md-1">
+    <div class="col-md-7">
         <h1>Logs</h1>
     </div>
     
-    <div class="col-md-11 logs-search-area">
-        <form class="form-inline search-form">
+    <div class="col-md-5 logs-search-area">
+        <form class="form-inline search-form pull-right" method="GET" action="">
             <div class="form-group">
                 <div class="input-group">
                     <div class="input-group-addon"><span class="glyphicon glyphicon-search"></span></div>
                     <input type="text"
+                           name="query"
                            class="form-control search-query"
-                           placeholder="Enter a search term">
+                           placeholder="Enter a search term"
+                           value="{{query}}">
                 </div>
-                
+            </div>
+            
+            <div class="form-group">
                 <button type="submit"
                         class="btn btn-default">Search</button>
+                        
                 <button type="reset"
                         class="btn btn-default clear-search-query">Clear</button>
             </div>

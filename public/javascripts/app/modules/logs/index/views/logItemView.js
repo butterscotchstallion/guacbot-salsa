@@ -24,7 +24,8 @@ define('logItemView', function (require) {
         render    : function() {
             var modelJSON = this.model.toJSON();
             var tpl       = this.template(_.extend({
-                createdAtFormatted: moment(this.model.get('ts')).format("MMM MM HH:mm:ss")
+                createdAtFormatted: moment(this.model.get('ts')).format("MMM MM HH:mm:ss"),
+                channelWithoutHash: this.model.get('channel').replace("#", "")
             }, modelJSON));
 
             this.$el.html(tpl);

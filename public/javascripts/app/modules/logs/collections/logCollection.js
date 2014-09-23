@@ -17,6 +17,10 @@ define('logCollection', function (require) {
                 earl += "&nick=" + this.nick;
             }
             
+            if (this.channel) {
+                earl += "&channel=" + this.channel;
+            }
+            
             if (this.limit) {
                 earl += "&limit=" + this.limit;
             }
@@ -30,10 +34,11 @@ define('logCollection', function (require) {
 
         initialize : function (options) {
             if (options) {
-                this.order = options.order;
-                this.limit = options.limit || 25;
-                this.nick  = options.nick  || "";
-                this.query = options.query || "";
+                this.order   = options.order;
+                this.limit   = options.limit || 25;
+                this.nick    = options.nick  || "";
+                this.query   = options.query || "";
+                this.channel = options.channel || "";
             }
         },
         

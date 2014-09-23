@@ -4,8 +4,12 @@
         <abbr class="timeago" title="{{ts}}">{{createdAtFormatted}}</abbr>
     </td>
     
-    <td class="col-channel overflow">{{channel}}</td>
+    <td class="col-channel overflow">
+        <a href="?channel={{channelWithoutHash}}">{{channel}}</a>
+    </td>
     
-    <td class="col-nick overflow">{{nick}}</td>
+    <td class="col-nick overflow">
+        <a href="?nick={{nick}}">{{nick}}</a>
+    </td>
     
     <td class="col-message">{{{message}}}</td>    

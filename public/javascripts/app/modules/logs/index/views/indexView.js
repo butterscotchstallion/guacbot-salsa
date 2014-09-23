@@ -20,39 +20,23 @@ define('indexView', function (require) {
         el        : $('body'),
         
         events    : {
-            "submit .search-form": function (e) {
-                var self = this;
-                
-                self.onSearchFormSubmitted(e, self);
-            },
-            
             "click .clear-search-query": "onClearButtonClicked"
         },
         
         onClearButtonClicked: function () {
             $('.search-query').val("");
-            
-            this.getLogs();
-        },
-        
-        onSearchFormSubmitted: function (e, self) {
-            e.preventDefault();
-            
-            var query = $('.search-query').val().trim();
-            
-            var filteredCollection = self.collection.where({
-                nick: query
-            });
-            
-            self.collection.reset(filteredCollection);
+            $('.search-form').trigger('submit');
         },
         
         initialize: function (options) {
             var self        = this;
+            self.query      = self.getQueryStringParameter('query');
             self.collection = new logCollection({
-                limit: 25,
-                order: "id",
-                query: "http"
+                limit  : 25,
+                order  : "id",
+                query  : self.query,
+                channel: self.getQueryStringParameter('channel'),
+                nick   : self.getQueryStringParameter('nick')
             });
             
             self.listenTo(self.collection, "reset", self.render, self);
@@ -74,17 +58,29 @@ define('indexView', function (require) {
             var self = this;
             var view;
             var messageWithLinks;
+            var regex;
+            var message;
             
             if (self.collection.length > 0) {
                 self.collection.each(function (log) {
-                    messageWithLinks = Autolinker.link(log.get('message'), { 
+                    message = log.get('message');
+                    
+                    messageWithLinks = Autolinker.link(message, { 
                         className: "log-table-link",
-                        truncate : 255
+                        truncate : 75
                     });
+                    
+                    // Don't highlight words in URLs because it messes up the auto linking
+                    if (self.query && message.indexOf("http") === -1) {
+                        regex            = new RegExp(self.query, "gi");
+                        messageWithLinks = messageWithLinks.replace(regex, function (input) {
+                            return '<strong class="search-query-highlight">' + input + '</strong>';
+                        });
+                    }
                     
                     log.set('message', messageWithLinks);
                     
-                    view           = new logItemView({
+                    view = new logItemView({
                         model: log
                     });
                     
@@ -100,12 +96,21 @@ define('indexView', function (require) {
         
         render: function () {
             var tpl  = Handlebars.compile(indexTemplate);
-            var html = tpl();
+            var html = tpl({
+                query: this.query
+            });
             
             $('.logs-container').html(html);
             $('.loading').addClass('hidden');
             
             this.renderLogs();
+        },
+        
+        getQueryStringParameter: function (name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
         }
     });
 
